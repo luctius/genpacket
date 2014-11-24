@@ -9,31 +9,46 @@
 
 %%
 
-"fixed"             { return PK_TFIXED; }
-"dynamic"           { return PK_TDYNAMIC; }
-"calculated"        { return PK_TCALC; }
-"packet"            { return PACK;}
-"{"                 { return PSTART; }
-"}"                 { return PEND; }
+"fixed "            { return PK_TFIXED; }
+"dynamic "          { return PK_TDYNAMIC; }
+"calculated "       { return PK_TCALC; }
+"packet "           { return PACKET;}
+"size"[ ]*"="       { return PA_SIZE; }
+"pipe"[ ]*"="       { return PA_PIPE; }
 
-"frame"             { return PA_FRAME; }
-"attr"              { return PA_ATTR; }
-"attribute"         { return PA_ATTR; }
+"frame"             { return PO_FRAME; }
+"attr"              { return PO_ATTR; }
+"attribute"         { return PO_ATTR; }
+"size"              { return PO_SIZE; }
+"crc"               { return PO_CRC; }
 
 "type"              { return OP_TYPE; }
-"="                 { return ASSIGN; }
+"data_width"        { return OP_DATAWIDTH; }
+"datawidth"         { return OP_DATAWIDTH; }
+"default"           { return OP_DEFAULT; }
+"values"            { return OP_VALUES; }
+"exclude"           { return OP_EXCLUDE; }
+"start"             { return OP_START; }
+"end"               { return OP_END; }
 
-"bit"               { yylval.number = 1; return TYPE; }
-"uint8"             { yylval.number = 8; return TYPE; }
-"uint16"            { yylval.number = 16; return TYPE; }
-"int[0-9].[0-9]?"   { return TYPE; }
-"uint[0-9].[0-9]?"  { return TYPE; }
+"="                 { return '='; }
+"{"                 { return '{'; }
+"}"                 { return '}'; }
+","                 { return ','; }
 
+"bit"               { yylval.string = strdup(yytext); return TYPE; }
+"float"             { yylval.string = strdup(yytext); return TYPE; }
+"double"            { yylval.string = strdup(yytext); return TYPE; }
+"int"[1-9][0-9]?    { yylval.string = strdup(yytext); return TYPE; }
+"uint"[1-9][0-9]?   { yylval.string = strdup(yytext); return TYPE; }
+
+"\""[a-zA-Z_][a-zA-Z0-9_]*"\""  { yylval.string = strdup(yytext); return STRING; }
 [a-zA-Z_][a-zA-Z0-9_]*  { yylval.string = strdup(yytext); return VAR; }
 
 
 "#".*  { return COMMENT; }
-[0-9]+  { yylval.number = atoi(yytext); return NUMBER; }
-\n      { /* printf("\n"); return EOL; */ }
+[0-9]+  { yylval.number = strtol(yytext, NULL, 10); return NUMBER; }
+"0x"[0-9]+  { yylval.number = strtol(yytext, NULL, 16); return NUMBER; }
+\n      { /*printf("\n"); return EOL;*/ }
 [ \t]   /* return nada */
 .       { printf("Unkown: %c\n", *yytext); }
