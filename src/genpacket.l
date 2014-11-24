@@ -50,6 +50,5 @@
 "#".*  { return COMMENT; }
 [0-9]+  { yylval.number = strtol(yytext, NULL, 10); return NUMBER; }
 "0x"[0-9]+  { yylval.number = strtol(yytext, NULL, 16); return NUMBER; }
-\n      { /*printf("\n"); return EOL;*/ }
-[ \t]   /* return nada */
+[ \t\n]   /* return nada */
 .       { printf("Unkown: %c\n", *yytext); }
