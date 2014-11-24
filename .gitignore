@@ -1,0 +1,52 @@
+# C++ objects and libs
+
+*.slo
+*.lo
+*.o
+*.a
+*.la
+*.lai
+*.so
+*.dll
+*.dylib
+
+/src/.deps
+cmdline.c
+cmdline.h
+*.tab.c
+*.tab.h
+*.lex.c
+
+# autotools
+*.log
+*.status
+configure
+Makefile
+ltmain.sh
+config.status
+aclocal.m4
+autom4te.cache
+compile
+config.guess
+config.h
+config.h.in~
+config.log
+config.status
+config.sub
+depcomp
+install-sh
+libtool
+Makefile.in
+missing
+stamp-h1
+*.ggo
+/m4
+
+# results
+Doxyfile
+*.pc
+
+# editor files
+.*.swp
+*.in
+*.csv
