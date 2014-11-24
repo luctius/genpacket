@@ -21,6 +21,7 @@
 "attribute"         { return PO_ATTR; }
 "size"              { return PO_SIZE; }
 "crc"               { return PO_CRC; }
+"data"              { return PO_DATA; }
 
 "type"              { return OP_TYPE; }
 "data_width"        { return OP_DATAWIDTH; }

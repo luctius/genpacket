@@ -17,7 +17,7 @@ void yyerror(const char *s);
 
 %token PK_TFIXED PK_TDYNAMIC PK_TCALC
 %token PACKET PA_SIZE PA_PIPE
-%token PO_FRAME PO_ATTR PO_SIZE PO_CRC
+%token PO_FRAME PO_ATTR PO_SIZE PO_CRC PO_DATA
 %token OP_TYPE OP_DATAWIDTH OP_DEFAULT OP_VALUES OP_EXCLUDE OP_START OP_END
 
 
@@ -63,6 +63,8 @@ option:
     | PO_SIZE size_plist  { printf("size default\n"); }
     | PO_CRC STRING VAR crc_plist  { printf("crc: %s: %s\n", $2, $3); }
     | PO_CRC VAR crc_plist  { printf("crc default: %s\n", $2); }
+    | PO_DATA STRING data_plist  { printf("data: %s\n", $2); }
+    | PO_DATA data_plist  { printf("data default\n"); }
     | COMMENT {}
 ;
 
@@ -102,6 +104,16 @@ c_param:
     | op_type
     | op_start
     | op_end
+    | op_exclude
+;
+
+data_plist: d_param
+    | data_plist d_param
+;
+
+d_param:
+    | op_type
+    | op_datawidth
     | op_exclude
 ;
 
