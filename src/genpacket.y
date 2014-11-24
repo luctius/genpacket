@@ -1,6 +1,6 @@
 %{
 
-#include <stdio.h>
+//#include <stdio.h>
 
 %}
 
@@ -30,11 +30,6 @@ packet_type:
     | PACKET_TYPE_CALCULATED PACKET VARIABLE EOL     { printf("calculated packet\n"); }
 
 %%
-
-int main(int argc, char **argv) {
-    while (yylex() != 0) {}
-    return (0);
-}
 
 yyerror(char *s) {
     fprintf(stderr, "error: %s\n",s);

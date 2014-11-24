@@ -64,6 +64,6 @@ AC_CHECK_FUNCS([memmove memset mkdir sqrt strtol])
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile 
-                 level_detector.ggo])
+                 genpacket.ggo])
 AC_OUTPUT
 
