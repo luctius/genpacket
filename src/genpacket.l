@@ -9,18 +9,18 @@
 
 %%
 
-"fixed"             { return PACKET_TYPE_FIXED; }
-"dynamic"           { return PACKET_TYPE_DYNAMIC; }
-"calculated"        { return PACKET_TYPE_CALCULATED; }
-"packet"            { return PACKET;}
-"{"                 { return PACKET_START; }
-"}"                 { return PACKET_END; }
+"fixed"             { return PK_TFIXED; }
+"dynamic"           { return PK_TDYNAMIC; }
+"calculated"        { return PK_TCALC; }
+"packet"            { return PACK;}
+"{"                 { return PSTART; }
+"}"                 { return PEND; }
 
-"frame"             { return PACKET_ATTR_FRAME; }
-"attr"              { return PACKET_ATTR_ATTRIBUTE; }
-"attribute"         { return PACKET_ATTR_ATTRIBUTE; }
+"frame"             { return PA_FRAME; }
+"attr"              { return PA_ATTR; }
+"attribute"         { return PA_ATTR; }
 
-"type"              { return PACKET_ATTR_OPTION_TYPE; }
+"type"              { return OP_TYPE; }
 "="                 { return ASSIGN; }
 
 "bit"               { yylval.number = 1; return TYPE; }
@@ -29,11 +29,11 @@
 "int[0-9].[0-9]?"   { return TYPE; }
 "uint[0-9].[0-9]?"  { return TYPE; }
 
-[a-zA-Z_][a-zA-Z0-9_]*  { yylval.string = strdup(yytext); return VARIABLE; }
+[a-zA-Z_][a-zA-Z0-9_]*  { yylval.string = strdup(yytext); return VAR; }
 
 
 "#".*  { return COMMENT; }
 [0-9]+  { yylval.number = atoi(yytext); return NUMBER; }
-\n      { printf("\n"); return EOL; }
+\n      { /* printf("\n"); return EOL; */ }
 [ \t]   /* return nada */
 .       { printf("Unkown: %c\n", *yytext); }
