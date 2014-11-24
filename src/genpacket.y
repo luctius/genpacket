@@ -2,6 +2,9 @@
 
 #include <stdio.h>
 
+int yylex(void);
+int yyerror(const char *s);
+
 %}
 
 %token PACKET_TYPE_FIXED PACKET_TYPE_DYNAMIC PACKET_TYPE_CALCULATED
@@ -29,9 +32,18 @@ packet_type:
     | PACKET_TYPE_DYNAMIC PACKET VARIABLE EOL     { printf("dynamic packet\n"); }
     | PACKET_TYPE_CALCULATED PACKET VARIABLE EOL     { printf("calculated packet\n"); }
 
+option:
+    | PACKET_ATTR_FRAME variable PACKET_ATTR_OPTION_TYPE ASSIGN type
+
+type: TYPE
+    |               { printf("type\n"); }
+
+variable: VARIABLE
+    |               { printf("variable\n"); }
+
 %%
 
-int yyerror(char *s) {
+int yyerror(const char *s) {
     fprintf(stderr, "error: %s\n",s);
     return 0;
 }

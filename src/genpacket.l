@@ -24,8 +24,8 @@
 "="                 { return ASSIGN; }
 
 "bit"               { yylval = 1; return TYPE; }
-"int[0-9].[0-9]?"   { }
-"uint[0-9].[0-9]?"  { }
+"int[0-9].[0-9]?"   { return TYPE; }
+"uint[0-9].[0-9]?"  { return TYPE; }
 
 [a-zA-Z_][a-zA-Z0-9_]*  { return VARIABLE; }
 
