@@ -1,6 +1,6 @@
 %{
 
-//#include <stdio.h>
+#include <stdio.h>
 
 %}
 
@@ -31,6 +31,7 @@ packet_type:
 
 %%
 
-yyerror(char *s) {
+int yyerror(char *s) {
     fprintf(stderr, "error: %s\n",s);
+    return 0;
 }

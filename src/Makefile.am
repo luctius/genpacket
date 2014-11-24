@@ -22,5 +22,5 @@ cmdline.c cmdline.h: ../genpacket.ggo
 genpacket.tab.c: genpacket.y
 	bison -d genpacket.y
 
-lex.yy.c: genpacket.l
+genpacket.lex.c: genpacket.l
 	flex genpacket.l

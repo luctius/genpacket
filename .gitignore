@@ -11,11 +11,6 @@
 *.dylib
 
 /src/.deps
-cmdline.c
-cmdline.h
-*.tab.c
-*.tab.h
-*.lex.c
 
 # autotools
 *.log
@@ -45,6 +40,12 @@ stamp-h1
 # results
 Doxyfile
 *.pc
+cmdline.c
+cmdline.h
+*.tab.c
+*.tab.h
+*.lex.c
+genpacket
 
 # editor files
 .*.swp
