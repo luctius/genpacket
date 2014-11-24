@@ -3,47 +3,42 @@
 #include <stdio.h>
 
 int yylex(void);
-int yyerror(const char *s);
+void yyerror(const char *s);
+
+#define YYERROR_VERBOSE
 
 %}
+
+%union
+{
+    int number;
+    char *string;
+}
 
 %token PACKET_TYPE_FIXED PACKET_TYPE_DYNAMIC PACKET_TYPE_CALCULATED
 %token PACKET PACKET_START PACKET_END
 %token PACKET_ATTR_FRAME PACKET_ATTR_ATTRIBUTE PACKET_ATTR_OPTION_TYPE
 
 
-%token VARIABLE
+%token <string> VARIABLE
 %token ASSIGN
-%token TYPE
-%token NUMBER
-%token ADD SUB MUL DIV ABS
-%token CP OP
+%token <number> TYPE
+%token <number> NUMBER
 %token EOL COMMENT
 
 %%
 
-packet:  /* nothing */
-    | packet_type {printf("done\n");}
-    | COMMENT EOL       {}
-;
-
-packet_type:
-    | PACKET_TYPE_FIXED PACKET VARIABLE EOL     { printf("fixed packet\n"); }
-    | PACKET_TYPE_DYNAMIC PACKET VARIABLE EOL     { printf("dynamic packet\n"); }
-    | PACKET_TYPE_CALCULATED PACKET VARIABLE EOL     { printf("calculated packet\n"); }
+input: option | input option;
 
 option:
-    | PACKET_ATTR_FRAME variable PACKET_ATTR_OPTION_TYPE ASSIGN type
-
-type: TYPE
-    |               { printf("type\n"); }
-
-variable: VARIABLE
-    |               { printf("variable\n"); }
+    | PACKET_ATTR_FRAME VARIABLE            { printf("frame: %s\n", $2); }
+    | PACKET_ATTR_ATTRIBUTE VARIABLE        { printf("attr: %s\n", $2); }
+    | COMMENT EOL                           {}
+    | EOL                                   {}
+;
 
 %%
 
-int yyerror(const char *s) {
+void yyerror(const char *s) {
     fprintf(stderr, "error: %s\n",s);
-    return 0;
 }

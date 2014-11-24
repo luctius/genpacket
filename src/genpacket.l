@@ -23,15 +23,17 @@
 "type"              { return PACKET_ATTR_OPTION_TYPE; }
 "="                 { return ASSIGN; }
 
-"bit"               { yylval = 1; return TYPE; }
+"bit"               { yylval.number = 1; return TYPE; }
+"uint8"             { yylval.number = 8; return TYPE; }
+"uint16"            { yylval.number = 16; return TYPE; }
 "int[0-9].[0-9]?"   { return TYPE; }
 "uint[0-9].[0-9]?"  { return TYPE; }
 
-[a-zA-Z_][a-zA-Z0-9_]*  { return VARIABLE; }
+[a-zA-Z_][a-zA-Z0-9_]*  { yylval.string = strdup(yytext); return VARIABLE; }
 
 
 "#".*  { return COMMENT; }
-[0-9]+  { yylval = atoi(yytext); return NUMBER; }
+[0-9]+  { yylval.number = atoi(yytext); return NUMBER; }
 \n      { printf("\n"); return EOL; }
 [ \t]   /* return nada */
 .       { printf("Unkown: %c\n", *yytext); }
