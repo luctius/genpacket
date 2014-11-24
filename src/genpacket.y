@@ -61,7 +61,7 @@ option:
     | PO_ATTR attr_plist  { printf("attr default\n"); }
     | PO_SIZE STRING size_plist  { printf("size: %s\n", $2); }
     | PO_SIZE size_plist  { printf("size default\n"); }
-    | PO_CRC STRING VAR size_plist  { printf("crc: %s: %s\n", $2, $3); }
+    | PO_CRC STRING VAR crc_plist  { printf("crc: %s: %s\n", $2, $3); }
     | PO_CRC VAR crc_plist  { printf("crc default: %s\n", $2); }
     | COMMENT {}
 ;
