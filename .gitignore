@@ -49,5 +49,4 @@ genpacket
 
 # editor files
 .*.swp
-*.in
 *.csv

@@ -28,7 +28,7 @@ void yyerror(const char *s);
 
 %%
 
-input: packet | input packet;
+//input: packet | input packet;
 
 packet: 
     | packet_header packet_option_list '{' option_list '}'     {}

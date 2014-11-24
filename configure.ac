@@ -26,13 +26,11 @@ AM_PROG_LEX
 LT_INIT
 
 AM_CONDITIONAL(NO_CROSSCOMPILING, test "$cross_compiling" = no )
-
 AC_DEFINE([_GNU_SOURCE], 1, [Use GNU extensions])
 
 # Checks for libraries.
 # FIXME: Replace `main' with a function in `-lm':
 AC_CHECK_LIB([m], [main])
-PKG_CHECK_MODULES(SNDFILE, sndfile)
 
 # Checks for header files.
 AC_CHECK_HEADERS([float.h limits.h stddef.h stdint.h stdlib.h string.h sys/param.h unistd.h])
