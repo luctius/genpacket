@@ -1,11 +1,13 @@
 %{
 
 #include "genpacket.tab.h"
-
+int line_num = 1;
 %}
 
 %option outfile="genpacket.lex.c"
 %option noyywrap
+
+%x COMMENTS
 
 %%
 
@@ -43,12 +45,23 @@
 "int"[1-9][0-9]?    { yylval.string = strdup(yytext); return TYPE; }
 "uint"[1-9][0-9]?   { yylval.string = strdup(yytext); return TYPE; }
 
+0x[0-9A-Fa-f]+  { yylval.number = strtol(yytext, NULL, 16); return NUMBER; }
+
 "\""[a-zA-Z_][a-zA-Z0-9_]*"\""  { yylval.string = strdup(yytext); return STRING; }
 [a-zA-Z_][a-zA-Z0-9_]*  { yylval.string = strdup(yytext); return VAR; }
 
+\n                      { ++line_num; }
 
 "#".*  { return COMMENT; }
+\/\*                    { // start of a comment: go to a 'COMMENTS' state.
+	                        BEGIN(COMMENTS);
+	                    }
+<COMMENTS>\*\/          {   // end of a comment: go back to normal parsing.
+	                        BEGIN(INITIAL);
+	                    }
+<COMMENTS>\n            { ++line_num; }   // still have to increment line numbers inside of comments!
+<COMMENTS>.             ;   // ignore every other character while we're in this state
+
 [0-9]+  { yylval.number = strtol(yytext, NULL, 10); return NUMBER; }
-"0x"[0-9]+  { yylval.number = strtol(yytext, NULL, 16); return NUMBER; }
 [ \t\n]   /* return nada */
 .       { printf("Unkown: %c\n", *yytext); }

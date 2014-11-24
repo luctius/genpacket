@@ -6,6 +6,7 @@ int yylex(void);
 void yyerror(const char *s);
 
 #define YYERROR_VERBOSE
+extern int line_num;
 
 %}
 
@@ -70,6 +71,10 @@ option:
     | PO_DATA STRING VAR data_plist  { printf("data: %s\n", $2); }
     | PO_DATA VAR data_plist  { printf("data default\n"); }
     | COMMENT
+;
+
+attr_name: VAR
+    | attr_name '=' VAR { printf("variable: %s\n", $3); }
 ;
 
 frame_plist: f_param
@@ -156,5 +161,6 @@ op_exclude: OP_EXCLUDE
 %%
 
 void yyerror(const char *s) {
-    fprintf(stderr, "error: %s\n",s);
+    
+    fprintf(stderr, "error: %s on line %d\n",s,line_num);
 }
