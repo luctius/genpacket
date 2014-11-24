@@ -21,28 +21,30 @@ void yyerror(const char *s);
 %token OP_TYPE OP_DATAWIDTH OP_DEFAULT OP_VALUES OP_EXCLUDE OP_START OP_END
 
 
-%token <string> VAR STRING
-%token <number> TYPE
+%token <string> VAR STRING TYPE
 %token <number> NUMBER
 %token EOL COMMENT
 
 %%
 
-//input: packet | input packet;
+input: packet 
+    | input packet
+;
 
 packet: 
-    | packet_header packet_option_list '{' option_list '}'     {}
-    | packet_header '{' option_list '}'     {}
+    | packet_header packet_option_list '{' option_list '}'
+    | packet_header '{' option_list '}'
+    | COMMENT
+;
 
 packet_header: packet_option_list option_list
     | PK_TFIXED PACKET STRING    { printf("fixed packet: %s\n", $3); }
     | PK_TDYNAMIC PACKET STRING  { printf("dynamic packet: %s\n", $3); }
     | PK_TCALC PACKET STRING     { printf("calculated packet: %s\n", $3); }
-    | COMMENT {}
 ;
 
 packet_option_list: packet_option
-    | packet_option_list packet_option  {}
+    | packet_option_list packet_option
 ;
 
 packet_option:
@@ -51,7 +53,7 @@ packet_option:
 ;
 
 option_list: option
-    | option_list option    {}
+    | option_list option
 ;
 
 option: 
@@ -65,7 +67,9 @@ option:
     | PO_CRC VAR crc_plist  { printf("crc default: %s\n", $2); }
     | PO_DATA STRING data_plist  { printf("data: %s\n", $2); }
     | PO_DATA data_plist  { printf("data default\n"); }
-    | COMMENT {}
+    | PO_DATA STRING VAR data_plist  { printf("data: %s\n", $2); }
+    | PO_DATA VAR data_plist  { printf("data default\n"); }
+    | COMMENT
 ;
 
 frame_plist: f_param
@@ -129,7 +133,7 @@ op_default: OP_DEFAULT
     | OP_DEFAULT '=' NUMBER  { printf("default: %d\n", $3); }
 ;
 
-op_values: NUMBER
+op_values: OP_VALUES
     | OP_VALUES '=' NUMBER   {printf("values: %d\n", $3); }
     | op_values ',' NUMBER   {printf("values: %d\n", $3); }
 ;
