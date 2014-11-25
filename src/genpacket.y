@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 int yylex(void);
-void yyerror(const char *s);
+//void yyerror(const char *s);
 
 #define YYERROR_VERBOSE
 extern int line_num;
@@ -182,8 +182,16 @@ op_datasize: OP_DATASIZE
 
 %%
 
-void yyerror(const char *s) {
+#include <stdarg.h>
+
+void yyerror(const char *s, ...) {
+    va_list args;
+    va_start(args, s);
+
+    fprintf(stderr, "%d: error: ", line_num);
+    vfprintf(stderr, s, args);
+    fprintf(stderr, "\n");
     
-    fprintf(stderr, "error: %s on line %d\n",s,line_num);
+    //fprintf(stderr, "error: %s on line %d\n",s,line_num);
 }
 
