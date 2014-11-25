@@ -57,17 +57,11 @@ int line_num = 1;
 <INITIAL,PACKET_PARAMS>"\""[a-zA-Z_][a-zA-Z0-9_]*"\""  { yylval.string = strdup(yytext); return STRING; }
 [a-zA-Z_][a-zA-Z0-9_]*  { yylval.string = strdup(yytext); return VAR; }
 
-\n                      { ++line_num; }
-
 <INITIAL,PACKET_PARAMS>"//".*  { return COMMENT; }
-<INITIAL,PACKET_PARAMS>\/\*                    { // start of a comment: go to a 'COMMENTS' state.
-	                        BEGIN(COMMENTS);
-	                    }
-<COMMENTS>\*\/          {   // end of a comment: go back to normal parsing.
-	                        BEGIN(INITIAL);
-	                    }
-<COMMENTS>\n            { ++line_num; }   // still have to increment line numbers inside of comments!
-<COMMENTS>.             ;   // ignore every other character while we're in this state
+<INITIAL,PACKET_PARAMS>\/\*    { BEGIN(COMMENTS); } // start of a comment: go to a 'COMMENTS' state.
+<COMMENTS>\*\/                 { BEGIN(INITIAL); } // end of a comment: go back to normal parsing.
+<COMMENTS>\n                   { ++line_num; }   // still have to increment line numbers inside of comments!
 
-<INITIAL,PACKET_PARAMS>[ \t\n]   /* return nada */
+<INITIAL,PACKET_PARAMS>\n      { ++line_num; }
+<INITIAL,PACKET_PARAMS>[ \t]   /* return nada */
 <INITIAL,PACKET_PARAMS>.       { printf("Unkown: %c\n", *yytext); }
