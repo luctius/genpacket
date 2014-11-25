@@ -1,6 +1,10 @@
 %{
 
+#include <stdlib.h>
+
 #include "genpacket.tab.h"
+#include "packet.h"
+
 int line_num = 1;
 %}
 
@@ -43,13 +47,13 @@ int line_num = 1;
 <INITIAL,PP>"}"  { BEGIN(INITIAL); return '}'; }
 <INITIAL,PP>","  { return ','; }
 
-"bit"             { yylval.s = strdup(yytext); return TYPE; }
-"float"           { yylval.s = strdup(yytext); return TYPE; }
-"double"          { yylval.s = strdup(yytext); return TYPE; }
-"int"[1-9]        { yylval.s = strdup(yytext); return TYPE; }
-"uint"[1-9]       { yylval.s = strdup(yytext); return TYPE; }
-"int"[1-3][0-9]?  { yylval.s = strdup(yytext); return TYPE; }
-"uint"[1-3][0-9]? { yylval.s = strdup(yytext); return TYPE; }
+"bit"             { yylval.t.ft=FT_UNSIGNED; yylval.t.ft_sz=1; return TYPE; }
+"float"           { yylval.t.ft=FT_FLOAT;    yylval.t.ft_sz=4; return TYPE; }
+"double"          { yylval.t.ft=FT_FLOAT;    yylval.t.ft_sz=8; return TYPE; }
+"int"[1-9]        { yylval.t.ft=FT_SIGNED;   yylval.t.ft_sz=strtol(&yytext[3], NULL, 10); return TYPE; }
+"uint"[1-9]       { yylval.t.ft=FT_UNSIGNED; yylval.t.ft_sz=strtol(&yytext[4], NULL, 10); return TYPE; }
+"int"[1-3][0-9]?  { yylval.t.ft=FT_SIGNED;   yylval.t.ft_sz=strtol(&yytext[3], NULL, 10); return TYPE; }
+"uint"[1-3][0-9]? { yylval.t.ft=FT_UNSIGNED; yylval.t.ft_sz=strtol(&yytext[4], NULL, 10); return TYPE; }
 
 <INITIAL,PP>[\-\]?[0-9]+  { yylval.i = strtol(yytext, NULL, 10); return INTEGER; }
 <INITIAL,PP>0b([01]+)   { yylval.i = strtol(&yytext[2], NULL, 2); return INTEGER; }
@@ -58,7 +62,7 @@ int line_num = 1;
 <INITIAL,PP>[\-\+]?0x[0-9A-Fa-f]+  { yylval.i = strtol(yytext, NULL, 16); return INTEGER; }
 <INITIAL,PP>[-+]?([0-9]*\.?[0-9]+|[0-9]+\.)[f]?  { yylval.f = strtod(yytext, NULL); return FLOAT; }
 
-<INITIAL,PP>"\""[a-zA-Z_][a-zA-Z0-9_]*"\""  { yylval.s = strdup(yytext); return STRING; }
+<INITIAL,PP>"\""[a-zA-Z_][a-zA-Z0-9_]*"\""  { yylval.s = strdup(&yytext[1]); yylval.s[yyleng-2] = '\0'; return STRING; }
 [a-zA-Z_][a-zA-Z0-9_]*  { yylval.s = strdup(yytext); return VAR; }
 
 <INITIAL,PP>"//".*  { BEGIN(COMMENTS_LINE); }
