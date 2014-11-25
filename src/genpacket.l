@@ -62,11 +62,11 @@ int line_num = 1;
 [a-zA-Z_][a-zA-Z0-9_]*  { yylval.s = strdup(yytext); return VAR; }
 
 <INITIAL,PP>"//".*  { BEGIN(COMMENTS_LINE); }
-<COMMENTS_LINE>\n              { ++line_num; BEGIN(INITIAL); }   // still have to increment line numbers inside of comments!
+<COMMENTS_LINE>\n   { ++line_num; BEGIN(INITIAL); }   // still have to increment line numbers inside of comments!
 <INITIAL,PP>\/\*    { BEGIN(COMMENTS); } // start of a comment: go to a 'COMMENTS' state.
-<COMMENTS>\*\/                 { BEGIN(INITIAL); } // end of a comment: go back to normal parsing.
-<COMMENTS>\n                   { ++line_num; }   // still have to increment line numbers inside of comments!
-<COMMENTS>.*                   // nada
+<COMMENTS>\n        { ++line_num; }   // still have to increment line numbers inside of comments!
+<COMMENTS>.*        // nada
+<COMMENTS>\*\/      { BEGIN(INITIAL); } // end of a comment: go back to normal parsing.
 
 <INITIAL,PP>\n      { ++line_num; }
 <INITIAL,PP>[ \t]   /* return nada */
