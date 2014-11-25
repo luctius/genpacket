@@ -10,6 +10,8 @@ extern int line_num;
 
 #include <stdbool.h>
 #include <stdint.h>
+
+void yyerror(const char *s, ...);
 %}
 
 %union

@@ -15,6 +15,7 @@ fixed packet "p1" size=10 pipe=0 { //comment
     frame "frame1" -0b01010
     frame "frame2" .1f type=uint16
 	frame "frame2" 2. type=uint16
+	"frame2" 2. type=uint16
 
     attribute
     attribute "test1"
