@@ -8,19 +8,19 @@
 }
 */
 
-fixed packet "p1" size=10 pipe=0 { #comment
-    frame 0x10 #comment
+fixed packet "p1" size=10 pipe=0 { //comment
+    frame 0x10 //comment
 
     frame 0x10
-    frame "frame1" 0x10
+    frame "frame1" -0b01010
     frame "frame2" 0x11 type=uint16
-	frame name="frame2" 0x11 type=uint16
+	frame "frame2" 0x11 type=uint16
 
     attribute
     attribute "test1"
     attribute "test2" type=uint8
-    attribute "test3" type=uint8 default=11
-    attribute "test4" type=uint8 default=0x11 values=1,0x2,3
+    attribute "test3" type=uint8 default=0b11
+    attribute "test4" type=uint8 default=0x11 values=-0x1,0x2,-3
 
     size
     size "size1"
@@ -39,11 +39,14 @@ fixed packet "p1" size=10 pipe=0 { #comment
 
     data
     data "data1"
-    data "data2" param 
-    data "data3" param exclude="size1","size5"
-    data "data4" param exclude="size1","size5" type=uint10
-    data "data5" param exclude="size1","size5" type=uint10 data_width=uint8
-    data "data6" param exclude="size1","size5" type=uint10 data_width=uint8 #escape=<esc> escape_values=<e1>,<eN> escape_op=<func> escape_param=<param>
+    data "data2" 
+    data "data3" exclude="size1","size5"
+    data "data4" exclude="size1","size5" type=uint10
+    data "data5" exclude="size1","size5" type=uint10 data_width=uint8
+    data "data5" exclude="size1","size5" type=uint10 data_width=uint8 data_size=0x11
+    data "data5" exclude="size1","size5" type=uint10 data_width=uint8 data_size=11
+    data "data5" exclude="size1","size5" type=uint10 data_width=uint8 data_size="crc1"
+    data "data6" exclude="size1","size5" type=uint10 data_width=uint8 //escape=<esc> escape_values=<e1>,<eN> escape_op=<func> escape_param=<param>
 }
 
 dynamic packet "p2" { frame 0x10 attribute size data crc crc16 }

@@ -35,13 +35,13 @@ struct packet{
     frame <"name"> [val] type=<type>
     attr(ibute) <"name"> type=<type> default=<value> values=<value1>,<value2>
     size <"name"> type=<type> data_width=<type> exclude=<"attr1">,<"attrN">
-    data <"name"> <param> exclude=<"attr1">,<"attrN"> type=<type> data_width=<type> escape=<esc> escape_values=<e1>,<eN> escape_op=<func> escape_param=<param>
+    data <"name"> data_size=<number|"attribute"> exclude=<"attr1">,<"attrN"> type=<type> data_width=<type> escape=<esc> escape_values=<e1>,<eN> escape_op=<func> escape_param=<param>
     crc <"name"> [method] start=<"start_attribute"> end=<"end_attribute"> exclude=<"attr1">,<"attrN"> type=<type>
 }
 
 fixed packet "simple_packet" size=0x10
 {
-    frame name=id 0xDE /* type uint8 */
+    frame "id" 0xDE /* type uint8 */
     data /* type uint8 */
 }
 

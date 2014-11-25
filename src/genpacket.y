@@ -19,7 +19,7 @@ extern int line_num;
 %token PK_TFIXED PK_TDYNAMIC PK_TCALC
 %token PACKET PA_SIZE PA_PIPE
 %token PO_FRAME PO_ATTR PO_SIZE PO_CRC PO_DATA
-%token OP_TYPE OP_DATAWIDTH OP_DEFAULT OP_VALUES OP_EXCLUDE OP_START OP_END
+%token OP_TYPE OP_DATAWIDTH OP_DEFAULT OP_VALUES OP_EXCLUDE OP_START OP_END OP_DATASIZE
 
 
 %token <string> VAR STRING TYPE
@@ -49,8 +49,8 @@ packet_option_list: packet_option
 ;
 
 packet_option:
-    | PA_SIZE NUMBER    { printf("size: %d\n", $2); }
-    | PA_PIPE NUMBER    { printf("pipe: %d\n", $2); }
+    | PA_SIZE '=' NUMBER    { printf("size: %d\n", $3); }
+    | PA_PIPE '=' NUMBER    { printf("pipe: %d\n", $3); }
 ;
 
 option_list: option
@@ -71,10 +71,6 @@ option:
     | PO_DATA STRING VAR data_plist  { printf("data: %s\n", $2); }
     | PO_DATA VAR data_plist  { printf("data default\n"); }
     | COMMENT
-;
-
-attr_name: VAR
-    | attr_name '=' VAR { printf("variable: %s\n", $3); }
 ;
 
 frame_plist: f_param
@@ -123,6 +119,7 @@ data_plist: d_param
 d_param:
     | op_type
     | op_datawidth
+    | op_datasize
     | op_exclude
 ;
 
@@ -156,6 +153,11 @@ op_end: OP_END
 op_exclude: OP_EXCLUDE
     | OP_EXCLUDE '=' STRING  {printf("exclude: %s\n", $3); }
     | op_exclude ',' STRING  {printf("exclude: %s\n", $3); }
+;
+
+op_datasize: OP_DATASIZE
+    | OP_DATASIZE '=' NUMBER  { printf("data_size: %d\n", $3); }
+    | OP_DATASIZE '=' STRING  { printf("data_size: %s\n", $3); }
 ;
 
 %%
