@@ -31,7 +31,6 @@ extern int line_num;
 %token <s> VAR STRING TYPE
 %token <i> INTEGER
 %token <f> FLOAT
-%token EOL COMMENT
 
 %%
 
@@ -42,7 +41,6 @@ input: packet
 packet: 
     | packet_header packet_option_list '{' option_list '}'
     | packet_header '{' option_list '}'
-    | COMMENT
 ;
 
 packet_header: packet_option_list option_list
@@ -85,8 +83,6 @@ option:
     | PO_DATA data_plist  { printf("data default\n"); }
     | PO_DATA STRING VAR data_plist  { printf("data: %s\n", $2); }
     | PO_DATA VAR data_plist  { printf("data default\n"); }
-
-    | COMMENT
 ;
 
 frame_plist: f_param

@@ -8,6 +8,7 @@ int line_num = 1;
 %option noyywrap
 
 %x COMMENTS
+%x COMMENTS_LINE
 %x PACKET_PARAMS
 
 %%
@@ -37,10 +38,10 @@ int line_num = 1;
 "start"             { return OP_START; }
 "end"               { return OP_END; }
 
-<INITIAL,PACKET_PARAMS>"="                 { return '='; }
-<INITIAL,PACKET_PARAMS>"{"                 { BEGIN(INITIAL); return '{'; }
-<INITIAL,PACKET_PARAMS>"}"                 { BEGIN(INITIAL); return '}'; }
-","                 { return ','; }
+<INITIAL,PACKET_PARAMS>"="   { return '='; }
+<INITIAL,PACKET_PARAMS>"{"   { BEGIN(INITIAL); return '{'; }
+<INITIAL,PACKET_PARAMS>"}"   { BEGIN(INITIAL); return '}'; }
+<INITIAL,PACKET_PARAMS>","   { return ','; }
 
 "bit"               { yylval.s = strdup(yytext); return TYPE; }
 "float"             { yylval.s = strdup(yytext); return TYPE; }
@@ -60,10 +61,12 @@ int line_num = 1;
 <INITIAL,PACKET_PARAMS>"\""[a-zA-Z_][a-zA-Z0-9_]*"\""  { yylval.s = strdup(yytext); return STRING; }
 [a-zA-Z_][a-zA-Z0-9_]*  { yylval.s = strdup(yytext); return VAR; }
 
-<INITIAL,PACKET_PARAMS>"//".*  { return COMMENT; }
+<INITIAL,PACKET_PARAMS>"//".*  { BEGIN(COMMENTS_LINE); }
+<COMMENTS_LINE>\n              { ++line_num; BEGIN(INITIAL); }   // still have to increment line numbers inside of comments!
 <INITIAL,PACKET_PARAMS>\/\*    { BEGIN(COMMENTS); } // start of a comment: go to a 'COMMENTS' state.
 <COMMENTS>\*\/                 { BEGIN(INITIAL); } // end of a comment: go back to normal parsing.
 <COMMENTS>\n                   { ++line_num; }   // still have to increment line numbers inside of comments!
+<COMMENTS>.*                   // nada
 
 <INITIAL,PACKET_PARAMS>\n      { ++line_num; }
 <INITIAL,PACKET_PARAMS>[ \t]   /* return nada */

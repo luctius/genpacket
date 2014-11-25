@@ -49,6 +49,3 @@ fixed packet "p1" size=10 pipe=0 { //comment
     data "data6" exclude="size1","size5" type=uint10 data_width=uint8 //escape=<esc> escape_values=<e1>,<eN> escape_op=<func> escape_param=<param>
 }
 
-dynamic packet "p2" { frame 0x10 attribute size data crc crc16 }
-calculated packet "p3" { frame 10 attribute size data crc crc16 }
-
