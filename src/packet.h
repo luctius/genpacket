@@ -18,7 +18,7 @@ enum field_type {
     FT_FLOAT,
 };
 
-struct value {
+union value {
     int64_t i;
     uint64_t u;
     double d;

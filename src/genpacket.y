@@ -11,10 +11,13 @@ void yyerror(const char *s, ...);
 extern int line_num;
 %}
 
+%output "genpacket.tab.c"
+
 %code requires {
 #include "packet.h"
 #include "parser.h"
 }
+
 
 %union
 {
