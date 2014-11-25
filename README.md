@@ -4,4 +4,12 @@ With a simple dsl it aims to make implementing a binary custom packet format a l
 
 The range of supported package types is from simple fixed size packets to packets with a start stop frame and escaping of data.
 
-Examples can be found
+Examples can be found in the test directory
+
+On Mac OSX installing from source requires bison 3.0.2 which can be installed using homebrew
+
+$ brew install bison
+
+then configure like this:
+
+$ YACC=/usr/local/opt/bison/bin/bison ./configure
