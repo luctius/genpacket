@@ -22,7 +22,7 @@ cmdline.c cmdline.h: ../genpacket.ggo
 
 
 genpacket.tab.c: genpacket.y
-	bison -d genpacket.y
+	$(YACC) -d genpacket.y
 
 genpacket.lex.c: genpacket.l
-	flex genpacket.l
+	$(LEX) genpacket.l
