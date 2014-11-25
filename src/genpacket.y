@@ -53,8 +53,8 @@ packet_option_list: packet_option
 ;
 
 packet_option:
-    | PA_SIZE '=' INTEGER    { printf("size: %d\n", $3); }
-    | PA_PIPE '=' INTEGER    { printf("pipe: %d\n", $3); }
+    | PA_SIZE '=' INTEGER   { printf("size: %d\n", $3); }
+    | PA_PIPE '=' INTEGER   { printf("pipe: %d\n", $3); }
     | PA_SIZE '=' FLOAT     { printf("size: %f\n", $3); }
     | PA_PIPE '=' FLOAT     { printf("pipe: %f\n", $3); }
 ;
@@ -64,24 +64,24 @@ option_list: option
 ;
 
 option: 
-    | PO_FRAME STRING INTEGER frame_plist { printf("frame %s: %d\n", $2, $3); }
-    | PO_FRAME INTEGER frame_plist { printf("frame default: %d\n", $2); }
-    | PO_FRAME STRING FLOAT frame_plist { printf("frame %s: %f\n", $2, $3); }
-    | PO_FRAME FLOAT frame_plist { printf("frame default: %f\n", $2); }
+    | PO_FRAME STRING INTEGER  { printf("frame %s: %d\n", $2, $3); } frame_plist
+    | PO_FRAME INTEGER { printf("frame default: %d\n", $2); } frame_plist 
+    | PO_FRAME STRING FLOAT { printf("frame %s: %f\n", $2, $3); } frame_plist
+    | PO_FRAME FLOAT { printf("frame default: %f\n", $2); } frame_plist 
 
-    | PO_ATTR STRING attr_plist  { printf("attr: %s\n", $2); }
-    | PO_ATTR attr_plist  { printf("attr default\n"); }
+    | PO_ATTR STRING { printf("attr: %s\n", $2); } attr_plist  
+    | PO_ATTR { printf("attr default\n"); } attr_plist  
 
-    | PO_SIZE STRING size_plist  { printf("size: %s\n", $2); }
-    | PO_SIZE size_plist  { printf("size default\n"); }
+    | PO_SIZE STRING { printf("size: %s\n", $2); } size_plist  
+    | PO_SIZE { printf("size default\n"); } size_plist
 
-    | PO_CRC STRING VAR crc_plist  { printf("crc: %s: %s\n", $2, $3); }
-    | PO_CRC VAR crc_plist  { printf("crc default: %s\n", $2); }
+    | PO_CRC STRING VAR { printf("crc: %s: %s\n", $2, $3); } crc_plist  
+    | PO_CRC VAR { printf("crc default: %s\n", $2); } crc_plist
 
-    | PO_DATA STRING data_plist  { printf("data: %s\n", $2); }
-    | PO_DATA data_plist  { printf("data default\n"); }
-    | PO_DATA STRING VAR data_plist  { printf("data: %s\n", $2); }
-    | PO_DATA VAR data_plist  { printf("data default\n"); }
+    | PO_DATA STRING { printf("data: %s\n", $2); } data_plist  
+    | PO_DATA { printf("data default\n"); } data_plist
+    | PO_DATA STRING VAR { printf("data: %s\n", $2); } data_plist
+    | PO_DATA VAR { printf("data default\n"); } data_plist
 ;
 
 frame_plist: f_param
