@@ -73,13 +73,14 @@ void free_packet(int idx);
 void add_option(enum po_type otype);
 struct poption *get_curr_option(void);
 
+bool packet_name_is_unique(struct packet *p);
+bool option_name_is_unique(struct packet *p, struct poption *o);
+
 bool check_packet(int idx);
 bool check_option(int pkt_idx, int idx);
 
 char *packet_to_str(int pkt_idx);
 char *option_to_str(int pkt_idx, int idx);
-
-char *value_to_str(struct value v);
 char *type_to_str(struct type t);
 
 #endif /* PACKET_H */

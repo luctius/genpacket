@@ -22,6 +22,10 @@ void add_packet(enum packet_type ptype, char *name) {
     p->pipe = v_set_i(-1);
     p->option_list_sz = 0;
     p->option_list = NULL;
+
+    if (!packet_name_is_unique(p) ) {
+        fprintf(stderr, "error: packet (%s) allready exists\n", p->name);
+    }
 }
 
 struct packet *get_curr_packet() {
@@ -64,8 +68,12 @@ void add_option(enum po_type otype) {
     }
 
     o->name = malloc(strlen(defname) +100);
-    sprintf(o->name, defname, p->option_list_sz-1);
-    o->name = realloc(o->name, strlen(o->name) +1);
+
+    sprintf(o->name, defname, 0);
+    for (int i = 1; i < 100 && !option_name_is_unique(p, o); i++) {
+        sprintf(o->name, defname, i);
+    }
+    o->name = realloc(o->name, (strlen(o->name) +1) * sizeof(char) );
 }
 
 struct poption *get_curr_option(void) {
@@ -74,14 +82,6 @@ struct poption *get_curr_option(void) {
     if (p->option_list_sz == 0) return NULL;
 
     return &p->option_list[p->option_list_sz-1];
-}
-
-static bool check_packet_name(int pkt_idx, char *name) {
-    return false;
-}
-
-static bool check_option_name(int pkt_idx, int opt_idx, char *name) {
-    return false;
 }
 
 bool check_packet(int idx){
@@ -99,27 +99,30 @@ bool check_option(int pkt_idx, int idx){
 }
 
 char *packet_to_str(int pkt_idx) {
-    int size = 100;
-    char *ts_bfr = malloc(size);
+    int size = 400;
+    char *ts_bfr = malloc(size * sizeof(char) );
 
     struct packet *p = &packet_list[pkt_idx];
 
     int ctr = 0;
     char *sp = ts_bfr;
-    ctr += sprintf(&sp[ctr], "packet: %s ", p->name);
-    ctr += sprintf(&sp[ctr], "size: %d ", p->size);
-    ctr += sprintf(&sp[ctr], "pipe: %d ", p->pipe);
+    ctr += sprintf(&sp[ctr], "packet %s ", p->name);
+    ctr += sprintf(&sp[ctr], "[size: %s] ", v_to_str(p->size) );
+    ctr += sprintf(&sp[ctr], "[pipe: %s] ", v_to_str(p->pipe) );
     ctr += sprintf(&sp[ctr], "{\n");
 
         for (int i = 0; i < p->option_list_sz; i++) {
             ctr += sprintf(&sp[ctr], "\t%s\n", option_to_str(pkt_idx, i) );
             if (ctr > (size * 0.75) ) {
-                size += 100;
-                ts_bfr = realloc(ts_bfr, size);
+                size += 400;
+                ts_bfr = realloc(ts_bfr, size * sizeof(char) );
             }
+            option_to_str(pkt_idx, i);
         }
 
     ctr += sprintf(&sp[ctr], "}\n");
+
+    ts_bfr = realloc(ts_bfr, strlen(ts_bfr) +2 );
 
     return ts_bfr;
 }
@@ -131,41 +134,31 @@ char *option_to_str(int pkt_idx, int idx) {
 
     int ctr = 0;
     char *sp = ts_bfr;
-    ctr += sprintf(&sp[ctr], "name: %s ", o->name);
-    ctr += sprintf(&sp[ctr], "type: %s ", type_to_str(o->type) );
+    ctr += sprintf(&sp[ctr], "%s ", o->name);
+    ctr += sprintf(&sp[ctr], "[type: %s] ", type_to_str(o->type) );
+    ctr += sprintf(&sp[ctr], "[data_width: %s] ", v_to_str(o->data_width) );
 
-    if (o->default_set) ctr += sprintf(&sp[ctr], "default: %s ", type_to_str(o->type) );
+    if (o->default_set) ctr += sprintf(&sp[ctr], "[default: %s] ", v_to_str(o->default_val) );
 
-    if (o->exclude_list_sz > 0) ctr += sprintf(&sp[ctr], "exclude: ");
-    for (int i = 0; i < o->exclude_list_sz; i++) {
-        if (i != 0) ctr += sprintf(&sp[ctr], ", ");
-        ctr += sprintf(&sp[ctr], "%s", o->exclude_list[i]);
+    if (o->exclude_list_sz > 0) {
+        ctr += sprintf(&sp[ctr], "exclude: ");
+        for (int i = 0; i < o->exclude_list_sz; i++) {
+            if (i != 0) ctr += sprintf(&sp[ctr], ", ");
+            ctr += sprintf(&sp[ctr], "%s", o->exclude_list[i]);
+        }
+        ctr += sprintf(&sp[ctr], "] ");
     }
 
-    if (o->value_list_sz > 0) ctr += sprintf(&sp[ctr], "value: ");
-    for (int i = 0; i < o->value_list_sz; i++) {
-        if (i != 0) ctr += sprintf(&sp[ctr], ", ");
-        ctr += sprintf(&sp[ctr], "%s", value_to_str(o->value_list[i]) );
+    if (o->value_list_sz > 0) {
+        ctr += sprintf(&sp[ctr], "[value: ");
+        for (int i = 0; i < o->value_list_sz; i++) {
+            if (i != 0) ctr += sprintf(&sp[ctr], ", ");
+            ctr += sprintf(&sp[ctr], "%s", v_to_str(o->value_list[i]) );
+        }
+        ctr += sprintf(&sp[ctr], "] ");
     }
 
     return sp;
-}
-
-char *value_to_str(struct value v) {
-    static char bfr[20];
-    switch (v.ft) {
-        case FT_SIGNED:
-            sprintf(bfr, "%d", v.i);
-            break;
-        case FT_UNSIGNED:
-            sprintf(bfr, "%u", v.u);
-            break;
-        case FT_FLOAT:
-            sprintf(bfr, "%f", v.d);
-            break;
-        default: sprintf(bfr, "default"); break;
-    }
-    return bfr;
 }
 
 char *type_to_str(struct type t) {
@@ -193,3 +186,28 @@ char *type_to_str(struct type t) {
     return bfr;
 }
 
+bool packet_name_is_unique(struct packet *p) {
+    if (p->name == NULL) return false;
+
+    int cnt = 0;
+    for (int i = 0; i < packet_list_sz; i++) {
+        struct packet *pt = &packet_list[i];
+        if (p == pt) continue;
+        if (strcmp(p->name, pt->name) == 0) return false;
+    }
+
+    return true;
+}
+
+bool option_name_is_unique(struct packet *p, struct poption *o) {
+    if (o->name == NULL) return false;
+
+    int cnt = 0;
+    for (int i = 0; i < p->option_list_sz; i++) {
+        struct poption *ot = &p->option_list[i];
+        if (o == ot) continue;
+        if (strcmp(o->name, ot->name) == 0) return false;
+    }
+
+    return true;
+}

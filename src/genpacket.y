@@ -33,8 +33,7 @@ extern int line_num;
 
 %token <s> VAR STRING
 %token <t> TYPE
-%token <v> INTEGER
-%token <v> FLOAT
+%token <v> INTEGER FLOAT
 
 %%
 

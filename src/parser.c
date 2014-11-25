@@ -38,7 +38,6 @@ void cb_data_option() {
     add_option(O_DATA);
 }
 
-
 void cb_op_name(char *name) {
     struct poption *o = get_curr_option();
     free(o->name);
@@ -65,7 +64,7 @@ void cb_op_datasize_string(char *attr) {
 }
 
 void cb_op_datasize_v(struct value v) {
-    printf("(datasize: %u NI) ", v_get_u(v));
+    printf("(datasize: %s NI) ", v_to_str(v));
 }
 
 void cb_op_default_v(struct value v){

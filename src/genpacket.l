@@ -55,15 +55,15 @@ int line_num = 1;
 "int"[1-3][0-9]?  { yylval.t.ft=FT_SIGNED;   yylval.t.ft_sz=strtol(&yytext[3], NULL, 10); return TYPE; }
 "uint"[1-3][0-9]? { yylval.t.ft=FT_UNSIGNED; yylval.t.ft_sz=strtol(&yytext[4], NULL, 10); return TYPE; }
 
-<INITIAL,PP>\-[0-9]+        { yylval.v.i = strtol(yytext, NULL, 10); yylval.v.ft = FT_SIGNED; return INTEGER; }
-<INITIAL,PP>\+?[0-9]+        { yylval.v.i = strtol(yytext, NULL, 10); yylval.v.ft = FT_UNSIGNED; return INTEGER; }
-<INITIAL,PP>[\-\]?[0-9]+        { yylval.v.i = strtol(yytext, NULL, 10); yylval.v.ft = FT_SIGNED; return INTEGER; }
-<INITIAL,PP>0b([01]+)           { yylval.v.i = strtol(&yytext[2], NULL, 2); yylval.v.ft = FT_UNSIGNED; return INTEGER; }
-<INITIAL,PP>\+0b([01]+)         { yylval.v.i = strtol(&yytext[3], NULL, 2); yylval.v.ft = FT_UNSIGNED; return INTEGER; }
-<INITIAL,PP>\-0b([01]+)         { yylval.v.i = -strtol(&yytext[3], NULL, 2); yylval.v.ft = FT_SIGNED; return INTEGER; }
-<INITIAL,PP>\-0x[0-9A-Fa-f]+   { yylval.v.i = strtol(yytext, NULL, 16); yylval.v.ft = FT_SIGNED; return INTEGER; }
-<INITIAL,PP>\+?0x[0-9A-Fa-f]+   { yylval.v.i = strtol(yytext, NULL, 16); yylval.v.ft = FT_UNSIGNED; return INTEGER; }
-<INITIAL,PP>[-+]?([0-9]*\.?[0-9]+|[0-9]+\.)[f]?  { yylval.v.d = strtod(yytext, NULL); yylval.v.ft = FT_FLOAT; return FT_FLOAT; }
+<INITIAL,PP>\-[0-9]+            { yylval.v = v_set_i(strtol(yytext, NULL, 10) ); return INTEGER; }
+<INITIAL,PP>\+?[0-9]+           { yylval.v = v_set_u(strtol(yytext, NULL, 10) ); return INTEGER; }
+<INITIAL,PP>[\-\]?[0-9]+        { yylval.v = v_set_i(strtol(yytext, NULL, 10) ); return INTEGER; }
+<INITIAL,PP>0b([01]+)           { yylval.v = v_set_u(strtol(&yytext[2], NULL, 2) ); return INTEGER; }
+<INITIAL,PP>\+0b([01]+)         { yylval.v = v_set_u(strtol(&yytext[3], NULL, 2) ); return INTEGER; }
+<INITIAL,PP>\-0b([01]+)         { yylval.v = v_set_i(-strtol(&yytext[3], NULL, 2) ); return INTEGER; }
+<INITIAL,PP>\-0x[0-9A-Fa-f]+    { yylval.v = v_set_i(strtol(yytext, NULL, 16) ); return INTEGER; }
+<INITIAL,PP>\+?0x[0-9A-Fa-f]+   { yylval.v = v_set_u(strtol(yytext, NULL, 16) ); return INTEGER; }
+<INITIAL,PP>[-+]?([0-9]*\.?[0-9]+|[0-9]+\.)[f]?  { yylval.v = v_set_f(strtod(yytext, NULL) ); return FT_FLOAT; }
 
 <INITIAL,PP>"\""[a-zA-Z_][a-zA-Z0-9_]*"\""  { yylval.s = strdup(&yytext[1]); yylval.s[yyleng-2] = '\0'; return STRING; }
 [a-zA-Z_][a-zA-Z0-9_]*  { yylval.s = strdup(yytext); return VAR; }
