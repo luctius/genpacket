@@ -8,12 +8,9 @@ int yylex(void);
 #define YYERROR_VERBOSE
 extern int line_num;
 
-%}
-
-%code requires {
 #include <stdbool.h>
 #include <stdint.h>
-}
+%}
 
 %union
 {
