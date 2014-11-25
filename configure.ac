@@ -58,7 +58,8 @@ AC_FUNC_ERROR_AT_LINE
 AC_FUNC_MALLOC
 AC_CHECK_FUNCS([memmove memset mkdir sqrt strtol])
 
-
+AC_PROG_YACC
+AC_PROG_LEX
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile 
