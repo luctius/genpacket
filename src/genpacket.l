@@ -2,8 +2,8 @@
 
 #include <stdlib.h>
 
-#include "genpacket.tab.h"
 #include "packet.h"
+#include "genpacket.tab.h"
 
 int line_num = 1;
 %}

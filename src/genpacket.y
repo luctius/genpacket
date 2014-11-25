@@ -136,7 +136,8 @@ op_type: OP_TYPE
 ;
 
 op_datawidth: OP_DATAWIDTH
-    | OP_DATAWIDTH '=' TYPE     { cb_op_datawidth($3); }
+    | OP_DATAWIDTH '=' TYPE     { cb_op_datawidth_type($3); }
+    | OP_DATAWIDTH '=' INTEGER  { cb_op_datawidth_int($3); }
 ;
 
 op_default: OP_DEFAULT
