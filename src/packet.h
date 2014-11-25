@@ -4,6 +4,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "value.h"
+
 enum po_type {
     O_FRAME,
     O_ATTRIBUTE,
@@ -11,28 +13,6 @@ enum po_type {
     O_DATA,
     O_CRC,
 };
-
-enum field_type {
-    FT_SIGNED,
-    FT_UNSIGNED,
-    FT_FLOAT,
-};
-
-union value {
-    int64_t i;
-    uint64_t u;
-    double d;
-};
-/*
-struct value {
-    enum field_type ft;
-    union {
-        int64_t i;
-        uint64_t u;
-        double d;
-    }
-};
-*/
 
 struct type {
     enum field_type ft;
@@ -52,13 +32,13 @@ struct poption {
     enum po_type otype;
 
     struct type type;
-    int data_width;
+    struct value data_width;
 
     int value_list_sz;
-    union value *value_list;
+    struct value *value_list;
 
     bool default_set;
-    union value default_val; /* use type.ft to determine type */
+    struct value default_val; /* use type.ft to determine type */
 
     int exclude_list_sz;
     char **exclude_list;
@@ -76,8 +56,8 @@ enum packet_type {
 struct packet {
     char *name;
     enum packet_type ptype;
-    int size;
-    int pipe;
+    struct value size;
+    struct value pipe;
 
     int option_list_sz;
     struct poption *option_list;
@@ -99,7 +79,7 @@ bool check_option(int pkt_idx, int idx);
 char *packet_to_str(int pkt_idx);
 char *option_to_str(int pkt_idx, int idx);
 
-char *value_to_str(struct type t, union value v);
+char *value_to_str(struct value v);
 char *type_to_str(struct type t);
 
 #endif /* PACKET_H */

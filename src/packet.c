@@ -18,8 +18,8 @@ void add_packet(enum packet_type ptype, char *name) {
     p->name = name;
     p->ptype = ptype;
 
-    p->size = -1;
-    p->pipe = -1;
+    p->size = v_set_i(-1);
+    p->pipe = v_set_i(-1);
     p->option_list_sz = 0;
     p->option_list = NULL;
 }
@@ -145,15 +145,15 @@ char *option_to_str(int pkt_idx, int idx) {
     if (o->value_list_sz > 0) ctr += sprintf(&sp[ctr], "value: ");
     for (int i = 0; i < o->value_list_sz; i++) {
         if (i != 0) ctr += sprintf(&sp[ctr], ", ");
-        ctr += sprintf(&sp[ctr], "%s", value_to_str(o->type, o->value_list[i]) );
+        ctr += sprintf(&sp[ctr], "%s", value_to_str(o->value_list[i]) );
     }
 
     return sp;
 }
 
-char *value_to_str(struct type t, union value v) {
+char *value_to_str(struct value v) {
     static char bfr[20];
-    switch (t.ft) {
+    switch (v.ft) {
         case FT_SIGNED:
             sprintf(bfr, "%d", v.i);
             break;
@@ -185,9 +185,11 @@ char *type_to_str(struct type t) {
         else sprintf(bfr, "uint%d", t.ft_sz);
         break;
     case FT_FLOAT:
-        sprintf(bfr, "float%d", t.ft_sz);
+        if (t.ft_sz == 8) sprintf(bfr, "double");
+        else sprintf(bfr, "float");
         break;
     default: sprintf(bfr, "default"); break;
     }
     return bfr;
 }
+

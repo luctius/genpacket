@@ -22,8 +22,7 @@ extern int line_num;
 %union
 {
     char *s;
-    int64_t i;
-    double f;
+    struct value v;
     struct type t;
 }
 
@@ -34,8 +33,8 @@ extern int line_num;
 
 %token <s> VAR STRING
 %token <t> TYPE
-%token <i> INTEGER
-%token <f> FLOAT
+%token <v> INTEGER
+%token <v> FLOAT
 
 %%
 
@@ -140,19 +139,19 @@ op_type: OP_TYPE
 
 op_datawidth: OP_DATAWIDTH
     | OP_DATAWIDTH '=' TYPE     { cb_op_datawidth_type($3); }
-    | OP_DATAWIDTH '=' INTEGER  { cb_op_datawidth_int($3); }
+    | OP_DATAWIDTH '=' INTEGER  { cb_op_datawidth_v($3); }
 ;
 
 op_default: OP_DEFAULT
-    | OP_DEFAULT '=' INTEGER    { cb_op_datasize_int($3); }
-    | OP_DEFAULT '=' FLOAT      { cb_op_default_double($3); }
+    | OP_DEFAULT '=' INTEGER    { cb_op_default_v($3); }
+    | OP_DEFAULT '=' FLOAT      { cb_op_default_v($3); }
 ;
 
 op_values: OP_VALUES
-    | OP_VALUES '=' INTEGER     { cb_op_values_int($3); }
-    | op_values ',' INTEGER     { cb_op_values_int($3); }
-    | OP_VALUES '=' FLOAT       { cb_op_values_double($3); }
-    | op_values ',' FLOAT       { cb_op_values_double($3); }
+    | OP_VALUES '=' INTEGER     { cb_op_values_v($3); }
+    | op_values ',' INTEGER     { cb_op_values_v($3); }
+    | OP_VALUES '=' FLOAT       { cb_op_values_v($3); }
+    | op_values ',' FLOAT       { cb_op_values_v($3); }
 ;
 
 op_start: OP_START
@@ -171,7 +170,7 @@ op_exclude: OP_EXCLUDE
 ;
 
 op_datasize: OP_DATASIZE
-    | OP_DATASIZE '=' INTEGER   { cb_op_datasize_int($3); }
+    | OP_DATASIZE '=' INTEGER   { cb_op_datasize_v($3); }
     | OP_DATASIZE '=' STRING    { cb_op_datasize_string($3); }
 ;
 
