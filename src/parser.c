@@ -39,9 +39,9 @@ void cb_data_option() {
 }
 
 void cb_op_name(char *name) {
+    struct packet *p = get_curr_packet();
     struct poption *o = get_curr_option();
-    free(o->name);
-    o->name = name;
+    option_add_name(p, o, name);
 }
 
 void cb_op_type(struct type t) {

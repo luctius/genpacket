@@ -24,7 +24,7 @@ void add_packet(enum packet_type ptype, char *name) {
     p->option_list = NULL;
 
     if (!packet_name_is_unique(p) ) {
-        fprintf(stderr, "error: packet (%s) allready exists\n", p->name);
+        fprintf(stderr, "error: packet (%s) already exists\n", p->name);
     }
 }
 
@@ -84,6 +84,16 @@ struct poption *get_curr_option(void) {
     return &p->option_list[p->option_list_sz-1];
 }
 
+void option_add_name(struct packet *p, struct poption *o, char *name) {
+    free(o->name);
+
+    o->name = name;
+    if (!option_name_is_unique(p, o) ) {
+        fprintf(stderr, "error: option (%s) already exists\n", o->name);
+    }
+}
+
+
 bool check_packet(int idx){
     if (packet_list_sz <= idx) return false;
     struct packet *p = &packet_list[idx];
@@ -99,10 +109,10 @@ bool check_option(int pkt_idx, int idx){
 }
 
 char *packet_to_str(int pkt_idx) {
-    int size = 400;
-    char *ts_bfr = malloc(size * sizeof(char) );
-
     struct packet *p = &packet_list[pkt_idx];
+
+    int size = TS_BFR_LEN + (TS_BFR_LEN * p->option_list_sz);
+    char *ts_bfr = malloc(size * sizeof(char) );
 
     int ctr = 0;
     char *sp = ts_bfr;
@@ -113,14 +123,10 @@ char *packet_to_str(int pkt_idx) {
 
         for (int i = 0; i < p->option_list_sz; i++) {
             ctr += sprintf(&sp[ctr], "\t%s\n", option_to_str(pkt_idx, i) );
-            if (ctr > (size * 0.75) ) {
-                size += 400;
-                ts_bfr = realloc(ts_bfr, size * sizeof(char) );
-            }
             option_to_str(pkt_idx, i);
         }
 
-    ctr += sprintf(&sp[ctr], "}\n");
+    ctr += sprintf(&sp[ctr], "} (sz: %d)\n", size);
 
     ts_bfr = realloc(ts_bfr, strlen(ts_bfr) +2 );
 
