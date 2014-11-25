@@ -2,11 +2,11 @@ AUTOMAKE_OPTIONS = subdir-objects
 AM_CPPFLAGS=-I$(top_srcdir)/utils -I.
 bin_PROGRAMS = genpacket
 
-GIT_VERSION:=$(shell git describe --abbrev=10 --dirty --always)
+GIT_VERSION = $(shell git describe --abbrev=10 --dirty --always)
 
 genpacket_SOURCES =  \
                     cmdline.c \
-                    genpacket.tab.c \ 
+                    genpacket.tab.c \
                     genpacket.lex.c \
                     main.c
 
@@ -15,7 +15,7 @@ genpacket_CFLAGS = $(lua_CFLAGS) -ggdb -O0 -Wall -Wextra -Wformat=2 -Wswitch-def
 genpacket_LDADD = -lm
 
 cmdline.c cmdline.h: ../genpacket.ggo
-	sed -i "s:usr_prefix:${prefix}:g" $<
+#	sed -i "s:usr_prefix:${prefix}:g" $<
 	gengetopt < $<
 
 
