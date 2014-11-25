@@ -42,20 +42,23 @@ int line_num = 1;
 <INITIAL,PACKET_PARAMS>"}"                 { BEGIN(INITIAL); return '}'; }
 ","                 { return ','; }
 
-"bit"               { yylval.string = strdup(yytext); return TYPE; }
-"float"             { yylval.string = strdup(yytext); return TYPE; }
-"double"            { yylval.string = strdup(yytext); return TYPE; }
-"int"[1-9][0-9]?    { yylval.string = strdup(yytext); return TYPE; }
-"uint"[1-9][0-9]?   { yylval.string = strdup(yytext); return TYPE; }
+"bit"               { yylval.s = strdup(yytext); return TYPE; }
+"float"             { yylval.s = strdup(yytext); return TYPE; }
+"double"            { yylval.s = strdup(yytext); return TYPE; }
+"int"[1-9]          { yylval.s = strdup(yytext); return TYPE; }
+"uint"[1-9]         { yylval.s = strdup(yytext); return TYPE; }
+"int"[1-3][0-9]?    { yylval.s = strdup(yytext); return TYPE; }
+"uint"[1-3][0-9]?   { yylval.s = strdup(yytext); return TYPE; }
 
-<INITIAL,PACKET_PARAMS>[\-\+0-9]+  { yylval.number = strtol(yytext, NULL, 10); return NUMBER; }
-<INITIAL,PACKET_PARAMS>0b([01]+) { yylval.number = strtol(&yytext[2], NULL, 2); return NUMBER; }
-<INITIAL,PACKET_PARAMS>\+0b([01]+) { yylval.number = strtol(&yytext[3], NULL, 2); return NUMBER; }
-<INITIAL,PACKET_PARAMS>\-0b([01]+) { yylval.number = -strtol(&yytext[3], NULL, 2); return NUMBER; }
-<INITIAL,PACKET_PARAMS>[\-\+]?0x[0-9A-Fa-f]+  { yylval.number = strtol(yytext, NULL, 16); return NUMBER; }
+<INITIAL,PACKET_PARAMS>[\-\]?[0-9]+  { yylval.i = strtol(yytext, NULL, 10); return INTEGER; }
+<INITIAL,PACKET_PARAMS>0b([01]+)   { yylval.i = strtol(&yytext[2], NULL, 2); return INTEGER; }
+<INITIAL,PACKET_PARAMS>\+0b([01]+) { yylval.i = strtol(&yytext[3], NULL, 2); return INTEGER; }
+<INITIAL,PACKET_PARAMS>\-0b([01]+) { yylval.i = -strtol(&yytext[3], NULL, 2); return INTEGER; }
+<INITIAL,PACKET_PARAMS>[\-\+]?0x[0-9A-Fa-f]+  { yylval.i = strtol(yytext, NULL, 16); return INTEGER; }
+<INITIAL,PACKET_PARAMS>[-+]?([0-9]*\.?[0-9]+|[0-9]+\.)[f]?  { yylval.f = strtod(yytext, NULL); return FLOAT; }
 
-<INITIAL,PACKET_PARAMS>"\""[a-zA-Z_][a-zA-Z0-9_]*"\""  { yylval.string = strdup(yytext); return STRING; }
-[a-zA-Z_][a-zA-Z0-9_]*  { yylval.string = strdup(yytext); return VAR; }
+<INITIAL,PACKET_PARAMS>"\""[a-zA-Z_][a-zA-Z0-9_]*"\""  { yylval.s = strdup(yytext); return STRING; }
+[a-zA-Z_][a-zA-Z0-9_]*  { yylval.s = strdup(yytext); return VAR; }
 
 <INITIAL,PACKET_PARAMS>"//".*  { return COMMENT; }
 <INITIAL,PACKET_PARAMS>\/\*    { BEGIN(COMMENTS); } // start of a comment: go to a 'COMMENTS' state.

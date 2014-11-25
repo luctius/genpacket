@@ -10,10 +10,16 @@ extern int line_num;
 
 %}
 
+%code requires {
+#include <stdbool.h>
+#include <stdint.h>
+}
+
 %union
 {
-    int number;
-    char *string;
+    char *s;
+    int64_t i;
+    double f;
 }
 
 %token PK_TFIXED PK_TDYNAMIC PK_TCALC
@@ -22,8 +28,9 @@ extern int line_num;
 %token OP_TYPE OP_DATAWIDTH OP_DEFAULT OP_VALUES OP_EXCLUDE OP_START OP_END OP_DATASIZE
 
 
-%token <string> VAR STRING TYPE
-%token <number> NUMBER
+%token <s> VAR STRING TYPE
+%token <i> INTEGER
+%token <f> FLOAT
 %token EOL COMMENT
 
 %%
@@ -49,8 +56,10 @@ packet_option_list: packet_option
 ;
 
 packet_option:
-    | PA_SIZE '=' NUMBER    { printf("size: %d\n", $3); }
-    | PA_PIPE '=' NUMBER    { printf("pipe: %d\n", $3); }
+    | PA_SIZE '=' INTEGER    { printf("size: %d\n", $3); }
+    | PA_PIPE '=' INTEGER    { printf("pipe: %d\n", $3); }
+    | PA_SIZE '=' FLOAT     { printf("size: %f\n", $3); }
+    | PA_PIPE '=' FLOAT     { printf("pipe: %f\n", $3); }
 ;
 
 option_list: option
@@ -58,18 +67,25 @@ option_list: option
 ;
 
 option: 
-    | PO_FRAME STRING NUMBER frame_plist { printf("frame %s: %d\n", $2, $3); }
-    | PO_FRAME NUMBER frame_plist { printf("frame default: %d\n", $2); }
+    | PO_FRAME STRING INTEGER frame_plist { printf("frame %s: %d\n", $2, $3); }
+    | PO_FRAME INTEGER frame_plist { printf("frame default: %d\n", $2); }
+    | PO_FRAME STRING FLOAT frame_plist { printf("frame %s: %f\n", $2, $3); }
+    | PO_FRAME FLOAT frame_plist { printf("frame default: %f\n", $2); }
+
     | PO_ATTR STRING attr_plist  { printf("attr: %s\n", $2); }
     | PO_ATTR attr_plist  { printf("attr default\n"); }
+
     | PO_SIZE STRING size_plist  { printf("size: %s\n", $2); }
     | PO_SIZE size_plist  { printf("size default\n"); }
+
     | PO_CRC STRING VAR crc_plist  { printf("crc: %s: %s\n", $2, $3); }
     | PO_CRC VAR crc_plist  { printf("crc default: %s\n", $2); }
+
     | PO_DATA STRING data_plist  { printf("data: %s\n", $2); }
     | PO_DATA data_plist  { printf("data default\n"); }
     | PO_DATA STRING VAR data_plist  { printf("data: %s\n", $2); }
     | PO_DATA VAR data_plist  { printf("data default\n"); }
+
     | COMMENT
 ;
 
@@ -132,12 +148,15 @@ op_datawidth: OP_DATAWIDTH
 ;
 
 op_default: OP_DEFAULT
-    | OP_DEFAULT '=' NUMBER  { printf("default: %d\n", $3); }
+    | OP_DEFAULT '=' INTEGER  { printf("default: %d\n", $3); }
+    | OP_DEFAULT '=' FLOAT   { printf("default: %f\n", $3); }
 ;
 
 op_values: OP_VALUES
-    | OP_VALUES '=' NUMBER   {printf("values: %d\n", $3); }
-    | op_values ',' NUMBER   {printf("values: %d\n", $3); }
+    | OP_VALUES '=' INTEGER   {printf("values: %d\n", $3); }
+    | op_values ',' INTEGER   {printf("values: %d\n", $3); }
+    | OP_VALUES '=' FLOAT    {printf("values: %f\n", $3); }
+    | op_values ',' FLOAT    {printf("values: %f\n", $3); }
 ;
 
 op_start: OP_START
@@ -156,7 +175,8 @@ op_exclude: OP_EXCLUDE
 ;
 
 op_datasize: OP_DATASIZE
-    | OP_DATASIZE '=' NUMBER  { printf("data_size: %d\n", $3); }
+    | OP_DATASIZE '=' INTEGER  { printf("data_size: %d\n", $3); }
+    | OP_DATASIZE '=' FLOAT   { printf("data_size: %f\n", $3); }
     | OP_DATASIZE '=' STRING  { printf("data_size: %s\n", $3); }
 ;
 
@@ -166,3 +186,4 @@ void yyerror(const char *s) {
     
     fprintf(stderr, "error: %s on line %d\n",s,line_num);
 }
+
