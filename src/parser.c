@@ -1,89 +1,98 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "parser.h"
 
 void cb_new_packet(enum packet_type ptype, char *name) {
-    switch(ptype) {
-        case PT_FIXED: printf("fixed "); break;
-        case PT_DYNAMIC: printf("dynamic "); break;
-        case PT_CALCULATED: printf("calculated "); break;
-    }
-    printf("packet %s", name);
+    add_packet(ptype, name);
 }
 
-void cb_pa_size(int size) {
-    printf(" (size: %d)", size);
+void cb_pa_size(struct value v){
+    struct packet *p = get_curr_packet();
+    if (v_get_i(p->size) != -1) fprintf(stderr, "warning: packet %s' size already declared\n", p->name);
+    p->size = v;
 }
 
-void cb_pa_pipe(int pipe) {
-    printf(" (pipe: %d)", pipe);
+void cb_pa_pipe(struct value v) {
+    struct packet *p = get_curr_packet();
+    if (v_get_i(p->pipe) != -1) fprintf(stderr, "warning: packet %s' pipe already declared\n", p->name);
+    p->pipe = v;
 }
 
 void cb_attr_option() {
-    printf("\nattribute ");
+    add_option(O_ATTRIBUTE);
 }
 
-void cb_frame_option(int64_t frame) {
-    printf("\nframe ");
+void cb_frame_option(struct value v) {
+    add_option(O_FRAME);
 }
 
 void cb_size_option() {
-    printf("\nsize ");
+    add_option(O_SIZE);
 }
 
 void cb_crc_option(char *method) {
-    printf("\ncrc ");
+    add_option(O_CRC);
 }
 
 void cb_data_option() {
-    printf("\ndata ");
+    add_option(O_DATA);
 }
 
-
 void cb_op_name(char *name) {
-    printf("(name: %s) ", name);
+    struct packet *p = get_curr_packet();
+    struct poption *o = get_curr_option();
+    option_add_name(p, o, name);
 }
 
 void cb_op_type(struct type t) {
-    printf("(type: %s) ", type_to_str(t) );
+    struct poption *o = get_curr_option();
+    o->type = t;
 }
 
-void cb_op_datawidth(struct type t) {
-    printf("(datawidth: %s) ", type_to_str(t) );
+void cb_op_datawidth_type(struct type t) {
+    struct poption *o = get_curr_option();
+    o->data_width = v_set_u(t.ft_sz);
+}
+
+void cb_op_datawidth_v(struct value v) {
+    struct poption *o = get_curr_option();
+    o->data_width = v;
 }
 
 void cb_op_datasize_string(char *attr) {
-    printf("(datasize: %s) ", attr);
+    printf("(datasize: %s NI) ", attr);
 }
 
-void cb_op_datasize_int(int64_t value) {
-    printf("(datasize: %d) ", value);
+void cb_op_datasize_v(struct value v) {
+    printf("(datasize: %s NI) ", v_to_str(v));
 }
 
-void cb_op_default_int(int64_t value){
-    printf("(default: %d) ", value);
+void cb_op_default_v(struct value v){
+    struct poption *o = get_curr_option();
+    if (o->default_set == true) fprintf(stderr, "warning: option %s' default already declared\n", o->name);
+    o->default_val = v;
+    o->default_set = true;
 }
 
-void cb_op_default_double(double value){
-    printf("(default: %f) ", value);
-}
-
-void cb_op_values_int(int64_t value){
-    printf("(default: %d) ", value);
-}
-
-void cb_op_values_double(double value){
-    printf("(default: %f) ", value);
+void cb_op_values_v(struct value v){
+    struct poption *o = get_curr_option();
+    o->value_list = realloc(o->value_list, ++o->value_list_sz * sizeof(struct value) );
+    o->value_list[o->value_list_sz-1] = v;
 }
 
 void cb_op_start(char *string){
-    printf("(start: %s) ", string);
+    struct poption *o = get_curr_option();
+    o->start_attr = string;
 }
 
 void cb_op_end(char *string){
-    printf("(start: %s) ", string);
+    struct poption *o = get_curr_option();
+    o->end_attr = string;
 }
 
 void cb_op_exclude(char *string){
-    printf("(exclude: %s) ", string);
+    struct poption *o = get_curr_option();
+    o->exclude_list = realloc(o->exclude_list, ++o->exclude_list_sz * sizeof(char *) );
+    o->exclude_list[o->exclude_list_sz-1] = string;
 }
 

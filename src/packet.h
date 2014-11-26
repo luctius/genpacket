@@ -4,23 +4,14 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#include "value.h"
+
 enum po_type {
-    FRAME,
-    ATTRIBUTE,
-    SIZE,
-    DATA,
-    CRC,
-};
-
-enum field_type {
-    FT_SIGNED,
-    FT_UNSIGNED,
-    FT_FLOAT,
-};
-
-union value {
-    int64_t i;
-    double d;
+    O_FRAME,
+    O_ATTRIBUTE,
+    O_SIZE,
+    O_DATA,
+    O_CRC,
 };
 
 struct type {
@@ -41,13 +32,13 @@ struct poption {
     enum po_type otype;
 
     struct type type;
-    int data_width;
+    struct value data_width;
 
     int value_list_sz;
-    union value *value_list;
+    struct value *value_list;
 
-    int default_list_sz;
-    union value *default_list;
+    bool default_set;
+    struct value default_val; /* use type.ft to determine type */
 
     int exclude_list_sz;
     char **exclude_list;
@@ -64,14 +55,33 @@ enum packet_type {
 
 struct packet {
     char *name;
-    enum packet_type packet_type;
-    int size;
-    int pipe;
+    enum packet_type ptype;
+    struct value size;
+    struct value pipe;
 
     int option_list_sz;
     struct poption *option_list;
 };
 
+extern int packet_list_sz;
+extern struct packet *packet_list;
+
+void add_packet(enum packet_type ptype, char *name);
+struct packet *get_curr_packet(void);
+void free_packet(int idx);
+
+void add_option(enum po_type otype);
+struct poption *get_curr_option(void);
+void option_add_name(struct packet *p, struct poption *o, char *name);
+
+bool packet_name_is_unique(struct packet *p);
+bool option_name_is_unique(struct packet *p, struct poption *o);
+
+bool check_packet(int idx);
+bool check_option(int pkt_idx, int idx);
+
+char *packet_to_str(int pkt_idx);
+char *option_to_str(int pkt_idx, int idx);
 char *type_to_str(struct type t);
 
 #endif /* PACKET_H */

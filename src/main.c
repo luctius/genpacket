@@ -10,6 +10,7 @@
 #include <string.h>
 #include <sys/types.h>
 
+#include "packet.h"
 #include "genpacket.tab.h"
 
 int main(int argc, char **argv) {
@@ -18,6 +19,12 @@ int main(int argc, char **argv) {
 
 
     yyparse();
+
+    printf("\n");
+    for (int i = 0; i < packet_list_sz; i++) {
+        printf("%s\n", packet_to_str(i) );
+    }
+
     return (0);
 }
 
