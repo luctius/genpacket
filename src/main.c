@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
     yyparse();
 
     if (has_parse_error) {
-        parse_error("too many errors; quitting");
+        parse_error(NULL, NULL, "too many errors; quitting");
         exit(EXIT_FAILURE);
     }
 

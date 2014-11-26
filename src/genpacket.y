@@ -44,8 +44,8 @@ input: packet
 ;
 
 packet: 
-    | packet_header packet_option_list '{' option_list '}'
-    | packet_header '{' option_list '}'
+    | packet_header packet_option_list '{' option_list '}'  { check_curr_packet(); }
+    | packet_header '{' option_list '}'                     { check_curr_packet(); }
 	| endls
 ;
 
@@ -69,20 +69,20 @@ option_list: option
 ;
 
 option: 
-    | PO_FRAME STRING INTEGER   { cb_frame_option($3); cb_op_name($2); } frame_plist 
-    | PO_FRAME INTEGER          { cb_frame_option($2); } frame_plist 
+    | PO_FRAME STRING INTEGER   { cb_frame_option($3); cb_op_name($2); } frame_plist { check_curr_option(); }
+    | PO_FRAME INTEGER          { cb_frame_option($2); } frame_plist                 { check_curr_option(); }
 
-    | PO_ATTR STRING            { cb_attr_option(); cb_op_name($2); } attr_plist  
-    | PO_ATTR                   { cb_attr_option(); } attr_plist  
+    | PO_ATTR STRING            { cb_attr_option(); cb_op_name($2); } attr_plist     { check_curr_option(); }
+    | PO_ATTR                   { cb_attr_option(); } attr_plist                     { check_curr_option(); }
 
-    | PO_SIZE STRING            { cb_size_option(); cb_op_name($2); } size_plist  
-    | PO_SIZE                   { cb_size_option(); } size_plist
+    | PO_SIZE STRING            { cb_size_option(); cb_op_name($2); } size_plist     { check_curr_option(); }
+    | PO_SIZE                   { cb_size_option(); } size_plist                     { check_curr_option(); }
 
-    | PO_CRC STRING CRC_VAR     { cb_crc_option($3); cb_op_name($2); } crc_plist  
-    | PO_CRC CRC_VAR            { cb_crc_option($2); } crc_plist
+    | PO_CRC STRING CRC_VAR     { cb_crc_option($3); cb_op_name($2); } crc_plist     { check_curr_option(); }
+    | PO_CRC CRC_VAR            { cb_crc_option($2); } crc_plist                     { check_curr_option(); }
 
-    | PO_DATA STRING            { cb_data_option(); cb_op_name($2); } data_plist  
-    | PO_DATA                   { cb_data_option(); } data_plist
+    | PO_DATA STRING            { cb_data_option(); cb_op_name($2); } data_plist     { check_curr_option(); }
+    | PO_DATA                   { cb_data_option(); } data_plist                     { check_curr_option(); }
 ;
 
 frame_plist: f_param

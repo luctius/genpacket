@@ -8,13 +8,6 @@
 
 extern int line_num;
 extern bool has_parse_error;
-#define parse_error(fmt, ...) \
-    do { \
-        has_parse_error = true; \
-        fprintf(stderr, "[line: %d] error: ", line_num); \
-        fprintf(stderr, fmt, ##__VA_ARGS__); \
-        fprintf(stderr, ".\n"); \
-    } while (0);
 
 enum po_type {
     O_FRAME,
@@ -29,6 +22,47 @@ struct type {
     int ft_sz;
 };
 
+inline bool type_is_valid(struct type t) {
+    if (t.ft_sz == 0) return false;
+    if (t.ft != FT_SIGNED && t.ft != FT_UNSIGNED && t.ft != FT_FLOAT) return false;
+    if (t.ft_sz > 64) return false;
+    return true;
+}
+
+inline bool within_max(uint64_t val, uint8_t bits, enum field_type ft) {
+    uint64_t max = 0;
+    if (ft == FT_UNSIGNED) {
+        max = (1<<bits) -1;
+    }
+    if (ft == FT_SIGNED) {
+        max = (1<<(bits-1)) -1;
+    }
+    if (val > max) return false;
+    return true;
+}
+
+inline bool v_is_valid(struct value v_to_check, struct type to_compare) {
+    if (v_to_check.ft == to_compare.ft) return true;
+    if (to_compare.ft == FT_SIGNED || to_compare.ft == FT_UNSIGNED) {
+        if (v_is_float(v_to_check)) return false;
+        if (to_compare.ft == FT_UNSIGNED) {
+            if (v_is_signed(v_to_check) ) {
+                if (v_get_i(v_to_check) < 0) return false;
+            }
+        }
+
+        if (v_is_unsigned(v_to_check) ) {
+            if (within_max(v_get_u(v_to_check), to_compare.ft_sz, to_compare.ft) == false) return false;
+        }
+        if (v_is_signed(v_to_check) ) {
+            int64_t tval = v_get_i(v_to_check);
+            tval = (tval < 0) ? tval * -1 : tval;
+            if (within_max(tval, to_compare.ft_sz, to_compare.ft) == false) return false;
+        }
+    }
+    return true;
+}
+
 /*
     frame <"name"> [val] type=<type>
     attr(ibute) <"name"> type=<type> default=<value> values=<value1>,<value2>
@@ -42,7 +76,7 @@ struct poption {
     enum po_type otype;
 
     struct type type;
-    struct value data_width;
+    int data_width;
 
     int value_list_sz;
     struct value *value_list;
@@ -57,7 +91,9 @@ struct poption {
     char *end_attr;
 
     char *data_size_str;
-    struct value data_size_v;
+    int data_size_i;
+
+    struct value frame_val;
 };
 
 enum packet_type {
@@ -69,8 +105,8 @@ enum packet_type {
 struct packet {
     char *name;
     enum packet_type ptype;
-    struct value size;
-    struct value pipe;
+    int size;
+    int pipe;
 
     int option_list_sz;
     struct poption *option_list;
@@ -90,11 +126,13 @@ void option_add_name(struct packet *p, struct poption *o, char *name);
 bool packet_name_is_unique(struct packet *p);
 bool option_name_is_unique(struct packet *p, struct poption *o);
 
-bool check_packet(int idx);
-bool check_option(int pkt_idx, int idx);
+void check_curr_packet(void);
+void check_curr_option(void);
 
 char *packet_to_str(int pkt_idx);
 char *option_to_str(int pkt_idx, int idx);
 char *type_to_str(struct type t);
+
+void parse_error(struct packet *packet, struct poption *option, const char *fmt, ...);
 
 #endif /* PACKET_H */

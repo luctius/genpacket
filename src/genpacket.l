@@ -51,10 +51,8 @@ int comment_caller = 0;
 "bit"             { yylval.t.ft=FT_UNSIGNED; yylval.t.ft_sz=1; return TYPE; }
 "float"           { yylval.t.ft=FT_FLOAT;    yylval.t.ft_sz=4; return TYPE; }
 "double"          { yylval.t.ft=FT_FLOAT;    yylval.t.ft_sz=8; return TYPE; }
-"int"[1-9]        { yylval.t.ft=FT_SIGNED;   yylval.t.ft_sz=strtol(&yytext[3], NULL, 10); return TYPE; }
-"uint"[1-9]       { yylval.t.ft=FT_UNSIGNED; yylval.t.ft_sz=strtol(&yytext[4], NULL, 10); return TYPE; }
-"int"[1-3][0-9]?  { yylval.t.ft=FT_SIGNED;   yylval.t.ft_sz=strtol(&yytext[3], NULL, 10); return TYPE; }
-"uint"[1-3][0-9]? { yylval.t.ft=FT_UNSIGNED; yylval.t.ft_sz=strtol(&yytext[4], NULL, 10); return TYPE; }
+"int"[1-9][0-9]?  { yylval.t.ft=FT_SIGNED;   yylval.t.ft_sz=strtol(&yytext[3], NULL, 10); return TYPE; }
+"uint"[1-9][0-9]? { yylval.t.ft=FT_UNSIGNED; yylval.t.ft_sz=strtol(&yytext[4], NULL, 10); return TYPE; }
 
 <INITIAL,PP>\-[0-9]+            { yylval.v = v_set_i(strtol(yytext, NULL, 10) ); return INTEGER; }
 <INITIAL,PP>\+?[0-9]+           { yylval.v = v_set_u(strtol(yytext, NULL, 10) ); return INTEGER; }

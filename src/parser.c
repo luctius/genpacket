@@ -8,14 +8,14 @@ void cb_new_packet(enum packet_type ptype, char *name) {
 
 void cb_pa_size(struct value v){
     struct packet *p = get_curr_packet();
-    if (v_get_i(p->size) != -1) parse_error("\"size\" already declared in packet \"%s\"", p->name);
-    p->size = v;
+    if (p->size != -1) parse_error(p, NULL, "\"size\" already declared");
+    p->size = v_get_i(v);
 }
 
 void cb_pa_pipe(struct value v) {
     struct packet *p = get_curr_packet();
-    if (v_get_i(p->pipe) != -1) parse_error("\"pipe\" already declared in packet \"%s\"", p->name);
-    p->pipe = v;
+    if (p->pipe != -1) parse_error(p, NULL, "\"pipe\" already declared");
+    p->pipe = v_get_i(v);
 }
 
 void cb_attr_option() {
@@ -24,6 +24,9 @@ void cb_attr_option() {
 
 void cb_frame_option(struct value v) {
     add_option(O_FRAME);
+
+    struct poption *o = get_curr_option();
+    o->frame_val = v;
 }
 
 void cb_size_option() {
@@ -51,12 +54,12 @@ void cb_op_type(struct type t) {
 
 void cb_op_datawidth_type(struct type t) {
     struct poption *o = get_curr_option();
-    o->data_width = v_set_u(t.ft_sz);
+    o->data_width = t.ft_sz;
 }
 
 void cb_op_datawidth_v(struct value v) {
     struct poption *o = get_curr_option();
-    o->data_width = v;
+    o->data_width = v_get_i(v);
 }
 
 void cb_op_datasize_string(char *attr) {
@@ -66,12 +69,13 @@ void cb_op_datasize_string(char *attr) {
 
 void cb_op_datasize_v(struct value v) {
     struct poption *o = get_curr_option();
-    o->data_size_v = v;
+    o->data_size_i = v_get_i(v);
 }
 
 void cb_op_default_v(struct value v){
+    struct packet *p = get_curr_packet();
     struct poption *o = get_curr_option();
-    if (o->default_set == true) parse_error("option %s' default already declared", o->name);
+    if (o->default_set == true) parse_error(p,o,"option default already declared");
     o->default_val = v;
     o->default_set = true;
 }

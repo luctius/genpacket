@@ -30,3 +30,35 @@ char *v_to_str(struct value v) {
     return bfr;
 }
 
+inline struct value v_convert(struct value v, enum field_type target_ft) {
+    struct value vn;
+    vn.ft = target_ft;
+
+    switch(target_ft) {
+        default:
+            vn.ft = FT_SIGNED;
+        case FT_SIGNED: 
+            switch(v.ft) {
+                default:
+                case FT_SIGNED: vn.i = v.i; break;
+                case FT_UNSIGNED: vn.i = v.u; break;
+                case FT_FLOAT: vn.i = v.d; break;
+            } break;
+        case FT_UNSIGNED:
+            switch(v.ft) {
+                default:
+                case FT_SIGNED: vn.u = v.i; break;
+                case FT_UNSIGNED: vn.u = v.u; break;
+                case FT_FLOAT: vn.u = v.d; break;
+            } break;
+        case FT_FLOAT:
+            switch(v.ft) {
+                default:
+                case FT_SIGNED: vn.d = v.i; break;
+                case FT_UNSIGNED: vn.d = v.u; break;
+                case FT_FLOAT: vn.d = v.d; break;
+            } break;
+    }
+    return vn;
+}
+

@@ -13,7 +13,7 @@ fixed packet "p1" size=10 pipe=0 /*a*/ {
 
     /*a*a*a*/
     frame 0x10
-    frame "frame2" -0b01010
+    frame "frame2" 0b01010
     frame "frame3" 1 type=uint16
 	frame "frame4" 2 type=uint16
 
@@ -21,22 +21,22 @@ fixed packet "p1" size=10 pipe=0 /*a*/ {
     attribute "test1"
     attribute "test2" type=uint8
     attribute "test3" type=uint8 default=0b11
-    attribute "test4" type=uint8 default=0x11 values=-0x1,0x2,-3
+    attribute "test4" type=int8 default=0x11 values=-0x1,0x2,-3
 
     size
     size "size1"
     size "size2" type=uint32
     size "size3" type=uint32 data_width=uint16
-    size "size4" type=uint32 data_width=uint16 exclude="test"
-    size "size5" type=uint32 data_width=uint16 exclude="test","size1"
+    size "size4" type=uint32 data_width=uint16 exclude="test1"
+    size "size5" type=uint32 data_width=uint16 exclude="test2","size1"
 
     crc crc_16
     crc "crc1" crc_8
     crc "crc2" crc_callback type=bit
-    crc "crc3" crc_callback type=bit start="test"
-    crc "crc4" crc_callback type=bit start="test" end="size1"
-    crc "crc5" crc_callback type=bit start="test" end="size1" exclude="start"
-    crc "crc6" crc_callback type=bit start="test" end="size1" exclude="start","crc1"
+    crc "crc3" crc_callback type=bit start="test1"
+    crc "crc4" crc_callback type=bit start="test2" end="size1"
+    crc "crc5" crc_callback type=bit start="test3" end="size1" exclude="frame3"
+    crc "crc6" crc_callback type=bit start="test4" end="size1" exclude="data9","crc1"
 
     data
     data "data1"
