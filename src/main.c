@@ -9,6 +9,7 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/types.h>
+#include <libgen.h>
 
 #include "packet.h"
 #include "genpacket.tab.h"
@@ -33,7 +34,7 @@ int main(int argc, char **argv) {
         free(s);
     }
 
-    if (strcmp(argv[0], "genpacket") == 0) generate_src("./", "test");
+    if (strcmp(basename(argv[0]), "genpacket") == 0) generate_src("./", "test");
 
 
     /* cleanup */

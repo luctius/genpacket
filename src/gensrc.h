@@ -1,6 +1,6 @@
 #ifndef GENSRC_H
 #define GENSRC_H
 
-void generate_src(char *path, char *prefix);
+void generate_src(const char *path, const char *prefix);
 
 #endif /* GENSRC_H */
