@@ -6,6 +6,7 @@
 #include "genpacket.tab.h"
 
 int line_num = 1;
+int comment_caller = 0;
 %}
 
 %option outfile="genpacket.lex.c"
@@ -66,14 +67,18 @@ int line_num = 1;
 <INITIAL,PP>[-+]?([0-9]*\.?[0-9]+|[0-9]+\.)[f]?  { yylval.v = v_set_f(strtod(yytext, NULL) ); return FT_FLOAT; }
 
 <INITIAL,PP>"\""[a-zA-Z_][a-zA-Z0-9_]*"\""  { yylval.s = strdup(&yytext[1]); yylval.s[yyleng-2] = '\0'; return STRING; }
+
+"crc_"[a-zA-Z0-9_]*  { yylval.s = strdup(yytext); return CRC_VAR; }
 [a-zA-Z_][a-zA-Z0-9_]*  { yylval.s = strdup(yytext); return VAR; }
 
 <INITIAL,PP>"//".*  { BEGIN(COMMENTS_LINE); }
-<COMMENTS_LINE>\n   { ++line_num; BEGIN(INITIAL); }   // still have to increment line numbers inside of comments!
-<INITIAL,PP>\/\*    { BEGIN(COMMENTS); } // start of a comment: go to a 'COMMENTS' state.
-<COMMENTS>\*\/      { BEGIN(INITIAL); } // end of a comment: go back to normal parsing.
-<COMMENTS>\n        { ++line_num; }   // still have to increment line numbers inside of comments!
-<COMMENTS>.*        // nada
+<COMMENTS_LINE>\n   { ++line_num; BEGIN(INITIAL); }                // still have to increment line numbers inside of comments!
+<INITIAL>"/*"       { comment_caller = INITIAL; BEGIN(COMMENTS); } // start of a comment: go to a 'COMMENTS' state.
+<PP>"/*"            { comment_caller = PP;      BEGIN(COMMENTS); } // start of a comment: go to a 'COMMENTS' state.
+<COMMENTS>"*/"      { BEGIN(comment_caller); }                     // end of a comment: go back to normal parsing.
+<COMMENTS>\n        { ++line_num; }                                // still have to increment line numbers inside of comments!
+<COMMENTS>[^*\n]*
+<COMMENTS>"*"+[^*/\n]*
 
 <INITIAL,PP>\n      { ++line_num; }
 <INITIAL,PP>[ \t]   /* return nada */

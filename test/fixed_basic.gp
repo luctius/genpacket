@@ -8,13 +8,14 @@
 }
 */
 
-fixed packet "p1" size=10 pipe=0 { //comment
+fixed packet "p1" size=10 pipe=0 {
     frame 0x10 //comment
 
+    /*a*a*a*/
     frame 0x10
-    frame "frame1" -0b01010
-    frame "frame2" 1 type=uint16
-	frame "frame3" 2 type=uint16
+    frame "frame2" -0b01010
+    frame "frame3" 1 type=uint16
+	frame "frame4" 2 type=uint16
 
     attribute
     attribute "test1"
@@ -29,13 +30,13 @@ fixed packet "p1" size=10 pipe=0 { //comment
     size "size4" type=uint32 data_width=uint16 exclude="test"
     size "size5" type=uint32 data_width=uint16 exclude="test","size1"
 
-    crc crc16
-    crc "crc1" crc8
-    crc "crc2" callback type=bit
-    crc "crc3" callback type=bit start="test"
-    crc "crc4" callback type=bit start="test" end="size1"
-    crc "crc5" callback type=bit start="test" end="size1" exclude="start"
-    crc "crc6" callback type=bit start="test" end="size1" exclude="start","crc1"
+    crc crc_16
+    crc "crc1" crc_8
+    crc "crc2" crc_callback type=bit
+    crc "crc3" crc_callback type=bit start="test"
+    crc "crc4" crc_callback type=bit start="test" end="size1"
+    crc "crc5" crc_callback type=bit start="test" end="size1" exclude="start"
+    crc "crc6" crc_callback type=bit start="test" end="size1" exclude="start","crc1"
 
     data
     data "data1"
@@ -43,9 +44,9 @@ fixed packet "p1" size=10 pipe=0 { //comment
     data "data3" exclude="size1","size5"
     data "data4" exclude="size1","size5" type=uint10
     data "data5" exclude="size1","size5" type=uint10 data_width=uint8
-    data "data5" exclude="size1","size5" type=uint10 data_width=uint8 data_size=0x11
-    data "data5" exclude="size1","size5" type=uint10 data_width=uint8 data_size=11
-    data "data5" exclude="size1","size5" type=uint10 data_width=uint8 data_size="crc1"
-    data "data6" exclude="size1","size5" type=uint10 data_width=uint8 //escape=<esc> escape_values=<e1>,<eN> escape_op=<func> escape_param=<param>
+    data "data6" exclude="size1","size5" type=uint10 data_width=uint8 data_size=0x11
+    data "data7" exclude="size1","size5" type=uint10 data_width=uint8 data_size=11
+    data "data8" exclude="size1","size5" type=uint10 data_width=uint8 data_size="crc1"
+    data "data9" exclude="size1","size5" type=uint10 data_width=uint8 //escape=<esc> escape_values=<e1>,<eN> escape_op=<func> escape_param=<param>
 }
 

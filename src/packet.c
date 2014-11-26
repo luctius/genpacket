@@ -24,7 +24,7 @@ void add_packet(enum packet_type ptype, char *name) {
     p->option_list = NULL;
 
     if (!packet_name_is_unique(p) ) {
-        fprintf(stderr, "error: packet (%s) already exists\n", p->name);
+        parse_error("packet \"%s\" already exist", p->name);
     }
 }
 
@@ -89,7 +89,7 @@ void option_add_name(struct packet *p, struct poption *o, char *name) {
 
     o->name = name;
     if (!option_name_is_unique(p, o) ) {
-        fprintf(stderr, "error: option (%s) already exists\n", o->name);
+        parse_error("option \"%s\" already exists in packet \"%s\"", o->name, p->name);
     }
 }
 
@@ -147,7 +147,7 @@ char *option_to_str(int pkt_idx, int idx) {
     if (o->default_set) ctr += sprintf(&sp[ctr], "[default: %s] ", v_to_str(o->default_val) );
 
     if (o->exclude_list_sz > 0) {
-        ctr += sprintf(&sp[ctr], "exclude: ");
+        ctr += sprintf(&sp[ctr], "[exclude: ");
         for (int i = 0; i < o->exclude_list_sz; i++) {
             if (i != 0) ctr += sprintf(&sp[ctr], ", ");
             ctr += sprintf(&sp[ctr], "%s", o->exclude_list[i]);

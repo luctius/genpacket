@@ -1,35 +1,5 @@
 packet examples:
 
-
-
-struct packet{
-    enum type = {fixed,calculated,dynamic},
-    char *name,
-    int size;
-    int pipe_nr;
-    struct field[10] {
-        enum field_type = {frame,attr,size,data,crc},
-        enum type type = {uint8, bit,...},
-        struct param = {
-            enum param_type,
-            char *cparam,
-            struct field *fparam,
-        },
-        enum method = {...}
-        enum type data_width,
-        int values[],
-        int exclude_count,
-        struct field *exclude,
-        struct field *start,
-        struct field *end,
-        struct type {
-            ...
-        } default,
-        struct type frame_val,
-    },
-};
-
-
 [fixed/calculated/dynamic] packet ["name"] size=<packet_size in bytes> pipe=<pipe_nr>
 {
     frame <"name"> [val] type=<type>
@@ -37,6 +7,9 @@ struct packet{
     size <"name"> type=<type> data_width=<type> exclude=<"attr1">,<"attrN">
     data <"name"> data_size=<number|"attribute"> exclude=<"attr1">,<"attrN"> type=<type> data_width=<type> escape=<esc> escape_values=<e1>,<eN> escape_op=<func> escape_param=<param>
     crc <"name"> [method] start=<"start_attribute"> end=<"end_attribute"> exclude=<"attr1">,<"attrN"> type=<type>
+
+    NI: timestamp <"timestamp"> type=<type> format=<unix_ts_s|counter|...>
+    NI: sequence <"seq"> type=<type>
 }
 
 fixed packet "simple_packet" size=0x10
@@ -104,9 +77,3 @@ crc methods
 crc8
 crc16
 callback
-
-
-maybe?:
-    data_attr    [size] exclude=<attr1>,<attrN> data_width=<type> type=<type> name=<name>
-    data_fixed   [len] type=<type> name=<name>
-    data_dynamic [value] trigger=<t1>,<t2> op=<func> param=<param> type=<type> name=<name>

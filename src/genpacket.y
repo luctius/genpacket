@@ -9,6 +9,7 @@ void yyerror(const char *s, ...);
 
 #define YYERROR_VERBOSE
 extern int line_num;
+bool has_parse_error = false;
 %}
 
 %output "genpacket.tab.c"
@@ -31,7 +32,7 @@ extern int line_num;
 %token PO_FRAME PO_ATTR PO_SIZE PO_CRC PO_DATA
 %token OP_TYPE OP_DATAWIDTH OP_DEFAULT OP_VALUES OP_EXCLUDE OP_START OP_END OP_DATASIZE
 
-%token <s> VAR STRING
+%token <s> VAR CRC_VAR STRING
 %token <t> TYPE
 %token <v> INTEGER FLOAT
 
@@ -75,8 +76,8 @@ option:
     | PO_SIZE STRING            { cb_size_option(); cb_op_name($2); } size_plist  
     | PO_SIZE                   { cb_size_option(); } size_plist
 
-    | PO_CRC STRING VAR         { cb_crc_option($3); cb_op_name($2); } crc_plist  
-    | PO_CRC VAR                { cb_crc_option($2); } crc_plist
+    | PO_CRC STRING CRC_VAR     { cb_crc_option($3); cb_op_name($2); } crc_plist  
+    | PO_CRC CRC_VAR            { cb_crc_option($2); } crc_plist
 
     | PO_DATA STRING            { cb_data_option(); cb_op_name($2); } data_plist  
     | PO_DATA                   { cb_data_option(); } data_plist
@@ -181,10 +182,10 @@ void yyerror(const char *s, ...) {
     va_list args;
     va_start(args, s);
 
-    fprintf(stderr, "%d: error: ", line_num);
+    fprintf(stderr, "[line: %d] ", line_num);
     vfprintf(stderr, s, args);
-    fprintf(stderr, "\n");
-    
-    //fprintf(stderr, "error: %s on line %d\n",s,line_num);
+    fprintf(stderr, ".\n");
+
+    has_parse_error = true;
 }
 

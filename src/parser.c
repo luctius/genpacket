@@ -8,13 +8,13 @@ void cb_new_packet(enum packet_type ptype, char *name) {
 
 void cb_pa_size(struct value v){
     struct packet *p = get_curr_packet();
-    if (v_get_i(p->size) != -1) fprintf(stderr, "warning: packet %s' size already declared\n", p->name);
+    if (v_get_i(p->size) != -1) parse_error("\"size\" already declared in packet \"%s\"", p->name);
     p->size = v;
 }
 
 void cb_pa_pipe(struct value v) {
     struct packet *p = get_curr_packet();
-    if (v_get_i(p->pipe) != -1) fprintf(stderr, "warning: packet %s' pipe already declared\n", p->name);
+    if (v_get_i(p->pipe) != -1) parse_error("\"pipe\" already declared in packet \"%s\"", p->name);
     p->pipe = v;
 }
 
@@ -69,7 +69,7 @@ void cb_op_datasize_v(struct value v) {
 
 void cb_op_default_v(struct value v){
     struct poption *o = get_curr_option();
-    if (o->default_set == true) fprintf(stderr, "warning: option %s' default already declared\n", o->name);
+    if (o->default_set == true) parse_error("option %s' default already declared", o->name);
     o->default_val = v;
     o->default_set = true;
 }

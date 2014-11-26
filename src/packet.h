@@ -6,6 +6,16 @@
 
 #include "value.h"
 
+extern int line_num;
+extern bool has_parse_error;
+#define parse_error(fmt, ...) \
+    do { \
+        has_parse_error = true; \
+        fprintf(stderr, "[line: %d] error: ", line_num); \
+        fprintf(stderr, fmt, ##__VA_ARGS__); \
+        fprintf(stderr, ".\n"); \
+    } while (0);
+
 enum po_type {
     O_FRAME,
     O_ATTRIBUTE,

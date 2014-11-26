@@ -20,6 +20,11 @@ int main(int argc, char **argv) {
 
     yyparse();
 
+    if (has_parse_error) {
+        parse_error("too many errors; quitting");
+        exit(EXIT_FAILURE);
+    }
+
     printf("\n");
     for (int i = 0; i < packet_list_sz; i++) {
         printf("%s\n", packet_to_str(i) );
