@@ -94,6 +94,8 @@ void add_option(enum po_type otype) {
     o->data_size_str = NULL;
     o->data_size_i = -1;
 
+    o->crc_method = NULL;
+
     const char *defname;
     switch(o->otype) {
         case O_FRAME:  defname = "frame%d";
@@ -138,6 +140,10 @@ void free_option(int pidx, int oidx) {
     if (o->end_attr != NULL) {
         free(o->end_attr);
         o->end_attr = NULL;
+    }
+    if (o->crc_method != NULL) {
+        free(o->crc_method);
+        o->crc_method = NULL;
     }
 
     free(o->value_list);

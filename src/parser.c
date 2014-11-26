@@ -35,6 +35,9 @@ void cb_size_option() {
 
 void cb_crc_option(char *method) {
     add_option(O_CRC);
+
+    struct poption *o = get_curr_option();
+    o->crc_method = method;
 }
 
 void cb_data_option() {

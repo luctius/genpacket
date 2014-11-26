@@ -40,9 +40,9 @@ fixed packet "p1" size=10 pipe=0 /*a*/ {
 
     data
     data "data1"
-    data "data2" 
+    data "data2" data_size="size2"
     data "data3" exclude="size1","size5"
-    data "data4" exclude="size1","size5" type=uint10
+    data "data4" exclude="size1","size5" type=uint10 
     data "data5" exclude="size1","size5" type=uint10 data_width=uint8
     data "data6" exclude="size1","size5" type=uint10 data_width=uint8 data_size=0x11
     data "data7" exclude="size1","size5" type=uint10 data_width=uint8 data_size=11

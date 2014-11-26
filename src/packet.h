@@ -93,6 +93,8 @@ struct poption {
     char *data_size_str;
     int data_size_i;
 
+    char *crc_method;
+
     struct value frame_val;
 };
 
