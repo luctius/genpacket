@@ -30,6 +30,10 @@ int main(int argc, char **argv) {
         printf("%s\n", packet_to_str(i) );
     }
 
+    for (int i = 0; i < packet_list_sz; i++) {
+        free_packet(i);
+    }
+
     return (0);
 }
 

@@ -122,6 +122,7 @@ void free_packet(int idx);
 void add_option(enum po_type otype);
 struct poption *get_curr_option(void);
 void option_add_name(struct packet *p, struct poption *o, char *name);
+void free_option(int pidx, int oidx);
 
 bool packet_name_is_unique(struct packet *p);
 bool option_name_is_unique(struct packet *p, struct poption *o);

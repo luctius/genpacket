@@ -51,6 +51,22 @@ void add_packet(enum packet_type ptype, char *name) {
     }
 }
 
+void free_packet(int idx) {
+    struct packet *p = &packet_list[idx];
+
+    if (p->name != NULL) {
+        free(p->name);
+        p->name = NULL;
+    }
+
+    for (int i = 0; i < p->option_list_sz; i++) {
+        free_option(idx, i);
+    }
+    free(p->option_list);
+    p->option_list = NULL;
+    p->option_list_sz = 0;
+}
+
 struct packet *get_curr_packet() {
     if (packet_list_sz <= 0) return NULL;
     return &packet_list[packet_list_sz-1];
@@ -102,6 +118,40 @@ void add_option(enum po_type otype) {
     }
     o->name = realloc(o->name, (strlen(o->name) +1) * sizeof(char) );
 }
+
+void free_option(int pidx, int oidx) {
+    struct packet *p = &packet_list[pidx];
+    struct poption *o = &p->option_list[oidx];
+
+    if (o->name != NULL) {
+        free(o->name);
+        o->name = NULL;
+    }
+    if (o->data_size_str != NULL) {
+        free(o->data_size_str);
+        o->data_size_str = NULL;
+    }
+    if (o->start_attr != NULL) {
+        free(o->start_attr);
+        o->start_attr = NULL;
+    }
+    if (o->end_attr != NULL) {
+        free(o->end_attr);
+        o->end_attr = NULL;
+    }
+
+    free(o->value_list);
+    o->value_list = NULL;
+    o->value_list_sz = 0;
+
+    for (int i = 0; i < o->exclude_list_sz; i++) {
+        free(o->exclude_list[i]);
+    }
+    free(o->exclude_list);
+    o->exclude_list_sz = 0;
+    o->exclude_list = NULL;
+}
+
 
 struct poption *get_curr_option(void) {
     if (packet_list_sz <= 0) return NULL;
