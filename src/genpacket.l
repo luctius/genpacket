@@ -71,7 +71,7 @@ int comment_caller = 0;
 "crc_"[a-zA-Z0-9_]*  { yylval.s = strdup(yytext); return CRC_VAR; }
 [a-zA-Z_][a-zA-Z0-9_]*  { yylval.s = strdup(yytext); return VAR; }
 
-<INITIAL,PP>"//".*  { BEGIN(COMMENTS_LINE); }
+<INITIAL,PP>"//".*  { BEGIN(COMMENTS_LINE);  return ENDL; }
 <COMMENTS_LINE>\n   { ++line_num; BEGIN(INITIAL); }                // still have to increment line numbers inside of comments!
 <INITIAL>"/*"       { comment_caller = INITIAL; BEGIN(COMMENTS); } // start of a comment: go to a 'COMMENTS' state.
 <PP>"/*"            { comment_caller = PP;      BEGIN(COMMENTS); } // start of a comment: go to a 'COMMENTS' state.
@@ -80,6 +80,6 @@ int comment_caller = 0;
 <COMMENTS>[^*\n]*
 <COMMENTS>"*"+[^*/\n]*
 
-<INITIAL,PP>\n      { ++line_num; }
+<INITIAL,PP>\n      { ++line_num; return ENDL; }
 <INITIAL,PP>[ \t]   /* return nada */
 <INITIAL,PP>.       { printf("Unkown: %c\n", *yytext); }

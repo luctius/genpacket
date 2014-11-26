@@ -31,6 +31,7 @@ bool has_parse_error = false;
 %token PACKET PA_SIZE PA_PIPE
 %token PO_FRAME PO_ATTR PO_SIZE PO_CRC PO_DATA
 %token OP_TYPE OP_DATAWIDTH OP_DEFAULT OP_VALUES OP_EXCLUDE OP_START OP_END OP_DATASIZE
+%token ENDL
 
 %token <s> VAR CRC_VAR STRING
 %token <t> TYPE
@@ -45,6 +46,7 @@ input: packet
 packet: 
     | packet_header packet_option_list '{' option_list '}'
     | packet_header '{' option_list '}'
+	| endls
 ;
 
 packet_header: packet_option_list option_list
@@ -63,7 +65,7 @@ packet_option:
 ;
 
 option_list: option
-    | option_list option
+    | option_list option endls;
 ;
 
 option: 
@@ -172,6 +174,10 @@ op_exclude: OP_EXCLUDE
 op_datasize: OP_DATASIZE
     | OP_DATASIZE '=' INTEGER   { cb_op_datasize_v($3); }
     | OP_DATASIZE '=' STRING    { cb_op_datasize_string($3); }
+;
+
+endls: ENDL
+	| endls ENDL
 ;
 
 %%
