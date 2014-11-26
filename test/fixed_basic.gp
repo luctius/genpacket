@@ -8,8 +8,8 @@
 }
 */
 
-fixed packet "p1" size=10 pipe=0 {
-    frame 0x10 //comment
+fixed packet "p1" size=10 pipe=0 /*a*/ {
+    frame /*b*/ 0x10 //comment
 
     /*a*a*a*/
     frame 0x10

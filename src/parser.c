@@ -60,11 +60,13 @@ void cb_op_datawidth_v(struct value v) {
 }
 
 void cb_op_datasize_string(char *attr) {
-    printf("(datasize: %s NI) ", attr);
+    struct poption *o = get_curr_option();
+    o->data_size_str = attr;
 }
 
 void cb_op_datasize_v(struct value v) {
-    printf("(datasize: %s NI) ", v_to_str(v));
+    struct poption *o = get_curr_option();
+    o->data_size_v = v;
 }
 
 void cb_op_default_v(struct value v){

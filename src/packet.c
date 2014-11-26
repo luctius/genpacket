@@ -15,6 +15,7 @@ void add_packet(enum packet_type ptype, char *name) {
     assert(packet_list != NULL);
 
     struct packet *p = get_curr_packet();
+    memset(p, 0x0, sizeof(struct packet) );
     p->name = name;
     p->ptype = ptype;
 
@@ -41,6 +42,7 @@ void add_option(enum po_type otype) {
     assert(p->option_list != NULL);
 
     struct poption *o = get_curr_option();
+    memset(o, 0x0, sizeof(struct poption) );
     o->otype = otype;
 
     o->default_set = false;
@@ -50,6 +52,9 @@ void add_option(enum po_type otype) {
 
     o->exclude_list_sz = 0;
     o->exclude_list = NULL;
+
+    o->data_size_str = NULL;
+    o->data_size_v.u = 0;
 
     char *defname;
     switch(o->otype) {
@@ -116,6 +121,19 @@ char *packet_to_str(int pkt_idx) {
 
     int ctr = 0;
     char *sp = ts_bfr;
+
+    switch(p->ptype) {
+        case PT_FIXED:
+            ctr += sprintf(&sp[ctr], "fixed ");
+            break;
+        case PT_DYNAMIC:
+            ctr += sprintf(&sp[ctr], "dynamic ");
+            break;
+        case PT_CALCULATED:
+            ctr += sprintf(&sp[ctr], "calculated ");
+            break;
+    }
+
     ctr += sprintf(&sp[ctr], "packet %s ", p->name);
     ctr += sprintf(&sp[ctr], "[size: %s] ", v_to_str(p->size) );
     ctr += sprintf(&sp[ctr], "[pipe: %s] ", v_to_str(p->pipe) );
@@ -126,7 +144,7 @@ char *packet_to_str(int pkt_idx) {
             option_to_str(pkt_idx, i);
         }
 
-    ctr += sprintf(&sp[ctr], "} (sz: %d)\n", size);
+    ctr += sprintf(&sp[ctr], "}\n");
 
     ts_bfr = realloc(ts_bfr, strlen(ts_bfr) +2 );
 
@@ -163,6 +181,9 @@ char *option_to_str(int pkt_idx, int idx) {
         }
         ctr += sprintf(&sp[ctr], "] ");
     }
+
+    if (o->data_size_str != NULL)   ctr += sprintf(&sp[ctr], "[data_size: %s] ", o->data_size_str);
+    else if (o->data_size_v.u != 0) ctr += sprintf(&sp[ctr], "[data_size: %s] ", v_to_str(o->data_size_v) );
 
     return sp;
 }

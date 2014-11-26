@@ -55,6 +55,9 @@ struct poption {
 
     char *start_attr;
     char *end_attr;
+
+    char *data_size_str;
+    struct value data_size_v;
 };
 
 enum packet_type {
