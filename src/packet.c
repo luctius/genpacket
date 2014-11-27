@@ -199,14 +199,17 @@ void check_curr_packet(void) {
     if (p->pipe < 0) p->pipe = 0;
     for (pipes; pipes <= p->pipe; pipes++);
 
+    bool data_sz_unkown = false;
     int total_sz_bits = 0;
     for (int i = 0; i < p->option_list_sz; i++) {
         struct poption *o = &p->option_list[i];
         if (o->otype == O_DATA) {
             if (o->data_size_i != -1) total_sz_bits += o->type.ft_sz * o->data_size_i;
+            else data_sz_unkown = true;
         }
         else total_sz_bits += o->type.ft_sz;
     }
+    if (data_sz_unkown == false && (total_sz_bits % 8) == 0) p->size = total_sz_bits/8;
 
     for (int i = 0; i < p->option_list_sz; i++) {
         struct poption *o = &p->option_list[i];
