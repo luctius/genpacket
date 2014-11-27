@@ -95,7 +95,7 @@ void generate_public_hdr(const char *path, const char *prefix) {
     hgs.packets = NULL;
     hgs.receive_functions = NULL;
     hgs.send_functions = NULL;
-    hgs.nro_pipes = packet_list_sz;
+    hgs.nro_pipes = pipes;
 
     /* capatilise gen_name */
     char ifndef_buf[strlen(hgs.prefix) +1];

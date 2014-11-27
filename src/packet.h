@@ -114,6 +114,7 @@ struct packet {
     struct poption *option_list;
 };
 
+extern int pipes;
 extern int packet_list_sz;
 extern struct packet *packet_list;
 
