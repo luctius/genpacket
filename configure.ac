@@ -10,6 +10,7 @@ AC_PROG_MAKE_SET
 AC_PROG_CC
 AC_PROG_CC_C99
 AM_PROG_CC_C_O
+AC_PROG_CPP
 AC_PROG_LIBTOOL
 AC_LANG_C
 AC_C_CONST
@@ -24,6 +25,7 @@ AC_EXEEXT
 AC_PROG_YACC
 AM_PROG_LEX
 LT_INIT
+AC_PROG_RANLIB
 
 dnl the following is a program for generating a program that
 dnl generates a source and substitutes some values
@@ -38,30 +40,30 @@ AC_DEFINE([_GNU_SOURCE], 1, [Use GNU extensions])
 AC_CHECK_LIB([m], [main])
 
 # Checks for header files.
-AC_CHECK_HEADERS([float.h limits.h stddef.h stdint.h stdlib.h string.h sys/param.h unistd.h])
+AC_FUNC_ALLOCA
+AC_CHECK_HEADERS([inttypes.h libintl.h limits.h malloc.h stddef.h stdint.h stdlib.h string.h unistd.h])
 
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
-AC_CHECK_FUNCS([memset])
+AC_FUNC_ERROR_AT_LINE
+AC_FUNC_STRFTIME
+AC_FUNC_STRTOD
+AC_CHECK_FUNCS([memset strchr strdup strtol])
 
 # Checks for typedefs, structures, and compiler characteristics.
-AC_HEADER_STDBOOL
 AC_C_INLINE
 AC_TYPE_SIZE_T
 AC_TYPE_SSIZE_T
 AC_TYPE_INT8_T
-AC_TYPE_SIZE_T
+AC_TYPE_INT16_T
+AC_TYPE_INT32_T
+AC_TYPE_INT64_T
 AC_TYPE_UINT16_T
 AC_TYPE_UINT32_T
 AC_TYPE_UINT64_T
 AC_TYPE_UINT8_T
-AC_FUNC_MALLOC
-AC_FUNC_STRFTIME
-AC_FUNC_STRTOD
-AC_FUNC_ERROR_AT_LINE
-AC_FUNC_MALLOC
-AC_CHECK_FUNCS([memmove memset mkdir sqrt strtol])
+AC_HEADER_STDBOOL
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile 
