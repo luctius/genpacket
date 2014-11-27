@@ -17,22 +17,34 @@ extern "C" {
 
 struct header_gen_struct
 {
-  const char *args_info;
   const char *ifndefname;
-  const char *parser_name;
+  int nro_pipes;
+  const char *packets;
+  const char *prefix;
+  const char *receive_functions;
+  const char *send_functions;
 };
+
+extern void generate_packets(FILE *stream, struct header_gen_struct *record, unsigned int indent);
+
+
+extern void generate_receive_functions(FILE *stream, struct header_gen_struct *record, unsigned int indent);
+
+
+extern void generate_send_functions(FILE *stream, struct header_gen_struct *record, unsigned int indent);
+
 
 void
 generate_header(FILE *stream, struct header_gen_struct *record, unsigned int indent);
 
 void
-generatep_header(FILE *stream, unsigned int indent, const char *args_info, const char *ifndefname, const char *parser_name);
+generatep_header(FILE *stream, unsigned int indent, const char *ifndefname, int nro_pipes, const char *packets, const char *prefix, const char *receive_functions, const char *send_functions);
 
 char *
 genstring_header(struct header_gen_struct *record, unsigned int indent);
 
 char *
-genstringp_header(unsigned int indent, const char *args_info, const char *ifndefname, const char *parser_name);
+genstringp_header(unsigned int indent, const char *ifndefname, int nro_pipes, const char *packets, const char *prefix, const char *receive_functions, const char *send_functions);
 
 int
 strcnt_header(struct header_gen_struct *record, unsigned int indent);

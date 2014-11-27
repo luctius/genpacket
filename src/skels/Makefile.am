@@ -25,7 +25,7 @@ GENERATE = $(GENGEN)
 .h_skel.c:
 	name="`echo $* | sed 's/^.*\///g'`"; \
 	echo "$$name"; \
-	$(GENERATE) -i $< -F $*.h -f $$name --output-format=c --separate-files --expand-tabs --output-dir=$(srcdir) --force
+	$(GENERATE) -i $< -F $*.h -f $$name --output-format=c --separate-files --output-dir=$(srcdir) --force
 endif
 
 INCLUDES = -I@top_srcdir@/src
@@ -34,10 +34,18 @@ noinst_LTLIBRARIES = libgp.la
 
 libgp_la_SOURCES = $(BUILT_SOURCES)
 
-BUILT_SOURCES = header.c header.h
+BUILT_SOURCES = header.c header.h \
+				structs.c structs.h \
+				send_function.c send_function.h \
+                receive_callback.c receive_callback.h \
+				var_declaration.c var_declaration.h
 
 EXTRA_DIST = header.h_skel \
-             $(BUILT_SOURCES)
+			structs.h_skel \
+            send_function.h_skel \
+            receive_callback.h_skel \
+			var_declaration.h_skel \
+			$(BUILT_SOURCES)
 
 built-clean:
 	cd @srcdir@ && rm -f $(BUILT_SOURCES)

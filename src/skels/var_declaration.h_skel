@@ -1,0 +1,1 @@
+@type@ @if@pointer@then@*@endif@@member_name@@if@array@then@[@size:int@]@endif@;

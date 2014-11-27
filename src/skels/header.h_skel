@@ -12,19 +12,27 @@
 extern "C" {
 #endif /* __cplusplus */
 
-struct @args_info@ {
-    int test;
+#define @ifndefname@_NRO_PIPES (@nro_pipes:int@)
+
+enum @prefix@_direction {
+    @ifndefname@_R=1,
+    @ifndefname@_W=2,
 };
 
-struct @parser_name@_params {
-    int override;
-    int initialize;
-    int check_required;
-    int check_ambiguity;
-    int print_errors;
+@packets:method{iteration=true}@
+
+@receive_functions:method{iteration=true}@
+
+@send_functions:method{iteration=true}@
+
+struct @prefix@_params {
+    int pipe_fds[@ifndefname@_NRO_PIPES];
+    enum @prefix@_direction pipe_dir[@ifndefname@_NRO_PIPES];
+    void *private_ctx;
 };
 
-int @parser_name@_init();
+int @prefix@_init(struct @prefix@_params *params);
+int @prefix@_process();
 
 #ifdef __cplusplus
 }
