@@ -41,7 +41,7 @@ void add_packet(enum packet_type ptype, char *name) {
     p->name = name;
     p->ptype = ptype;
 
-    p->size = -1;
+    p->size = 0;
     p->pipe = -1;
     p->option_list_sz = 0;
     p->option_list = NULL;
@@ -179,6 +179,15 @@ void option_add_name(struct packet *p, struct poption *o, char *name) {
 void check_curr_packet(void) {
     struct packet *p = &packet_list[packet_list_sz-1];
 
+    int total_sz_bits = 0;
+    for (int i = 0; i < p->option_list_sz; i++) {
+        struct poption *o = &p->option_list[i];
+        if ( (o->otype == O_DATA) && (o->data_size_i != -1) ) {
+            total_sz_bits += o->type.ft_sz * o->data_size_i;
+        }
+        else total_sz_bits += o->type.ft_sz;
+    }
+
     for (int i = 0; i < p->option_list_sz; i++) {
         struct poption *o = &p->option_list[i];
 
@@ -211,36 +220,21 @@ void check_curr_packet(void) {
         }
     }
 
-    if (p->ptype == PT_DYNAMIC) {
-        int size_members = 0;
-        int data_members = 0;
-        for (int i = 0; i < p->option_list_sz; i++) {
-            struct poption *o = &p->option_list[i];
-            if (o->otype == O_SIZE) size_members++;
-            if (o->otype == O_DATA) data_members++;
-        }
-
-        if (size_members == 0 && data_members == 0) {
-            struct poption *data = NULL;
-            struct poption *size = NULL;
-            for (int i = 0; i < p->option_list_sz; i++) {
-                struct poption *o = &p->option_list[i];
-                if (o->otype == O_DATA) data = o;
-                if (o->otype == O_SIZE) size = o;
-            }
-            data->data_size_str = strdup(size->name);
-        }
-    }
-
     switch(p->ptype) {
         default:
         case PT_FIXED:
-            if (p->size == 0) {
+            {
+                int data_mbrs_wo_sz = 0;
                 for (int i = 0; i < p->option_list_sz; i++) {
                     struct poption *o = &p->option_list[i];
                     if (o->otype == O_DATA) {
                         if (o->data_size_i == -1) {
-                            parse_error(p, o, "fixed size packet, but no size given for packet nor data member");
+                            data_mbrs_wo_sz++;
+
+                            if (data_mbrs_wo_sz > 1 || p->size == 0) {
+                                parse_error(p, o, "fixed size packet, but no size given for packet or data member");
+                            }
+                            else o->data_size_i = (p->size - (total_sz_bits/8))/o->type.ft_sz;
                         }
                     }
                 }
@@ -257,7 +251,74 @@ void check_curr_packet(void) {
             }
             break;
         case PT_CALCULATED:
+            {
+                /*
+                   Match size and data members if possible.
+                 */
+                int size_members = 0;
+                int data_members = 0;
+                for (int i = 0; i < p->option_list_sz; i++) {
+                    struct poption *o = &p->option_list[i];
+                    if (o->otype == O_SIZE) size_members++;
+                    if (o->otype == O_DATA) {
+                        if (o->data_size_str == NULL && o->data_size_i == -1) {
+                            data_members++;
+                        }
+                    }
+                }
+                
+                if (size_members == data_members) {
+                    char *size_mbr_names[size_members];
+                    size_members = 0;
+                    data_members = 0;
+                    for (int i = 0; i < p->option_list_sz && (data_members < size_members); i++) {
+                        struct poption *o = &p->option_list[i];
+                        if (o->otype == O_SIZE) {
+                            size_mbr_names[size_members++] = o->name;
+                        }
+                        if (o->otype == O_DATA) {
+                            if (o->data_size_str == NULL && o->data_size_i == -1) {
+                                if (size_mbr_names[data_members] == NULL) {
+                                    parse_error(p, o, "unable to match data and size members");
+                                }
+                                else o->data_size_str = size_mbr_names[data_members++];
+                            }
+                        }
+                    }
+                }
+
+                for (int i = 0; i < p->option_list_sz; i++) {
+                    struct poption *o = &p->option_list[i];
+                    if (o->otype == O_DATA) {
+                        if (o->data_size_str == NULL && o->data_size_i == -1) {
+                            parse_error(p, o, "data member has unkown size");
+                        }
+                    }
+                }
+            }
             break;
+    }
+
+    /* final size check */
+    total_sz_bits = 0;
+    for (int i = 0; i < p->option_list_sz; i++) {
+        struct poption *o = &p->option_list[i];
+        if ( (o->otype == O_DATA) && (o->data_size_i != -1) ) {
+            total_sz_bits += o->type.ft_sz * o->data_size_i;
+        }
+        else if ( (o->otype == O_DATA) && (p->ptype == PT_FIXED) ) {
+            total_sz_bits += o->type.ft_sz * o->data_size_i;
+        }
+        else total_sz_bits += o->type.ft_sz;
+    }
+    if (total_sz_bits % 8 != 0) {
+        parse_error(p, NULL, "packet not byte aligned");
+    }
+    if ( (p->size != 0) && (p->size < (total_sz_bits/8) ) ) {
+        parse_error(p, NULL, "packet size is smaller than all members combined");
+    }
+    else if (p->ptype == PT_FIXED && (total_sz_bits / 8) != p->size) {
+        parse_error(p, NULL, "packet size given cannot be correct");
     }
 }
 
