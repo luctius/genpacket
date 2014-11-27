@@ -34,9 +34,10 @@ noinst_LTLIBRARIES = libgp.la
 
 libgp_la_SOURCES = $(BUILT_SOURCES)
 
-BUILT_SOURCES = 
+BUILT_SOURCES = header.c header.h
 
-EXTRA_DIST = $(BUILT_SOURCES)
+EXTRA_DIST = header.h_skel \
+             $(BUILT_SOURCES)
 
 built-clean:
 	cd @srcdir@ && rm -f $(BUILT_SOURCES)

@@ -137,5 +137,6 @@ char *option_to_str(int pkt_idx, int idx);
 char *type_to_str(struct type t);
 
 void parse_error(struct packet *packet, struct poption *option, const char *fmt, ...);
+void parse_debug(struct packet *packet, struct poption *option, const char *fmt, ...);
 
 #endif /* PACKET_H */

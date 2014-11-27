@@ -16,6 +16,22 @@ extern inline bool type_is_valid(struct type t);
 extern inline bool v_is_valid(struct value v_to_check, struct type to_compare);
 extern inline bool within_max(uint64_t val, uint8_t bits, enum field_type ft);
 
+void parse_debug(struct packet *packet, struct poption *option, const char *fmt, ...) {
+    va_list args;
+    va_start(args, fmt);
+
+    has_parse_error = true;
+    fprintf(stderr, "[line: %d] debug: ", line_num);
+    if (packet != NULL) {
+        fprintf(stderr, "[%s", packet->name);
+        if (option != NULL) fprintf(stderr, ".%s", option->name);
+        fprintf(stderr, "] ");
+    }
+
+    vfprintf(stderr, fmt, args);
+    fprintf(stderr, ".\n");
+}
+
 void parse_error(struct packet *packet, struct poption *option, const char *fmt, ...) {
     va_list args;
     va_start(args, fmt);
@@ -182,8 +198,8 @@ void check_curr_packet(void) {
     int total_sz_bits = 0;
     for (int i = 0; i < p->option_list_sz; i++) {
         struct poption *o = &p->option_list[i];
-        if ( (o->otype == O_DATA) && (o->data_size_i != -1) ) {
-            total_sz_bits += o->type.ft_sz * o->data_size_i;
+        if (o->otype == O_DATA) {
+            if (o->data_size_i != -1) total_sz_bits += o->type.ft_sz * o->data_size_i;
         }
         else total_sz_bits += o->type.ft_sz;
     }
@@ -234,7 +250,7 @@ void check_curr_packet(void) {
                             if (data_mbrs_wo_sz > 1 || p->size == 0) {
                                 parse_error(p, o, "fixed size packet, but no size given for packet or data member");
                             }
-                            else o->data_size_i = (p->size - (total_sz_bits/8))/o->type.ft_sz;
+                            else o->data_size_i = ( (p->size * 8) - total_sz_bits)/o->type.ft_sz;
                         }
                     }
                 }
@@ -303,10 +319,7 @@ void check_curr_packet(void) {
     total_sz_bits = 0;
     for (int i = 0; i < p->option_list_sz; i++) {
         struct poption *o = &p->option_list[i];
-        if ( (o->otype == O_DATA) && (o->data_size_i != -1) ) {
-            total_sz_bits += o->type.ft_sz * o->data_size_i;
-        }
-        else if ( (o->otype == O_DATA) && (p->ptype == PT_FIXED) ) {
+        if ( (o->otype == O_DATA) && ( (o->data_size_i != -1) || (p->ptype == PT_FIXED) ) ) {
             total_sz_bits += o->type.ft_sz * o->data_size_i;
         }
         else total_sz_bits += o->type.ft_sz;
@@ -317,8 +330,9 @@ void check_curr_packet(void) {
     if ( (p->size != 0) && (p->size < (total_sz_bits/8) ) ) {
         parse_error(p, NULL, "packet size is smaller than all members combined");
     }
-    else if (p->ptype == PT_FIXED && (total_sz_bits / 8) != p->size) {
+    else if (p->ptype == PT_FIXED && (total_sz_bits) != (p->size * 8) ) {
         parse_error(p, NULL, "packet size given cannot be correct");
+        parse_debug(p, NULL, "packet size given (in bits %d), packet size in bits (%d)", p->size*8, total_sz_bits);
     }
 }
 

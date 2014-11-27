@@ -1,0 +1,32 @@
+#ifndef @ifndefname@_H
+#define @ifndefname@_H
+
+/* If we use autoconf.  */
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+struct @args_info@ {
+    int test;
+};
+
+struct @parser_name@_params {
+    int override;
+    int initialize;
+    int check_required;
+    int check_ambiguity;
+    int print_errors;
+};
+
+int @parser_name@_init();
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+#endif /* @ifndefname@_H */

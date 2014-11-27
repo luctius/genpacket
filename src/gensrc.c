@@ -5,6 +5,8 @@
 #include "packet.h"
 #include "gensrc.h"
 
+#include "skels/header.h"
+
 static char *type_to_c_type_str(struct type t) {
     static char bfr[20];
     int sz = 0;
@@ -28,13 +30,23 @@ static char *type_to_c_type_str(struct type t) {
 
 #define generate_line(fmt, ...) do { printf(fmt, ##__VA_ARGS__); } while (0)
 void generate_public_hdr(const char *path, const char *prefix) {
+    /*
     char fpath[PATH_MAX];
     char pheader[NAME_MAX];
 
     snprintf(pheader, NAME_MAX, "%s_gpacket", prefix);
     snprintf(fpath, PATH_MAX, "%s/%s.h", path, pheader);
     FILE *f = fopen(fpath, "w");
+    */
 
+
+    struct header_gen_struct hgs;
+    hgs.args_info = "cmd";
+    hgs.parser_name = "parser";
+    hgs.ifndefname = "PACKET";
+
+    init_header_gen_struct(&hgs);
+    generate_header(stdout, &hgs, 4);
 }
 
 void generate_src(const char *path, const char *prefix) {

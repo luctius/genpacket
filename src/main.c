@@ -23,15 +23,15 @@ int main(int argc, char **argv) {
 
     yyparse();
     yylex_destroy();
-    if (has_parse_error) {
-        parse_error(NULL, NULL, "too many errors; quitting");
-        exit(EXIT_FAILURE);
-    }
-
     for (int i = 0; i < packet_list_sz; i++) {
         char *s = packet_to_str(i) ;
         printf("%s\n", s);
         free(s);
+    }
+
+    if (has_parse_error) {
+        parse_error(NULL, NULL, "too many errors; quitting");
+        exit(EXIT_FAILURE);
     }
 
     if (strcmp(basename(argv[0]), "genpacket") == 0) generate_src("./", "test");
