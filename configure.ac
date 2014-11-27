@@ -25,6 +25,11 @@ AC_PROG_YACC
 AM_PROG_LEX
 LT_INIT
 
+dnl the following is a program for generating a program that
+dnl generates a source and substitutes some values
+AC_PATH_PROGS(GENGEN, gengen)
+AM_CONDITIONAL(NO_GENGEN, test -z "$ac_cv_path_GENGEN" )
+
 AM_CONDITIONAL(NO_CROSSCOMPILING, test "$cross_compiling" = no )
 AC_DEFINE([_GNU_SOURCE], 1, [Use GNU extensions])
 
@@ -60,6 +65,7 @@ AC_CHECK_FUNCS([memmove memset mkdir sqrt strtol])
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile 
+                 src/skels/Makefile 
                  genpacket.ggo])
 AC_OUTPUT
 
