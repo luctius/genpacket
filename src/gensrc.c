@@ -15,7 +15,7 @@
 static char *type_to_c_type_str(struct type t) {
     static char bfr[20];
     int sz = 0;
-    while (sz < t.ft_sz) sz += 8;
+    while (sz < t.ft_sz) sz += CHAR_BIT;
 
     switch (t.ft) {
     default:
@@ -26,7 +26,7 @@ static char *type_to_c_type_str(struct type t) {
         sprintf(bfr, "uint%d_t", sz);
         break;
     case FT_FLOAT:
-        if (sz == 8) sprintf(bfr, "double");
+        if (sz == (sizeof(double) * CHAR_BIT) ) sprintf(bfr, "double");
         else sprintf(bfr, "float");
         break;
     }

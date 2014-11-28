@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
+#include <limits.h>
 
 #include <stdarg.h>
 
@@ -257,7 +258,7 @@ void check_curr_packet(void) {
                             if (data_mbrs_wo_sz > 1 || p->size == 0) {
                                 parse_error(p, o, "fixed size packet, but no size given for packet or data member");
                             }
-                            else o->data_size_i = ( (p->size * 8) - total_sz_bits)/o->type.ft_sz;
+                            else o->data_size_i = ( ( (p->size * CHAR_BIT) - total_sz_bits) / o->type.ft_sz);
                         }
                     }
                 }
@@ -331,15 +332,15 @@ void check_curr_packet(void) {
         }
         else total_sz_bits += o->type.ft_sz;
     }
-    if (total_sz_bits % 8 != 0) {
+    if (total_sz_bits % CHAR_BIT != 0) {
         parse_error(p, NULL, "packet not byte aligned");
     }
-    if ( (p->size != 0) && (p->size < (total_sz_bits/8) ) ) {
+    if ( (p->size != 0) && (p->size < (total_sz_bits / CHAR_BIT) ) ) {
         parse_error(p, NULL, "packet size is smaller than all members combined");
     }
-    else if (p->ptype == PT_FIXED && (total_sz_bits) != (p->size * 8) ) {
+    else if (p->ptype == PT_FIXED && (total_sz_bits) != (p->size * CHAR_BIT) ) {
         parse_error(p, NULL, "packet size given cannot be correct");
-        parse_debug(p, NULL, "packet size given (in bits %d), packet size in bits (%d)", p->size*8, total_sz_bits);
+        parse_debug(p, NULL, "packet size given (in bits %d), packet size in bits (%d)", p->size * CHAR_BIT, total_sz_bits);
     }
 }
 
@@ -492,7 +493,7 @@ char *type_to_str(struct type t) {
         else sprintf(bfr, "uint%d", t.ft_sz);
         break;
     case FT_FLOAT:
-        if (t.ft_sz == 8) sprintf(bfr, "double");
+        if (t.ft_sz == (sizeof(double) * CHAR_BIT) ) sprintf(bfr, "double");
         else sprintf(bfr, "float");
         break;
     default: sprintf(bfr, "default"); break;
