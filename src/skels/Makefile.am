@@ -38,6 +38,7 @@ BUILT_SOURCES = header.c header.h \
 				structs.c structs.h \
 				send_function.c send_function.h \
                 receive_callback.c receive_callback.h \
+                source_skeleton.c source_skeleton.h \
 				var_declaration.c var_declaration.h
 
 EXTRA_DIST = header.h_skel \
@@ -45,6 +46,7 @@ EXTRA_DIST = header.h_skel \
             send_function.h_skel \
             receive_callback.h_skel \
 			var_declaration.h_skel \
+			source_skeleton.h_skel \
 			$(BUILT_SOURCES)
 
 built-clean:
