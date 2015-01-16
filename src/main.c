@@ -34,7 +34,7 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
-    if (strcmp(basename(argv[0]), "genpacket") == 0) generate_src("./", "genpacket");
+    if (strcmp(basename(argv[0]), "genpacket") == 0) generate_packet_files("./", "genpacket");
 
 
     /* cleanup */
