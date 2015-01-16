@@ -136,4 +136,6 @@ char *type_to_str(struct type t);
 
 void parse_error(struct packet *packet, struct poption *option, const char *fmt, ...);
 
+bool packet_has_option_type(int pkt_idx, char * option_name);
+
 #endif /* PACKET_H */
