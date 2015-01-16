@@ -8,6 +8,10 @@
 
 #include "packet.h"
 
+#if (CHAR_BIT != 8) 
+#error You are weird, go away!
+#endif 
+
 #define TS_BFR_LEN 256
 
 int pipes = 0;
