@@ -1,0 +1,1 @@
+int @prefix@_@packet_name@_send(struct @packet_name@ *packet);

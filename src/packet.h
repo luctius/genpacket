@@ -93,6 +93,8 @@ struct poption {
     char *data_size_str;
     int data_size_i;
 
+    char *crc_method;
+
     struct value frame_val;
 };
 
@@ -112,6 +114,7 @@ struct packet {
     struct poption *option_list;
 };
 
+extern int pipes;
 extern int packet_list_sz;
 extern struct packet *packet_list;
 
@@ -135,6 +138,7 @@ char *option_to_str(int pkt_idx, int idx);
 char *type_to_str(struct type t);
 
 void parse_error(struct packet *packet, struct poption *option, const char *fmt, ...);
+void parse_debug(struct packet *packet, struct poption *option, const char *fmt, ...);
 
 bool packet_has_option_type(int pkt_idx, char * option_name);
 

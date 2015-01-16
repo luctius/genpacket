@@ -1,0 +1,40 @@
+#ifndef @ifndefname@_H
+#define @ifndefname@_H
+
+/* If we use autoconf.  */
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include <stdint.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+#define @ifndefname@_NRO_PIPES (@nro_pipes:int@)
+
+enum @prefix@_direction {
+    @ifndefname@_R=1,
+    @ifndefname@_W=2,
+};
+
+@packets:method{iteration=true}@
+
+@receive_functions:method{iteration=true}@
+
+@send_functions:method{iteration=true}@
+
+struct @prefix@_params {
+    int pipe_fds[@ifndefname@_NRO_PIPES];
+    enum @prefix@_direction pipe_dir[@ifndefname@_NRO_PIPES];
+    void *private_ctx;
+};
+
+int @prefix@_init(struct @prefix@_params *params);
+int @prefix@_process();
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+#endif /* @ifndefname@_H */

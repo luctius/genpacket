@@ -1,6 +1,7 @@
 %{
 
 #include <stdlib.h>
+#include <limits.h>
 
 #include "packet.h"
 #include "genpacket.tab.h"
@@ -49,8 +50,8 @@ int comment_caller = 0;
 <INITIAL,PP>","  { return ','; }
 
 "bit"             { yylval.t.ft=FT_UNSIGNED; yylval.t.ft_sz=1; return TYPE; }
-"float"           { yylval.t.ft=FT_FLOAT;    yylval.t.ft_sz=4; return TYPE; }
-"double"          { yylval.t.ft=FT_FLOAT;    yylval.t.ft_sz=8; return TYPE; }
+"float"           { yylval.t.ft=FT_FLOAT;    yylval.t.ft_sz=(sizeof(float) * CHAR_BIT); return TYPE; }
+"double"          { yylval.t.ft=FT_FLOAT;    yylval.t.ft_sz=(sizeof(double) * CHAR_BIT); return TYPE; }
 "int"[1-9][0-9]?  { yylval.t.ft=FT_SIGNED;   yylval.t.ft_sz=strtol(&yytext[3], NULL, 10); return TYPE; }
 "uint"[1-9][0-9]? { yylval.t.ft=FT_UNSIGNED; yylval.t.ft_sz=strtol(&yytext[4], NULL, 10); return TYPE; }
 

@@ -8,7 +8,7 @@ void cb_new_packet(enum packet_type ptype, char *name) {
 
 void cb_pa_size(struct value v){
     struct packet *p = get_curr_packet();
-    if (p->size != -1) parse_error(p, NULL, "\"size\" already declared");
+    if (p->size != 0) parse_error(p, NULL, "\"size\" already declared");
     p->size = v_get_i(v);
 }
 
@@ -35,6 +35,9 @@ void cb_size_option() {
 
 void cb_crc_option(char *method) {
     add_option(O_CRC);
+
+    struct poption *o = get_curr_option();
+    o->crc_method = method;
 }
 
 void cb_data_option() {

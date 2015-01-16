@@ -1,0 +1,20 @@
+#ifndef @ifndefname@_CQC_H
+#define @ifndefname@_CQC_H
+
+struct cqc {
+    int head;
+    int tail;
+    int size;
+};
+
+#define cqc_init(cqc, size) do { (cqc).size = size; (cqc).tail = 0; (cqc).head = 0; } while (0)
+#define cqc_cnt(cqc) ( (cqc).head - (cqc).tail) & ( (cqc).size -1)
+#define cqc_space(cqc) ( ( (cqc).tail) - (cqc).head+1) & ( (cqc).size -1)
+#define cqc_put(cqc) ( (cqc).head++ ) & ( (cqc).size -1)
+#define cqc_get(cqc) ( (cqc).tail++ ) & ( (cqc).size -1)
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
+#endif /* @ifndefname@_CQC_H */
+
