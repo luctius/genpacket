@@ -38,9 +38,9 @@ extern enum debug_levels global_debug_lvl;
 void gp_printf(enum debug_levels dbg_lvl, const char *module, int line, const char* format, ... );
 void gp_printf_basic(enum debug_levels dbg_lvl, const char* module, int line, const char* format,  va_list args);
 
-#define gp_err(fmt, ...)   {gp_printf(GP_DEBUG_LEVEL_ERROR,         __FILE__, __LINE__, GP_COLOR_RED     fmt GP_COLOR_RESET,  ##__VA_ARGS__);}
-#define gp_warn(fmt, ...)  {gp_printf(GP_DEBUG_LEVEL_WARNING,       __FILE__, __LINE__, GP_COLOR_YELLOW  fmt GP_COLOR_RESET,  ##__VA_ARGS__);}
-#define gp_info(fmt, ...)  {gp_printf(GP_DEBUG_LEVEL_INFORMATIONAL, __FILE__, __LINE__, GP_COLOR_BLUE    fmt GP_COLOR_RESET,  ##__VA_ARGS__);}
-#define gp_debug(fmt, ...) {gp_printf(GP_DEBUG_LEVEL_DEBUG,         __FILE__, __LINE__, GP_COLOR_MAGENTA fmt GP_COLOR_RESET,  ##__VA_ARGS__);}
+#define gp_err(fmt, ...)   do {gp_printf(GP_DEBUG_LEVEL_ERROR,         __FILE__, __LINE__, GP_COLOR_RED     fmt GP_COLOR_RESET,  ##__VA_ARGS__);} while (0);
+#define gp_warn(fmt, ...)  do {gp_printf(GP_DEBUG_LEVEL_WARNING,       __FILE__, __LINE__, GP_COLOR_YELLOW  fmt GP_COLOR_RESET,  ##__VA_ARGS__);} while (0);
+#define gp_info(fmt, ...)  do {gp_printf(GP_DEBUG_LEVEL_INFORMATIONAL, __FILE__, __LINE__, GP_COLOR_BLUE    fmt GP_COLOR_RESET,  ##__VA_ARGS__);} while (0);
+#define gp_debug(fmt, ...) do {gp_printf(GP_DEBUG_LEVEL_DEBUG,         __FILE__, __LINE__, GP_COLOR_MAGENTA fmt GP_COLOR_RESET,  ##__VA_ARGS__);} while (0);
 
 #endif /*DEBUG_PRINT_H_*/
