@@ -534,11 +534,21 @@ bool option_name_is_unique(struct packet *p, struct poption *o) {
 bool packet_has_option_type(int pkt_idx, enum po_type option_type) {
 	struct packet *p = &packet_list[pkt_idx];
     for (int i = 0; i < p->option_list_sz; i++) {
-	    struct poption *o = &p->option_list[pkt_idx];
+	    struct poption *o = &p->option_list[i];
 		if (o->otype == option_type) {
 			return true;
 		} else { 
 			return false;
 		}
     }
+}
+
+int next_otype(struct packet * p, enum po_type otype, int idx) {
+    for (int i = idx; i < p->option_list_sz - idx; i++) {
+	    struct poption *o = &p->option_list[i];
+		if (o->otype == otype) {
+			return i;
+		}
+    }
+    return -1;
 }
