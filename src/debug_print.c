@@ -22,27 +22,27 @@ void gp_printf_basic(enum debug_levels dbg_lvl, const char *module, int line, co
 
     if (dbg_lvl >= GP_DEBUG_LEVEL_DEBUG) {
         fd = stdout;
-        if (isatty(fileno(stdout))) pre_format = GP_COLOR_RESET "[%s" GP_COLOR_RESET ":Debug] ";
-        else pre_format = "[%s:%d]" "[Debug] ";
+        if (isatty(fileno(stdout))) pre_format = GP_COLOR_RESET "[%s:%d][" GP_COLOR_MAGENTA "Debug"  GP_COLOR_RESET "] ";
+        else pre_format = "[%s:%d][Debug] ";
     }
     else if (dbg_lvl >= GP_DEBUG_LEVEL_INFORMATIONAL) {
         fd = stdout;
-        if (isatty(fileno(stdout))) pre_format = GP_COLOR_RESET "[%s" GP_COLOR_RESET "] ";
+        if (isatty(fileno(stdout))) pre_format = GP_COLOR_RESET "[%s:%d][" GP_COLOR_BLUE "Info"  GP_COLOR_RESET "] ";
         else pre_format = "[%s:%d] ";
     }
     else if (dbg_lvl >= GP_DEBUG_LEVEL_WARNING) {
         fd = stderr;
-        if (isatty(fileno(stdout))) pre_format = GP_COLOR_CYAN "[%s" GP_COLOR_CYAN ":Warning] "; /* should be cyan*/
+        if (isatty(fileno(stdout))) pre_format = GP_COLOR_RESET "[%s:%d][" GP_COLOR_YELLOW "Warn"  GP_COLOR_RESET "] ";
         else pre_format = "[%s:%d]" "[Warning] "; /* should be cyan*/
     }
     else if (dbg_lvl >= GP_DEBUG_LEVEL_ERROR) {
         fd = stderr;
-        if (isatty(fileno(stdout))) pre_format = GP_COLOR_BOLD_RED "[%s" GP_COLOR_BOLD_RED ":Error] "; /* should be red*/
+        if (isatty(fileno(stdout))) pre_format = GP_COLOR_RESET "[%s:%d][" GP_COLOR_RED "Error"  GP_COLOR_RESET "] ";
         else pre_format = "[%s:%d" "[Error] "; /* should be red*/
     }
     else {
         fd = stdout;
-        if (isatty(fileno(stdout))) pre_format = GP_COLOR_RED "[%s" GP_COLOR_RED ":Unknown] ";
+        if (isatty(fileno(stdout))) pre_format = GP_COLOR_RESET "[%s:%d][" GP_COLOR_BOLD "???"  GP_COLOR_RESET "] ";
         else pre_format = "[%s:%d" "[Unknown] ";
     }
 

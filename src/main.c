@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
     
     FILE *p_fp=fopen(args_info.packetdesc_arg,"r");
     if(!p_fp) {
-        printf("couldn't open packet description file for reading\n");
+        gp_err("Couldn't open packet description file %s for reading\n",args_info.packetdesc_arg);
         exit(0);
     }
     yyin = p_fp; 
@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
         printf("%s\n", s);
         free(s);
     }
-    free(p_fp);
+    fclose(p_fp);
     if (has_parse_error) {
         parse_error(NULL, NULL, "too many errors; quitting");
         exit(EXIT_FAILURE);
@@ -54,13 +54,17 @@ int main(int argc, char **argv) {
     
     if (strcmp(basename(argv[0]), "packit") == 0) {
         gp_debug("Using packit command");
-        FILE *i_fp=fopen(args_info.input_arg,"r");
+        FILE *i_fp;
+        if (args_info.input_arg[0] == '-')
+            i_fp=stdin;
+        else
+            i_fp=fopen(args_info.input_arg,"r");
         if(!i_fp) {
-            printf("couldn't open packet description file for reading\n");
+            gp_err("couldn't open input file %s for reading\n",args_info.input_arg);
             exit(0);
         }
         decode_using_packet(0,i_fp);
-        free(i_fp);
+        fclose(i_fp);
     }
 
     /* cleanup */
