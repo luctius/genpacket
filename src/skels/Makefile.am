@@ -28,7 +28,7 @@ GENERATE = $(GENGEN)
 	$(GENERATE) -i $< -F $*.h -f $$name --output-format=c --separate-files --output-dir=$(srcdir) --force
 endif
 
-INCLUDES = -I@top_srcdir@/src
+AM_CPPFLAGS = -I@top_srcdir@/src
 
 noinst_LTLIBRARIES = libgp.la
 

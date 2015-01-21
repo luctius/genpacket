@@ -534,9 +534,9 @@ bool option_name_is_unique(struct packet *p, struct poption *o) {
 bool packet_has_option_type(int pkt_idx, enum po_type option_type) {
 	struct packet *p = &packet_list[pkt_idx];
     for (int i = 0; i < p->option_list_sz; i++) {
-	    struct poption *o = &p->option_list[idx];
+	    struct poption *o = &p->option_list[pkt_idx];
 		if (o->otype == option_type) {
-			return true 
+			return true;
 		} else { 
 			return false;
 		}

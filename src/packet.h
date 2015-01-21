@@ -140,6 +140,6 @@ char *type_to_str(struct type t);
 void parse_error(struct packet *packet, struct poption *option, const char *fmt, ...);
 void parse_debug(struct packet *packet, struct poption *option, const char *fmt, ...);
 
-bool packet_has_option_type(int pkt_idx, char * option_name);
+bool packet_has_option_type(int pkt_idx, enum po_type option_type);
 
 #endif /* PACKET_H */

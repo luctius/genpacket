@@ -1,14 +1,11 @@
-package "level_detector"
-version "0.1.0"
-purpose "Detection of audio levels."
+package "genpacket"
+version "0.0.1"
+purpose "Generate encoder/decoder for user defined packet formats."
  
 args "<command line options>"
  
 option "debug" d "show debug output" flag off
 
-option "lpf_sz" - "low-pass filter size in samples" default="60" int optional
+option "input" i "Input file use - to get data from STDIN" default="-" string
 
-option "threshold" - "threshold in db" default="60" float optional
-option "length"    - "length in seconds the input should be above the threshold in order to take the action" default="10" int optional
-option "file"      - "File to open instead of stdin." default="-" string optional
-option "action"    - "action to run instead of quitting" default="false" string optional
+option "packetdesc" p "Packet description file" string
