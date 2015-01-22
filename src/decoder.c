@@ -2,6 +2,7 @@
 #include "packet.h"
 #include "debug_print.h"
 #include <inttypes.h>
+#include "crc.h"
 
 void decode_using_packet(int pkt_idx, FILE * input_stream) {
 	if (input_stream == NULL) {
@@ -107,8 +108,24 @@ void decode_fixed_packet(int pkt_idx, FILE * input_stream) {
                         printf(",\n\t\"%s\": ",o->name);
                         buffer_to_type_str(packet_buffer, byte_offset, str_buf, &o->type, o->data_width);
                         printf("%s",str_buf);
+                        printf("\",\n\tcrc_valid\": ");
+                        if (strcmp(o->crc_method,"crc_8")==0) {
+                            //gp_debug("Calc crc from: %d to %d", frame_at_idx, byte_offset);
+                            uint8_t crc = crc8(0, &packet_buffer[frame_at_idx], byte_offset - frame_at_idx);
+                            if (crc == packet_buffer[byte_offset]) {
+                                printf("true");
+                            } else {
+                                printf("false");
+                            }
+                            //gp_debug("Expected: %x Received: %x", crc, packet_buffer[byte_offset]);
+                        } else if (strcmp(o->crc_method,"crc_32")==0) {
+                            gp_debug("CRC 32 method");
+                        } else if (strcmp(o->crc_method,"crc_citt")==0) {
+                            gp_debug("CITT CRC method");
+                        }
                     break;
                     default:
+                        byte_offset += o->data_width/8;
                     break;
         		}
             }

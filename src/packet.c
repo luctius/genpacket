@@ -455,6 +455,7 @@ char *option_to_str(int pkt_idx, int idx) {
     ctr += sprintf(&sp[ctr], "%s ", o->name);
     ctr += sprintf(&sp[ctr], "[type: %s] ", type_to_str(o->type) );
     ctr += sprintf(&sp[ctr], "[data_width: %d] ", o->data_width);
+    if (o->crc_method != NULL)   ctr += sprintf(&sp[ctr], "[crc_method: %s] ", o->crc_method);
 
     if (o->default_set) ctr += sprintf(&sp[ctr], "[default: %s] ", v_to_str(o->default_val) );
 
