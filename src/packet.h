@@ -24,7 +24,7 @@ struct type {
 
 inline bool type_is_valid(struct type t) {
     if (t.ft_sz == 0) return false;
-    if (t.ft != FT_SIGNED && t.ft != FT_UNSIGNED && t.ft != FT_FLOAT) return false;
+    if (t.ft != FT_CHAR && t.ft != FT_SIGNED && t.ft != FT_UNSIGNED && t.ft != FT_FLOAT) return false;
     if (t.ft_sz > 64) return false;
     return true;
 }

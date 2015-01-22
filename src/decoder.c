@@ -99,46 +99,31 @@ void decode_fixed_packet(int pkt_idx, FILE * input_stream) {
                     struct poption *data = &p->option_list[data_idx];
                     
                     char data_str[1024];
-                    printf(",\n\t%s: [",data->name);
+                    
+                    printf(",\n\t%s: ",data->name);
+                    if (data->type.ft == FT_CHAR)
+                        printf(" \"");
+                    else
+                        printf(" [");
+                    
                     for(int i=0;i<data->data_size_i;i++) {                    
                         buffer_to_type_str(packet_buffer, byte_offset, data_str, &data->type, data->data_width);
                         printf("%s",data_str);
-                        if (i != data->data_size_i - 1)
+                        if (i != data->data_size_i - 1 && data->type.ft != FT_CHAR)
                             printf(",");
-                        else
+                        else if (data->type.ft != FT_CHAR)
                             printf("]");
+                        else if (i == data->data_size_i - 1 && data->type.ft == FT_CHAR)
+                            printf("\"");
                         byte_offset += data->data_width/8;
                     }
-                    
-                    //gp_debug("Attr datawidth: %d\nAttr type: %d\n", attr->data_width, attr->type.ft);
-                    //, v_to_str(attr->frame_val));
-                    //byte_offset += data->data_width/8;
                 }
                 //gp_debug("ttr idx: %d\n", attr_idx);
                 
-                
             } while(data_idx >= 0);
-            
-            
-            printf("\n}\n", p->name);
+            printf("\n}\n");
         }
         
-    }
-	//fread(packet_buffer, p->size, 1,input_stream);
-	
-	
-	// Check if there are any magic packet numbers
-    if(0) { // No magic numbers read simple packet
-		packet_buffer = malloc(p->size);
-	
-		fread(packet_buffer, p->size,1 ,input_stream);
-		
-		for(size_t i = 0; i < p->size; ++i) {
-            gp_debug("%d: %x",i,packet_buffer[i]);
-		    /* code */
-		}
-	
-		
     }
     free(packet_buffer);
 }
@@ -149,26 +134,49 @@ void buffer_to_type_str(uint8_t * buf, int buf_idx,char * type_str, struct type 
             if (dw == 8) {
                 sprintf(type_str,"%"PRIu8, buf[buf_idx]);
             } else if (dw == 16) {
-                sprintf(type_str,"%"PRIu16, (uint16_t)*((uint16_t*)&buf[buf_idx]));
+                uint16_t tmp;
+                memcpy(&tmp, &buf[buf_idx],2);
+                sprintf(type_str,"%"PRIu16, tmp);
             } else if (dw == 32) {
-                sprintf(type_str,"%"PRIu32, (uint32_t)*((uint32_t*)&buf[buf_idx]));
+                uint32_t tmp;
+                memcpy(&tmp, &buf[buf_idx],4);
+                sprintf(type_str,"%"PRIu32, tmp);
             } else if (dw == 64) {
-                sprintf(type_str,"%"PRIu64, (uint64_t)*((uint64_t*)&buf[buf_idx]));
+                uint64_t tmp;
+                memcpy(&tmp, &buf[buf_idx],8);
+                sprintf(type_str,"%"PRIu64, tmp);
             }
         break;
         case FT_SIGNED:
             if (dw == 8) {
                 sprintf(type_str,"%"PRId8, buf[buf_idx]);
             } else if (dw == 16) {
-                sprintf(type_str,"%"PRId16, (int16_t)*((int16_t*)&buf[buf_idx]));
+                int16_t tmp;
+                memcpy(&tmp, &buf[buf_idx],2);
+                sprintf(type_str,"%"PRId16, tmp);
             } else if (dw == 32) {
-                sprintf(type_str,"%"PRId32, (int32_t)*((int32_t*)&buf[buf_idx]));
+                int32_t tmp;
+                memcpy(&tmp, &buf[buf_idx],4);
+                sprintf(type_str,"%"PRId32, tmp);
             } else if (dw == 64) {
-                sprintf(type_str,"%"PRId64, (int64_t)*((int64_t*)&buf[buf_idx]));
+                int64_t tmp;
+                memcpy(&tmp, &buf[buf_idx],8);
+                sprintf(type_str,"%"PRId64, tmp);
             }
         break;
         case FT_FLOAT:
-        
+            if (dw == 32) {
+                float tmp;
+                memcpy(&tmp, &buf[buf_idx],4);
+                sprintf(type_str,"%f", tmp);
+            } else if (dw == 64) {
+                double tmp;
+                memcpy(&tmp, &buf[buf_idx],8);
+                sprintf(type_str,"%lf", tmp);
+            }
+        break;
+        case FT_CHAR:
+            sprintf(type_str,"%c", buf[buf_idx]);
         break;
     }
 }
@@ -176,8 +184,8 @@ void buffer_to_type_str(uint8_t * buf, int buf_idx,char * type_str, struct type 
 int find_frame_id(struct packet * p, int frame_byte, int frame_byte_sz,int timeout) {
     while(timeout--) {
         int num_checked = 0;
-        for(size_t i = 0; i < p->size; ++i) {
-            for(size_t j = 0; j < frame_byte_sz; ++j) {
+        for(int i = 0; i < p->size; ++i) {
+            for(int j = 0; j < frame_byte_sz; ++j) {
                 if (packet_buffer[i] == ((uint8_t*)&frame_byte)[j]) {
                     num_checked++;
                     if (num_checked == frame_byte_sz) {

@@ -25,6 +25,9 @@ char *v_to_str(struct value v) {
         case FT_FLOAT:
             sprintf(bfr, "%f", v.d);
             break;
+        case FT_CHAR:
+            sprintf(bfr, "%c", v.c);
+            break;
         default: sprintf(bfr, "default"); break;
     }
     return bfr;
@@ -57,6 +60,13 @@ inline struct value v_convert(struct value v, enum field_type target_ft) {
                 case FT_SIGNED: vn.d = v.i; break;
                 case FT_UNSIGNED: vn.d = v.u; break;
                 case FT_FLOAT: vn.d = v.d; break;
+            } break;
+        case FT_CHAR:
+            switch(v.ft) {
+                default:
+                case FT_SIGNED: vn.c = v.i; break;
+                case FT_UNSIGNED: vn.c = v.u; break;
+                case FT_FLOAT: vn.c = v.d; break;
             } break;
     }
     return vn;

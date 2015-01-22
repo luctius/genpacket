@@ -54,6 +54,7 @@ int comment_caller = 0;
 "double"          { yylval.t.ft=FT_FLOAT;    yylval.t.ft_sz=(sizeof(double) * CHAR_BIT); return TYPE; }
 "int"[1-9][0-9]?  { yylval.t.ft=FT_SIGNED;   yylval.t.ft_sz=strtol(&yytext[3], NULL, 10); return TYPE; }
 "uint"[1-9][0-9]? { yylval.t.ft=FT_UNSIGNED; yylval.t.ft_sz=strtol(&yytext[4], NULL, 10); return TYPE; }
+"char"            { yylval.t.ft=FT_CHAR;     yylval.t.ft_sz=(sizeof(char) * CHAR_BIT); return TYPE; }
 
 <INITIAL,PP>\-[0-9]+            { yylval.v = v_set_i(strtol(yytext, NULL, 10) ); return INTEGER; }
 <INITIAL,PP>\+?[0-9]+           { yylval.v = v_set_u(strtol(yytext, NULL, 10) ); return INTEGER; }

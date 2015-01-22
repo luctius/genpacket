@@ -502,6 +502,10 @@ char *type_to_str(struct type t) {
         if (t.ft_sz == (sizeof(double) * CHAR_BIT) ) sprintf(bfr, "double");
         else sprintf(bfr, "float");
         break;
+    case FT_CHAR:
+        if (t.ft_sz == (sizeof(char) * CHAR_BIT) ) sprintf(bfr, "string");
+        else sprintf(bfr, "char");
+        break;
     default: sprintf(bfr, "default"); break;
     }
     return bfr;
