@@ -8,6 +8,8 @@
 
 #include "packet.h"
 
+#include "debug_print.h"
+
 #if (CHAR_BIT != 8) 
 #error You are weird, go away!
 #endif 
@@ -544,8 +546,10 @@ bool packet_has_option_type(int pkt_idx, enum po_type option_type) {
 }
 
 int next_otype(struct packet * p, enum po_type otype, int idx) {
-    for (int i = idx; i < p->option_list_sz - idx; i++) {
+    idx++;
+    for (int i = idx; i < p->option_list_sz; i++) {
 	    struct poption *o = &p->option_list[i];
+        //gp_debug("i: %d o otype: %d otype: %d",i, o->otype,otype);
 		if (o->otype == otype) {
 			return i;
 		}
