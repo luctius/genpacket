@@ -67,61 +67,53 @@ void decode_fixed_packet(int pkt_idx, FILE * input_stream) {
                 gp_debug("%d: %x",i,packet_buffer[i]);
         	}
             
-            printf("{\n\tname: \"%s\"", p->name);
-            // Attribute stuff
-            int attr_idx = -1;
-            do {
-                attr_idx = next_otype(p, O_ATTRIBUTE,attr_idx);
-                if (attr_idx >= 0) {
-                    struct poption *attr = &p->option_list[attr_idx];
-                    
-                    char type_str[100];
-                    
-                    buffer_to_type_str(packet_buffer, byte_offset, type_str, &attr->type, attr->data_width);
-                    
-                    printf(",\n\t%s: %s",attr->name, type_str);
-                    
-                    //gp_debug("Attr datawidth: %d\nAttr type: %d\n", attr->data_width, attr->type.ft);
-                    //, v_to_str(attr->frame_val));
-                    byte_offset += attr->data_width/8;
-                }
-                //gp_debug("ttr idx: %d\n", attr_idx);
-                
-            } while(attr_idx >= 0);
+            printf("{\n\t\"name\": \"%s\"", p->name);
             
-            
-            // Data stuff
-            int data_idx = -1;
-            do {
-                data_idx = next_otype(p, O_DATA,data_idx);
-                //gp_debug("Data idx: %d\n", attr_idx);
-                if (data_idx >= 0) {
-                    struct poption *data = &p->option_list[data_idx];
+            char * str_buf = (char*)malloc(1024);
+            // Handle attributes and data
+            for (int idx = frame_opt_idx+1; idx < p->option_list_sz; idx++) {
+        	    struct poption *o = &p->option_list[idx];
+                memset(str_buf,0,sizeof(str_buf)*sizeof(char));
+                //gp_debug("i: %d o otype: %d otype: %d",i, o->otype,otype);
+        		switch (o->otype) {
+        			case O_ATTRIBUTE:
+                        buffer_to_type_str(packet_buffer, byte_offset, str_buf, &o->type, o->data_width);
                     
-                    char data_str[1024];
-                    
-                    printf(",\n\t%s: ",data->name);
-                    if (data->type.ft == FT_CHAR)
-                        printf(" \"");
-                    else
-                        printf(" [");
-                    
-                    for(int i=0;i<data->data_size_i;i++) {                    
-                        buffer_to_type_str(packet_buffer, byte_offset, data_str, &data->type, data->data_width);
-                        printf("%s",data_str);
-                        if (i != data->data_size_i - 1 && data->type.ft != FT_CHAR)
-                            printf(",");
-                        else if (data->type.ft != FT_CHAR)
-                            printf("]");
-                        else if (i == data->data_size_i - 1 && data->type.ft == FT_CHAR)
+                        printf(",\n\t\"%s\": %s",o->name, str_buf);
+                        // Update byte position
+                        byte_offset += o->data_width/8;
+                    break;
+                    case O_DATA:
+                        printf(",\n\t\"%s\": ",o->name);
+                        if (o->type.ft == FT_CHAR)
                             printf("\"");
-                        byte_offset += data->data_width/8;
-                    }
-                }
-                //gp_debug("ttr idx: %d\n", attr_idx);
-                
-            } while(data_idx >= 0);
+                        else
+                            printf("[");
+                    
+                        for(int i=0;i<o->data_size_i;i++) {                    
+                            buffer_to_type_str(packet_buffer, byte_offset, str_buf, &o->type, o->data_width);
+                            printf("%s",str_buf);
+                            if (i != o->data_size_i - 1 && o->type.ft != FT_CHAR)
+                                printf(",");
+                            else if (o->type.ft != FT_CHAR)
+                                printf("]");
+                            else if (i == o->data_size_i - 1 && o->type.ft == FT_CHAR)
+                                printf("\"");
+                            // Update byte position
+                            byte_offset += o->data_width/8;
+                        }
+                    break;
+                    case O_CRC:
+                        printf(",\n\t\"%s\": ",o->name);
+                        buffer_to_type_str(packet_buffer, byte_offset, str_buf, &o->type, o->data_width);
+                        printf("%s",str_buf);
+                    break;
+                    default:
+                    break;
+        		}
+            }
             printf("\n}\n");
+            free(str_buf);
         }
         
     }

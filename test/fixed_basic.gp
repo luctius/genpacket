@@ -11,6 +11,7 @@ fixed packet "p2_fixed" size=29 {
     data type=char data_size=3
     data type=char data_size=3
     data type=char data_size=1
+    attribute
     data
     crc crc_8
 }
