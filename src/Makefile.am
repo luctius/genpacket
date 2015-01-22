@@ -23,7 +23,6 @@ genpacket_CFLAGS = $(lua_CFLAGS) -ggdb -O0 -Wall -Wextra -Wformat=2 -Wswitch-def
 genpacket_LDADD = -lm skels/libgp.la
 
 cmdline.c cmdline.h: ../genpacket.ggo
-#	sed -i "s:usr_prefix:${prefix}:g" $<
 	gengetopt < $<
 
 

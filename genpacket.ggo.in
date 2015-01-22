@@ -9,3 +9,5 @@ option "debug" d "show debug output" flag off
 option "input" i "Input file use - to get data from STDIN" default="-" string
 
 option "packetdesc" p "Packet description file" string
+
+option "packetindex" n "Packet description to use if multiple are defined in the packet description file" default="0" int optional

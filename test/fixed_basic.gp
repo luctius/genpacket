@@ -1,6 +1,6 @@
 // test with
 // echo -e "sddsdsblaaat\x10\xa\xb\xb\xc\xc\xc\xc\x32\x32\x32\x32\x16\x16\x0\x0\x80\x3fheyjowa\x1\x2\x3\xc" | src/packit -i - -p test/fixed_basic.gp
-fixed packet "p2_fixed" size=28 {
+fixed packet "p2_fixed" size=29 {
     frame 0x10
     attribute
     attribute type=uint16

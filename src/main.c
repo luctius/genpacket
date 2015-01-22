@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
             gp_err("couldn't open input file %s for reading\n",args_info.input_arg);
             exit(0);
         }
-        decode_using_packet(0,i_fp);
+        decode_using_packet(args_info.packetindex_arg,i_fp);
         fclose(i_fp);
     }
 
