@@ -96,6 +96,8 @@ struct poption {
     char *crc_method;
 
     struct value frame_val;
+    
+    uint32_t data_byte_offset;
 };
 
 enum packet_type {
@@ -109,7 +111,8 @@ struct packet {
     enum packet_type ptype;
     int size;
     int pipe;
-
+    uint8_t * data;
+    bool crc_valid;
     int option_list_sz;
     struct poption *option_list;
 };
