@@ -19,17 +19,17 @@ void decode_using_packet(int pkt_idx, FILE * input_stream) {
 			decode_fixed_packet(pkt_idx, input_stream);
             break;
         case PT_DYNAMIC:
-            decode_dynamic_packet(pkt_idx, input_stream);
+            //decode_dynamic_packet(pkt_idx, input_stream);
             break;
         case PT_CALCULATED:
-            //decode_calculated_packet(p, input_stream, pdata);
+            decode_calculated_packet(pkt_idx, input_stream);
             break;
     }
     
     print_packet_as_json(pkt_idx);
 }
 
-void decode_dynamic_packet(int pkt_idx, FILE * input_stream) {
+void decode_calculated_packet(int pkt_idx, FILE * input_stream) {
     struct packet *p = &packet_list[pkt_idx];
 	gp_debug("Dynamic packet");
 	

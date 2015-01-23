@@ -30,7 +30,7 @@ fixed packet "p1_fixed" pipe=0 {
 
 // test with
 // echo -e "sddsdsblaaat\x10\xa\x3\x4\xa\x1\x2\x3\x4\xa\x1\x2\x3\xb7" | src/packit -i - -p test/fixed_basic.gp -n2
-dynamic packet "p3_dynamic" {
+calculated packet "p3_calculated" {
     frame 0x10
     attribute
     size "sz2"
