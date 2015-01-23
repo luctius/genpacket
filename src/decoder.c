@@ -36,7 +36,6 @@ void decode_calculated_packet(int pkt_idx, FILE * input_stream) {
     //data_buffer = malloc(p->size);
     
     uint64_t byte_offset = 0;
-    uint32_t packet_size = 0;
     
     if (packet_has_option_type(pkt_idx,O_FRAME)) {
         gp_debug("Framed packet type");
@@ -70,11 +69,9 @@ void decode_calculated_packet(int pkt_idx, FILE * input_stream) {
         gp_debug("Read %d bytes", p->size);
         data_buffer = malloc(p->size);
         
-        fread(data_buffer, p->size,1 ,input_stream);
-        
         int frame_byte_sz = frame_id->data_width/8;
         int timeout = 10;
-        int frame_at_idx = find_frame_id(p, frame_byte, frame_byte_sz,timeout,input_stream);
+        int frame_at_idx = find_frame_in_data(p, frame_byte, frame_byte_sz,timeout,input_stream);
         
         if (frame_at_idx >= 0) {
             gp_debug("Found frame at index: %d", frame_at_idx);
@@ -149,9 +146,9 @@ void decode_calculated_packet(int pkt_idx, FILE * input_stream) {
 void decode_fixed_packet(int pkt_idx, FILE * input_stream) {
     struct packet *p = &packet_list[pkt_idx];
 	gp_debug("Fixed packet size: %d", p->size);
-    data_buffer = malloc(p->size);
     
     uint64_t byte_offset = 0;
+    int frame_at_idx = -1;
     
     if (packet_has_option_type(pkt_idx,O_FRAME)) {
         gp_debug("Framed packet type");
@@ -166,58 +163,61 @@ void decode_fixed_packet(int pkt_idx, FILE * input_stream) {
         
         gp_debug("Read %d bytes", p->size);
         
-        fread(data_buffer, p->size,1 ,input_stream);
-        
+        //fread(data_buffer, p->size,1 ,input_stream);
+        data_buffer = malloc(p->size);
         int frame_byte_sz = frame_id->data_width/8;
         int timeout = 10;
-        int frame_at_idx = find_frame_id(p, frame_byte, frame_byte_sz,timeout, input_stream);
-        
+        frame_at_idx = find_frame_in_data(p, frame_byte, frame_byte_sz,timeout, input_stream);
         if (frame_at_idx >= 0) {
             gp_debug("Found frame at index: %d", frame_at_idx);
             data_buffer = realloc(data_buffer,p->size + frame_at_idx);
-            
+        
             gp_debug("Read %d bytes", frame_at_idx);
             // Read rest of packet
             fread(&data_buffer[p->size], frame_at_idx, 1,input_stream);
-            
+        
             p->data = (uint8_t *)malloc(p->size);
             memcpy(p->data,&data_buffer[frame_at_idx],p->size);
-            
+        
             free(data_buffer);
             // Print packet
         	for(int i = 0; i < p->size; ++i) {
                 gp_debug("%d: %x",i,p->data[i]);
         	}
-            // Update byte offset
-            byte_offset = 0;
-
-            for (int idx = 0; idx < p->option_list_sz; idx++) {
-        	    struct poption *o = &p->option_list[idx];
-        		switch (o->otype) {
-                    case O_DATA:
-                        o->data_byte_offset = byte_offset;
-                        byte_offset += (o->data_width/8) * o->data_size_i;
-                    break;
-                    case O_CRC:
-                        o->data_byte_offset = byte_offset;
-                        calculate_crc(p,o);
-                        byte_offset += o->data_width/8;
-                    break;
-                    default:
-                        o->data_byte_offset = byte_offset;
-                        byte_offset += o->data_width/8;
-                    break;
-        		}
-            }
         }
+    } else {
+        gp_debug("Packet has no frame id");
+        p->data = (uint8_t *)malloc(p->size);
+        fread(p->data, p->size, 1,input_stream);
+    }
         
+
+    // Update byte offset
+    byte_offset = 0;
+
+    for (int idx = 0; idx < p->option_list_sz; idx++) {
+	    struct poption *o = &p->option_list[idx];
+		switch (o->otype) {
+            case O_DATA:
+                o->data_byte_offset = byte_offset;
+                byte_offset += (o->data_width/8) * o->data_size_i;
+            break;
+            case O_CRC:
+                o->data_byte_offset = byte_offset;
+                calculate_crc(p,o);
+                byte_offset += o->data_width/8;
+            break;
+            default:
+                o->data_byte_offset = byte_offset;
+                byte_offset += o->data_width/8;
+            break;
+		}
     }
 }
 
-
-
-int find_frame_id(struct packet * p, int frame_byte, int frame_byte_sz,int timeout,FILE * input_stream) {
+int find_frame_in_data(struct packet * p, int frame_byte, int frame_byte_sz,int timeout,FILE * input_stream) {
     while(timeout--) {
+        fread(data_buffer, p->size,1 ,input_stream);
         int num_checked = 0;
         for(int i = 0; i < p->size; ++i) {
             for(int j = 0; j < frame_byte_sz; ++j) {
@@ -229,7 +229,6 @@ int find_frame_id(struct packet * p, int frame_byte, int frame_byte_sz,int timeo
                 }
             }
         }
-        fread(data_buffer, p->size,1 ,input_stream);
     }
     return -1;
 }
@@ -251,6 +250,7 @@ void calculate_crc(struct packet * p, struct poption * o) {
         if (crc == packet_crc) {
             p->crc_valid = true;
         } 
+        gp_debug("Expected: %x Received: %x", crc, packet_crc);
     } else if (strcmp(o->crc_method,"crc_citt")==0) {
         gp_debug("CITT CRC method");
     }

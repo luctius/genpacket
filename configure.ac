@@ -25,7 +25,7 @@ AC_EXEEXT
 AC_PROG_YACC
 AM_PROG_LEX
 LT_INIT
-AC_PROG_RANLIB
+#AC_PROG_RANLIB
 
 dnl the following is a program for generating a program that
 dnl generates a source and substitutes some values
@@ -67,7 +67,8 @@ AC_HEADER_STDBOOL
 
 AC_CONFIG_FILES([Makefile
                  src/Makefile 
-                 src/skels/Makefile 
+                 src/skels/Makefile
+				 test/Makefile 
                  genpacket.ggo])
 AC_OUTPUT
 

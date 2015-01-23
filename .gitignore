@@ -11,6 +11,7 @@
 *.dylib
 
 /src/.deps
+/test/.deps
 /src/skels/.deps
 
 # autotools
@@ -48,6 +49,7 @@ cmdline.h
 *.lex.c
 genpacket
 src/packit
+test/test_packit
 
 # editor files
 .*.swp
