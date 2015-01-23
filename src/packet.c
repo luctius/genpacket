@@ -555,9 +555,16 @@ int next_otype(struct packet * p, enum po_type otype, int idx) {
     for (int i = idx; i < p->option_list_sz; i++) {
 	    struct poption *o = &p->option_list[i];
         //gp_debug("i: %d o otype: %d otype: %d",i, o->otype,otype);
-		if (o->otype == otype) {
-			return i;
-		}
+		if (o->otype == otype) return i;
     }
     return -1;
+}
+
+
+struct poption *get_option_by_name(struct packet * p,char* name) {
+    for (int i = 0; i < p->option_list_sz; i++) {
+	    struct poption *o = &p->option_list[i];
+		if (strcmp(o->name,name)==0) return o;
+    }
+    return NULL;
 }

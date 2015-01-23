@@ -28,10 +28,16 @@ fixed packet "p1_fixed" pipe=0 {
     crc crc_16 type=uint16
 }
 
+// test with
+// echo -e "sddsdsblaaat\x10\xa\x3\x4\xa\x1\x2\x3\x4\xa\x1\x2\x3\xb7" | src/packit -i - -p test/fixed_basic.gp -n2
 dynamic packet "p3_dynamic" {
     frame 0x10
     attribute
+    size "sz2"
     size "sz"
+    attribute
     data data_size="sz"
+    attribute
+    data data_size="sz2"
     crc crc_8
 }
