@@ -22,7 +22,7 @@ void print_packet_as_json(int pkt_idx) {
                 else
                     printf("[");
             
-                for(int i=0;i<o->data_size_i;i++) {                    
+                for(int i=0;i<o->data_size_i;i++) {
                     buffer_to_json_type_str(p->data, o->data_byte_offset+i, str_buf, &o->type, o->data_width);
                     printf("%s",str_buf);
                     if (i != o->data_size_i - 1 && o->type.ft != FT_CHAR)
@@ -38,7 +38,7 @@ void print_packet_as_json(int pkt_idx) {
                 printf(",\n\t\"%s\": ",o->name);
                 buffer_to_json_type_str(p->data, o->data_byte_offset, str_buf, &o->type, o->data_width);
                 printf("%s",str_buf);
-                printf(",\n\tcrc_valid\": ");
+                printf(",\n\t\"crc_valid\": ");
                 if (p->crc_valid) {
                     printf("true");
                 } else {
