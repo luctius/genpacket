@@ -17,6 +17,7 @@ genpacket_SOURCES =  \
 					decoder.c \
                     debug_print.c \
 					crc.c \
+					json_printer.c \
                     main.c
 
 genpacket_CFLAGS = $(lua_CFLAGS) -ggdb -O0 -Wall -Wextra -Wformat=2 -Wswitch-default -Wcast-align -Wpointer-arith -Wbad-function-cast -Wstrict-prototypes -Winline -Wundef -Wnested-externs -Wcast-qual -Wshadow -Wwrite-strings  -Wunreachable-code -Wstrict-aliasing=2 -Wwrite-strings -Wno-aggressive-loop-optimizations -Wlogical-op -Wno-uninitialized -DGIT_VERSION=\"$(GIT_VERSION)\"
