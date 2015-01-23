@@ -120,8 +120,19 @@ void decode_fixed_packet(int pkt_idx, FILE * input_stream) {
                             //gp_debug("Expected: %x Received: %x", crc, packet_buffer[byte_offset]);
                         } else if (strcmp(o->crc_method,"crc_32")==0) {
                             gp_debug("CRC 32 method");
+                            uint32_t packet_crc;
+                            uint32_t crc = crc32(0, &packet_buffer[frame_at_idx], byte_offset - frame_at_idx);
+                            memcpy(packet_crc, &packet_buffer[byte_offset],4);
+                            if (crc == packet_crc) {
+                                printf("true");
+                            } else {
+                                printf("false");
+                            }
                         } else if (strcmp(o->crc_method,"crc_citt")==0) {
                             gp_debug("CITT CRC method");
+                            printf("false");
+                        } else {
+                            printf("false");
                         }
                     break;
                     default:
