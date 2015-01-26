@@ -40,6 +40,8 @@ missing
 stamp-h1
 *.ggo
 /m4
+test/.dirstamp
+src/.dirstamp
 
 # results
 Doxyfile
