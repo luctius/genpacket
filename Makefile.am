@@ -76,7 +76,7 @@ GENERATE = $(GENGEN)
 $(gengen_sources): $(EXTRA_DIST)
 	name="`echo $* | sed 's/^.*\///g'`"; \
 	echo "$$name"; \
-	$(GENERATE) -i $*.h_skel -F $*.h --output-format=c --separate-files --output-dir=$(srcdir) --force -f $$name
+	$(GENERATE) -i $*.h_skel -F $*.h --output-format=c --separate-files --output-dir=$(srcdir)/src/skels/ --force -f $$name
 	echo $(GENERATE) -i $< -F $*.h --output-format=c -f $$name  --separate-files --output-dir=$(srcdir) --force
 endif
 
@@ -110,9 +110,9 @@ built-clean:
 
 TESTS = test/test_packit test/test_packit_output.test
 check_PROGRAMS = test/test_packit
-test_packit_SOURCES = test/test_packit.c $(genpacket_program_sources)
-test_packit_CFLAGS = @check_CFLAGS@ -I src
-test_packit_LDADD = @check_LIBS@ 
+test_test_packit_SOURCES = test/test_packit.c $(genpacket_program_sources)
+test_test_packit_CFLAGS = @check_CFLAGS@ -I src
+test_test_packit_LDADD = @check_LIBS@
 
 TEST_LOG_DRIVER = env AM_TAP_BATS='test/bats/bin/bats' $(SHELL) \
                   tap-driver.sh
