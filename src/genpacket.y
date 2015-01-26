@@ -12,7 +12,7 @@ extern int line_num;
 bool has_parse_error = false;
 %}
 
-%output "genpacket.tab.c"
+%output "src/genpacket.tab.c"
 
 %code requires {
 #include "packet.h"

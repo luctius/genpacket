@@ -10,7 +10,7 @@ int line_num = 1;
 int comment_caller = 0;
 %}
 
-%option outfile="genpacket.lex.c"
+%option outfile="src/genpacket.lex.c"
 %option noyywrap
 
 %x COMMENTS
