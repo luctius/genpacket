@@ -19,6 +19,7 @@
 #include "debug_print.h"
 
 extern int yylex_destroy(void);
+extern enum debug_levels global_debug_lvl;
 extern FILE *yyin;
 
 int main(int argc, char **argv) {
@@ -37,10 +38,15 @@ int main(int argc, char **argv) {
     yyin = p_fp; 
     yyparse();
     yylex_destroy();
-    for (int i = 0; i < packet_list_sz; i++) {
-        char *s = packet_to_str(i) ;
-        printf("%s\n", s);
-        free(s);
+    if (args_info.debug_flag) {
+        global_debug_lvl = GP_DEBUG_LEVEL_DEBUG;
+        for (int i = 0; i < packet_list_sz; i++) {
+            char *s = packet_to_str(i) ;
+            printf("%s\n", s);
+            free(s);
+        }
+    } else {
+        global_debug_lvl = GP_DEBUG_LEVEL_INFORMATIONAL;
     }
     fclose(p_fp);
     if (has_parse_error) {

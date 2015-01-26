@@ -3,7 +3,7 @@ ACLOCAL_AMFLAGS=-I m4
 
 AUTOMAKE_OPTIONS = subdir-objects
 AM_CPPFLAGS=-I$(top_srcdir)/utils -I. -I$(top_srcdir)/src
-bin_PROGRAMS = genpacket
+bin_PROGRAMS = src/genpacket
 
 #SUBDIRS = skels
 
@@ -23,11 +23,11 @@ genpacket_program_sources = \
 					src/crc.c \
 					src/json_printer.c
 
-genpacket_SOURCES =  \
+src_genpacket_SOURCES =  \
 					$(genpacket_program_sources) \
                     src/main.c
 
-genpacket_CFLAGS = $(lua_CFLAGS) -ggdb -O0 -Wall -Wextra -Wformat=2 -Wswitch-default -Wcast-align -DGIT_VERSION=\"$(GIT_VERSION)\" -Wpointer-arith -Wbad-function-cast -Wstrict-prototypes -Winline -Wundef -Wnested-externs -Wcast-qual -Wshadow -Wwrite-strings  -Wunreachable-code -Wstrict-aliasing=2 -Wwrite-strings -Wno-uninitialized #-Wno-aggressive-loop-optimizations -Wlogical-op
+src_genpacket_CFLAGS = $(lua_CFLAGS) -ggdb -O0 -Wall -Wextra -Wformat=2 -Wswitch-default -Wcast-align -DGIT_VERSION=\"$(GIT_VERSION)\" -Wpointer-arith -Wbad-function-cast -Wstrict-prototypes -Winline -Wundef -Wnested-externs -Wcast-qual -Wshadow -Wwrite-strings  -Wunreachable-code -Wstrict-aliasing=2 -Wwrite-strings -Wno-uninitialized #-Wno-aggressive-loop-optimizations -Wlogical-op
 #-Wpadded  -Waggregate-return
 #genpacket_LDADD = -lm libgp.la
 
@@ -44,8 +44,10 @@ src/genpacket.lex.c: src/genpacket.l
 install-exec-hook:
 	$(LN_S) $(DESTDIR)/bin/genpacket $(DESTDIR)/bin/packit
 
-
-
+all-local:
+	if [ ! -h $(top_srcdir)/src/packit ]; then \
+		$(LN_S) $(shell pwd)/src/genpacket $(shell pwd)/src/packit; \
+	fi
 
 # Copyright (C) 1999-2008 Free Software Foundation, Inc.
 #

@@ -1,0 +1,16 @@
+{
+	"name": "p0_fixed",
+	"attribute0": 10,
+	"attribute1": 2827,
+	"attribute2": 202116108,
+	"data0": [842150450],
+	"data1": [5654],
+	"data2": [1.000000],
+	"data3": "hey",
+	"data4": "jow",
+	"data5": "a",
+	"attribute3": 1,
+	"data6": [2,3],
+	"crc0": 97,
+	"crc_valid": true
+}

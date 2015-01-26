@@ -1,11 +1,11 @@
 #!/usr/bin/env bats
 
-@test "addition using bc" {
-  result="$(echo 2+2 | bc)"
-  [ "$result" -eq 4 ]
+@test "Testpacket output is valid" {
+    src/packit -i test/test_packet_p0_fixed.dat -p test/fixed_basic.gp > $BATS_TMPDIR/p0.tmp
+    diff $BATS_TMPDIR/p0.tmp test/test_packet_p0_fixed.output
 }
 
-@test "addition using dc" {
-  result="$(echo 2 2+p | dc)"
-  [ "$result" -eq 4 ]
+@test "Testpacket output is valid json" {
+    src/packit -i test/test_packet_p0_fixed.dat -p test/fixed_basic.gp > $BATS_TMPDIR/p0.tmp
+    cat $BATS_TMPDIR/p0.tmp | python -m json.tool 
 }
