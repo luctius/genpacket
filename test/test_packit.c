@@ -1,6 +1,6 @@
 #include <check.h>
 #include <stdio.h>
-#include "src/decoder.h"
+#include "decoder.h"
  	
 START_TEST (test_packet_p0_fixed)
 {

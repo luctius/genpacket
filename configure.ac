@@ -34,8 +34,10 @@ AM_CONDITIONAL(NO_GENGEN, test -z "$ac_cv_path_GENGEN" )
 
 AM_CONDITIONAL(NO_CROSSCOMPILING, test "$cross_compiling" = no )
 AC_DEFINE([_GNU_SOURCE], 1, [Use GNU extensions])
+PKG_CHECK_MODULES([check], check, [], [])
+#AC_SUBST([check_CFLAGS])
 
-AM_PATH_CHECK([0.9.0],[],[AC_MSG_ERROR([check is missing])])
+#AM_PATH_CHECK([0.9.0],[],[AC_MSG_ERROR([check is missing])])
 
 # Checks for libraries.
 # FIXME: Replace `main' with a function in `-lm':

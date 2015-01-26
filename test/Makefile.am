@@ -1,7 +1,10 @@
+AM_CPPFLAGS=-I ../src/
+
 TESTS = test_packit test_packit_output.test
 check_PROGRAMS = test_packit
-test_packit_SOURCES = test_packit.c $(top_builddir)/src/decoder.h
-test_packit_CFLAGS = @CHECK_CFLAGS@
+test_packit_SOURCES = test_packit.c $(top_builddir)/src/decoder.c
+test_packit_CFLAGS = @check_CFLAGS@ 
+test_packit_LDADD = @check_LIBS@ 
 
 TEST_LOG_DRIVER = env AM_TAP_BATS='$(top_builddir)/test/bats/bin/bats' $(SHELL) \
                   $(top_srcdir)/tap-driver.sh
