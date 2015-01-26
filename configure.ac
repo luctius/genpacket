@@ -72,5 +72,7 @@ AC_CONFIG_FILES([Makefile
                  src/skels/Makefile
 				 test/Makefile 
                  genpacket.ggo])
+				 
+AC_REQUIRE_AUX_FILE([tap-driver.sh])
 AC_OUTPUT
 
