@@ -1,6 +1,6 @@
 AC_INIT(level_detector, 0.1.0)
 AC_CONFIG_SRCDIR([src/main.c])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([subdir-objects])
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
@@ -69,11 +69,7 @@ AC_TYPE_UINT64_T
 AC_TYPE_UINT8_T
 AC_HEADER_STDBOOL
 
-AC_CONFIG_FILES([Makefile
-                 src/Makefile 
-                 src/skels/Makefile
-				 test/Makefile 
-                 genpacket.ggo])
+AC_CONFIG_FILES([Makefile genpacket.ggo])
 				 
 AC_REQUIRE_AUX_FILE([tap-driver.sh])
 AC_OUTPUT
