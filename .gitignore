@@ -51,6 +51,7 @@ cmdline.h
 genpacket
 src/packit
 test/test_packit
+test/bats
 
 # editor files
 .*.swp
