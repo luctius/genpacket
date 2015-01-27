@@ -3,31 +3,33 @@ ACLOCAL_AMFLAGS=-I m4
 
 AUTOMAKE_OPTIONS = subdir-objects
 AM_CPPFLAGS=-I$(top_srcdir)/utils -I. -I$(top_srcdir)/src
+AM_YFLAGS=-d
 bin_PROGRAMS = src/genpacket
 
 #SUBDIRS = skels
+SUFFIXES = .c .h .y .l .h_skel
 
-GIT_VERSION=$(shell git describe --abbrev=10 --dirty --always)
+GIT_VERSION := "$(shell git describe --abbrev=10 --dirty --always)"
 
 genpacket_program_sources = \
                     src/cmdline.c \
-					$(gengen_sources) \
+                    $(gengen_sources) \
                     src/genpacket.tab.c \
                     src/genpacket.lex.c \
                     src/packet.c \
                     src/parser.c \
                     src/value.c \
                     src/gensrc.c \
-					src/decoder.c \
+                    src/decoder.c \
                     src/debug_print.c \
-					src/crc.c \
-					src/json_printer.c
+                    src/crc.c \
+                    src/json_printer.c
 
 src_genpacket_SOURCES =  \
 					$(genpacket_program_sources) \
                     src/main.c
 
-src_genpacket_CFLAGS = $(lua_CFLAGS) -ggdb -O0 -Wall -Wextra -Wformat=2 -Wswitch-default -Wcast-align -DGIT_VERSION=\"$(GIT_VERSION)\" -Wpointer-arith -Wbad-function-cast -Wstrict-prototypes -Winline -Wundef -Wnested-externs -Wcast-qual -Wshadow -Wwrite-strings  -Wunreachable-code -Wstrict-aliasing=2 -Wwrite-strings -Wno-uninitialized #-Wno-aggressive-loop-optimizations -Wlogical-op
+src_genpacket_CFLAGS = -ggdb -O0 -Wall -Wextra -Wformat=2 -Wswitch-default -Wcast-align -DGIT_VERSION=\"$(GIT_VERSION)\" -Wpointer-arith -Wbad-function-cast -Wstrict-prototypes -Winline -Wundef -Wnested-externs -Wcast-qual -Wshadow -Wwrite-strings  -Wunreachable-code -Wstrict-aliasing=2 -Wwrite-strings -Wno-uninitialized #-Wno-aggressive-loop-optimizations -Wlogical-op
 #-Wpadded  -Waggregate-return
 #genpacket_LDADD = -lm libgp.la
 
@@ -61,7 +63,6 @@ all-local:
 
 # if gengen is not installed we simply ignore the changes
 
-SUFFIXES = .h_skel
 
 if NO_GENGEN
 #.h_skel.c:

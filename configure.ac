@@ -39,8 +39,7 @@ PKG_CHECK_MODULES([check], check, [], [])
 #AM_PATH_CHECK([0.9.0],[],[AC_MSG_ERROR([check is missing])])
 
 # Checks for libraries.
-# FIXME: Replace `main' with a function in `-lm':
-AC_CHECK_LIB([m], [main])
+AC_CHECK_LIB([m], [acos])
 
 # Checks for header files.
 AC_FUNC_ALLOCA
