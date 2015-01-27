@@ -13,6 +13,14 @@
 #include "skels/send_function.h"
 #include "skels/var_declaration.h"
 
+#define rnd_to_pwr2(sz) do { if ( (sz & (sz-1) ) != 0) { sz |= sz>>1; sz |= sz>>2; sz |= sz>>4; sz |= sz>>8; sz |= sz>>16; sz++; } } while (0)
+
+const char *ctx = "ctx";
+const char *recvbuf = "recv_buff";
+const char *recvbuf_cqc = "recv_buff_cqc";
+const char *sendbuf = "send_buff";
+const char *sendbuf_cqc = "send_buff_cqc";
+
 static char *type_to_c_type_str(struct type t) {
     static char bfr[20];
     int sz = 0;
@@ -111,46 +119,41 @@ void generate_public_hdr(const char *path, const char *prefix, const char *ifnde
 void generate_receive_buffers(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent) {
     FIX_UNUSED(record);
 
-    struct packet *p = NULL;
-    for (int j = 0; j < packet_list_sz; j++) {
-        p = &packet_list[j];
-
-        const char *postfix = "recv";
-        char namebuf[strlen(p->name) +strlen(postfix) +2];
-        char namebufsz[strlen(p->name) +strlen(postfix) +2 +3];
-        sprintf(namebuf, "%s_%s", p->name, postfix);
-        sprintf(namebufsz, "%s_%s_sz", p->name, postfix);
-
-        struct type buftype = { .ft = FT_UNSIGNED, .ft_sz = 1, };
-        if (p->size > 0) {
-            generatep_var_declaration(stream, indent, 1, namebuf, 0, p->size, type_to_c_type_str(buftype) );
-        } else {
-            generatep_var_declaration(stream, indent, 0, namebuf, 1, 0,       type_to_c_type_str(buftype) );
-        }
-        generatep_var_declaration(stream, indent, 0, namebufsz, 0, 0, type_to_c_type_str(buftype) );
+    uint32_t sz = 0;
+    for (int i = 0; i < packet_list_sz; i++) {
+        uint32_t tsz = calculate_min_size(&packet_list[i]);
+        sz = (tsz > sz) ? tsz : sz;
     }
+    rnd_to_pwr2(sz);
+    
+    generatep_var_declaration(stream, indent, 1, recvbuf, 0, sz, "uint8_t");
+    generatep_var_declaration(stream, indent, 0, recvbuf_cqc, 0, 0, "struct cqc");
 }
 
 
 void generate_send_buffers(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent) {
-    /*
-    struct packet *p = NULL;
-    for (int j = 0; j < packet_list_sz; j++) {
-        p = &packet_list[j];
+    FIX_UNUSED(record);
 
-        struct type t = { .ft = FT_UNSIGNED, .ft_sz = 1, };
-
-        char *postfix = "send";
-        char namebuf[strlen(p->name) +strlen(postfix) +2];
-        sprintf(namebuf, "%s_%s", p->name, postfix);
-
-        if (p->size > 0) {
-            generatep_var_declaration(stream, indent, 1, namebuf, 0, p->size, type_to_c_type_str(t) );
-        } else {
-            generatep_var_declaration(stream, indent, 0, namebuf, 1, 0,       type_to_c_type_str(t) );
-        }
+    uint32_t sz = 0;
+    for (int i = 0; i < packet_list_sz; i++) {
+        uint32_t tsz = calculate_min_size(&packet_list[i]);
+        sz = (tsz > sz) ? tsz : sz;
     }
-    */
+    rnd_to_pwr2(sz);
+    
+    generatep_var_declaration(stream, indent, 1, sendbuf, 0, sz, "uint8_t");
+    generatep_var_declaration(stream, indent, 0, sendbuf_cqc, 0, 0, "struct cqc");
+}
+
+void generate_init_receive_buffers(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent) {
+    FIX_UNUSED(record);
+
+    char params_buf[ (4*2) + ( (strlen(recvbuf) +4) * 2) +10 ];
+    sprintf(params_buf, "%s.%s,ARRAY_SZ(ctx.%s)", ctx, recvbuf_cqc, recvbuf);
+    generatep_function_call(stream, indent, "cqc_init", params_buf);
+}
+
+void generate_init_send_buffers(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent) {
 }
 
 void generate_public_src(const char *path, const char *prefix, const char *ifndefname) {
