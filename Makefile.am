@@ -123,6 +123,11 @@ test_test_packit_LDADD = @check_LIBS@
 
 TEST_LOG_DRIVER = env AM_TAP_BATS='test/bats/bin/bats' $(SHELL) \
                   tap-driver.sh
+                  
+TEST_EXTENSIONS = .test .ctest
+
+LOG_DRIVER =  env AM_TAP_AWK='$(AWK)' $(SHELL) \
+                  tap-driver.sh
 
 
 AM_TESTS_ENVIRONMENT = \

@@ -48,7 +48,7 @@ uint8_t crc8(uint32_t crc, uint8_t *data, size_t len)
 
 /* this was used to generate the table and to test the table-version */
 
-#define POLY 0xB2
+#define POLY 0x07
 
 uint8_t crc8_slow(uint32_t crc, uint8_t *data, size_t len)
 {
