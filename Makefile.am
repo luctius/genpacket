@@ -93,6 +93,8 @@ gengen_sources = src/skels/header.h src/skels/header.c\
 				src/skels/send_function.c src/skels/send_function.h \
                 src/skels/receive_callback.c src/skels/receive_callback.h \
                 src/skels/source_skeleton.c src/skels/source_skeleton.h \
+                src/skels/function_call.c src/skels/function_call.h \
+                src/skels/assignment.c src/skels/assignment.h \
 				src/skels/var_declaration.c src/skels/var_declaration.h
 
 EXTRA_DIST = src/skels/header.h_skel \
@@ -100,6 +102,8 @@ EXTRA_DIST = src/skels/header.h_skel \
             src/skels/send_function.h_skel \
             src/skels/receive_callback.h_skel \
 			src/skels/var_declaration.h_skel \
+			src/skels/function_call.h_skel \
+			src/skels/assignment.h_skel \
 			src/skels/source_skeleton.h_skel
 #$(BUILT_SOURCES) \
 $(TESTS)
