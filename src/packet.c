@@ -559,6 +559,18 @@ int next_otype(struct packet * p, enum po_type otype, int idx) {
     return -1;
 }
 
+uint32_t calculate_min_size(struct packet * p) {
+    uint64_t size = 0;
+    for (int idx = 0; idx < p->option_list_sz; idx++) {
+	    struct poption *o = &p->option_list[idx];
+        if (o->otype == O_DATA) {
+            size += o->data_width/8;
+        } else {
+            size += (o->data_width/8)*o->data_size_i;
+        }
+    }
+    return size;
+}
 
 struct poption *get_option_by_name(struct packet * p,char* name) {
     for (int i = 0; i < p->option_list_sz; i++) {
