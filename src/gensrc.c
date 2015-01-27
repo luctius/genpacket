@@ -57,6 +57,9 @@ void generate_struct_member(FILE *stream, struct structs_gen_struct *record, uns
 }
 
 void generate_packets(FILE *stream, struct header_gen_struct *record, unsigned int indent) {
+    FIX_UNUSED(indent);
+    FIX_UNUSED(record);
+
     for (int i = 0; i < packet_list_sz; i++) {
         struct packet *p = &packet_list[i];
         generatep_structs(stream, indent, NULL, p->name);
@@ -80,6 +83,8 @@ void generate_send_functions(FILE *stream, struct header_gen_struct *record, uns
 
 #define generate_line(fmt, ...) do { printf(fmt, ##__VA_ARGS__); } while (0)
 void generate_public_hdr(const char *path, const char *prefix, const char *ifndefname) {
+    FIX_UNUSED(path);
+
     FILE *file = stdout;
     /*
     char fpath[PATH_MAX];
@@ -104,11 +109,13 @@ void generate_public_hdr(const char *path, const char *prefix, const char *ifnde
 }
 
 void generate_receive_buffers(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent) {
+    FIX_UNUSED(record);
+
     struct packet *p = NULL;
     for (int j = 0; j < packet_list_sz; j++) {
         p = &packet_list[j];
 
-        char *postfix = "recv";
+        const char *postfix = "recv";
         char namebuf[strlen(p->name) +strlen(postfix) +2];
         char namebufsz[strlen(p->name) +strlen(postfix) +2 +3];
         sprintf(namebuf, "%s_%s", p->name, postfix);

@@ -1,3 +1,4 @@
+#include <assert.h>
 #include "json_printer.h"
 
 void print_packet_as_json(int pkt_idx) {
@@ -103,5 +104,6 @@ void buffer_to_json_type_str(uint8_t * buf, int buf_idx,char * type_str, struct 
         case FT_CHAR:
             sprintf(type_str,"%c", buf[buf_idx]);
         break;
+        default: assert(false);
     }
 }

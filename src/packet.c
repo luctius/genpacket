@@ -204,7 +204,7 @@ void check_curr_packet(void) {
     struct packet *p = &packet_list[packet_list_sz-1];
 
     if (p->pipe < 0) p->pipe = 0;
-    for (pipes; pipes <= p->pipe; pipes++);
+    //TODO check this: for (pipes; pipes <= p->pipe; pipes++);
 
     bool data_sz_unkown = false;
     int total_sz_bits = 0;
@@ -515,7 +515,6 @@ char *type_to_str(struct type t) {
 bool packet_name_is_unique(struct packet *p) {
     if (p->name == NULL) return false;
 
-    int cnt = 0;
     for (int i = 0; i < packet_list_sz; i++) {
         struct packet *pt = &packet_list[i];
         if (p == pt) continue;
@@ -528,7 +527,6 @@ bool packet_name_is_unique(struct packet *p) {
 bool option_name_is_unique(struct packet *p, struct poption *o) {
     if (o->name == NULL) return false;
 
-    int cnt = 0;
     for (int i = 0; i < p->option_list_sz; i++) {
         struct poption *ot = &p->option_list[i];
         if (o == ot) continue;
@@ -548,6 +546,7 @@ bool packet_has_option_type(int pkt_idx, enum po_type option_type) {
 			return false;
 		}
     }
+    return false;
 }
 
 int next_otype(struct packet * p, enum po_type otype, int idx) {

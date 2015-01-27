@@ -6,6 +6,10 @@
 
 #include "value.h"
 
+#ifndef FIX_UNUSED
+#define FIX_UNUSED(X) (void) (X) /* avoid warnings for unused params */
+#endif
+
 extern int line_num;
 extern bool has_parse_error;
 
