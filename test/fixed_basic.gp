@@ -19,7 +19,7 @@ fixed packet "p0_fixed" size=31 {
     frame 0x20
 }
 // Test with
-// echo -e "\xa\xb\xc\x0\x0\x80\x3f\xa\x82\xdf\x19\xdf" | src/packit -i - -p test/fixed_basic.gp -n1
+// echo -e "\xa\xb\xc\x0\x0\x80\x3f\xa\x82\x8f\x19\xd8" | src/packit -i - -p test/fixed_basic.gp -n1
 fixed packet "p1_fixed" size=12 {
     attribute
     attribute

@@ -235,7 +235,7 @@ void calculate_crc(struct packet * p, struct poption * o) {
         gp_debug("CRC 32 method o: %d",o->data_byte_offset);
         uint32_t packet_crc;
         uint32_t crc = crc32(0, p->data, o->data_byte_offset);
-        memcpy(&packet_crc, &p->data[o->data_byte_offset],4);
+        memcpy(&packet_crc, p->data + o->data_byte_offset,sizeof(uint32_t));
         if (crc == packet_crc) {
             p->crc_valid = true;
         } 

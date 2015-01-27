@@ -1,11 +1,31 @@
 #!/usr/bin/env bats
 
-@test "Testpacket output is valid" {
+@test "testpacket_p0 output is valid" {
     src/packit -i test/test_packet_p0_fixed.dat -p test/fixed_basic.gp > $BATS_TMPDIR/p0.tmp
     diff $BATS_TMPDIR/p0.tmp test/test_packet_p0_fixed.output
 }
 
-@test "Testpacket output is valid json" {
+@test "testpacket_p0 output is valid json" {
     src/packit -i test/test_packet_p0_fixed.dat -p test/fixed_basic.gp > $BATS_TMPDIR/p0.tmp
     cat $BATS_TMPDIR/p0.tmp | python -m json.tool 
+}
+
+@test "testpacket_p1 output is valid" {
+    src/packit -i test/test_packet_p1_fixed.dat -n1 -p test/fixed_basic.gp > $BATS_TMPDIR/p1.tmp
+    diff $BATS_TMPDIR/p1.tmp test/test_packet_p1_fixed.output
+}
+
+@test "testpacket_p1 output is valid json" {
+    src/packit -i test/test_packet_p1_fixed.dat -n1 -p test/fixed_basic.gp > $BATS_TMPDIR/p1.tmp
+    cat $BATS_TMPDIR/p1.tmp | python -m json.tool 
+}
+
+@test "testpacket_p3 output is valid" {
+    src/packit -i test/test_packet_p3_calculated.dat -n3 -p test/fixed_basic.gp > $BATS_TMPDIR/p3.tmp
+    diff $BATS_TMPDIR/p3.tmp test/test_packet_p3_calculated.output
+}
+
+@test "testpacket_p3 output is valid json" {
+    src/packit -i test/test_packet_p3_calculated.dat -n3 -p test/fixed_basic.gp > $BATS_TMPDIR/p3.tmp
+    cat $BATS_TMPDIR/p3.tmp | python -m json.tool 
 }
