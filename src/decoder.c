@@ -48,20 +48,7 @@ void decode_calculated_packet(int pkt_idx, FILE * input_stream) {
         gp_debug("Frame data width: %d",frame_id->data_width);
         
         // Update estimated size
-        for (int idx = 0; idx < p->option_list_sz; idx++) {
-    	    struct poption *o = &p->option_list[idx];
-    		switch (o->otype) {
-                case O_DATA:
-                    //o->data_byte_offset = byte_offset;
-                    //byte_offset += (o->data_width/8) * o->data_size_i;
-                break;
-                default:
-                    o->data_byte_offset = byte_offset;
-                    byte_offset += o->data_width/8;
-                break;
-    		}
-        }
-        p->size = byte_offset;
+        p->size = calculate_min_size(p);
         gp_debug("Dynamic packet new size: %d", p->size);
         
         gp_debug("Searching for frame 0x%x", frame_byte);

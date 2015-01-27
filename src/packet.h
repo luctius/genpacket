@@ -149,6 +149,7 @@ void parse_debug(struct packet *packet, struct poption *option, const char *fmt,
 
 bool packet_has_option_type(int pkt_idx, enum po_type option_type);
 int next_otype(struct packet * p, enum po_type otype, int idx);
+uint32_t calculate_min_size(struct packet * p);
 
 struct poption *get_option_by_name(struct packet * p,char* name);
 
