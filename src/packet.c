@@ -563,10 +563,11 @@ uint32_t calculate_min_size(struct packet * p) {
     uint64_t size = 0;
     for (int idx = 0; idx < p->option_list_sz; idx++) {
 	    struct poption *o = &p->option_list[idx];
+        //gp_debug("i: %d o otype: %d otype: %d",i, o->otype,otype);
         if (o->otype == O_DATA) {
-            size += o->data_width/8;
-        } else {
             size += (o->data_width/8)*o->data_size_i;
+        } else {
+            size += o->data_width/8;
         }
     }
     return size;

@@ -68,6 +68,7 @@ void cb_op_datawidth_v(struct value v) {
 void cb_op_datasize_string(char *attr) {
     struct poption *o = get_curr_option();
     o->data_size_str = attr;
+    o->data_size_i = 0;
 }
 
 void cb_op_datasize_v(struct value v) {

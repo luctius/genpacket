@@ -178,7 +178,9 @@ void decode_fixed_packet(int pkt_idx, FILE * input_stream) {
         fread(p->data, p->size, 1,input_stream);
     }
         
-
+	for(int i = 0; i < p->size; ++i) {
+        gp_debug("%d: %x",i,p->data[i]);
+	}
     // Update byte offset
     byte_offset = 0;
 
@@ -230,7 +232,7 @@ void calculate_crc(struct packet * p, struct poption * o) {
         }
         gp_debug("Expected: %x Received: %x", crc, p->data[o->data_byte_offset]);
     } else if (strcmp(o->crc_method,"crc_32")==0) {
-        gp_debug("CRC 32 method");
+        gp_debug("CRC 32 method o: %d",o->data_byte_offset);
         uint32_t packet_crc;
         uint32_t crc = crc32(0, p->data, o->data_byte_offset);
         memcpy(&packet_crc, &p->data[o->data_byte_offset],4);
