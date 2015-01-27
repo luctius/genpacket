@@ -16,7 +16,7 @@
 
 #define TS_BFR_LEN 256
 
-int pipes = 0;
+int pipes = 1;
 int packet_list_sz = 0;
 struct packet *packet_list = NULL;
 
@@ -203,7 +203,7 @@ void option_add_name(struct packet *p, struct poption *o, char *name) {
 void check_curr_packet(void) {
     struct packet *p = &packet_list[packet_list_sz-1];
 
-    if (p->pipe < 0) p->pipe = 0;
+    if (p->pipe <= 0) p->pipe = 1;
     //TODO check this: for (pipes; pipes <= p->pipe; pipes++);
 
     bool data_sz_unkown = false;
