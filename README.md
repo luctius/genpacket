@@ -6,10 +6,23 @@ The range of supported package types is from simple fixed size packets to packet
 
 Examples can be found in the test directory
 
-On Mac OSX installing from source requires bison 3.0.2 which can be installed using homebrew
+On Mac OSX installing from source requires bison 3.0.2 or greater which can be installed using homebrew
 
-$ brew install bison
+    $ brew install bison
 
 then configure like this:
 
-$ YACC=/usr/local/opt/bison/bin/bison ./configure
+    $ YACC=/usr/local/opt/bison/bin/bison ./configure
+
+Then you can install with:
+
+    $ make && make install
+
+
+##### Test dependencies:
+- libcheck
+- bats
+
+
+Libcheck van be installed using homebrew on mac with:
+    $brew install check
