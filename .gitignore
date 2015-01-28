@@ -55,6 +55,7 @@ genpacket
 src/packit
 test/test_packit
 test/bats
+src/skels/*.[ch]
 
 # editor files
 .*.swp
