@@ -17,6 +17,9 @@ void genpacket_p2_fixed_received(struct p2_fixed *packet, void *private_ctx) {
 void genpacket_p3_calculated_received(struct p3_calculated *packet, void *private_ctx) {
 }
 
+void genpacket_p4_calculated_received(struct p4_calculated *packet, void *private_ctx) {
+}
+
 int main() {
     struct genpacket_params params = {
         .rfds = {  STDIN_FILENO, },

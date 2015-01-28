@@ -1,7 +1,7 @@
 #!/usr/bin/env bats
 
-@test "genpacket_p0 output is valid" {
-    test/genpacket_send | test/genpacket_receive > $BATS_TMPDIR/p0.tmp
+@test "genpacket_p0_send output is valid" {
+    test/genpacket_send | src/packit -i - -p test/fixed_basic.gp > $BATS_TMPDIR/p0.tmp
     diff $BATS_TMPDIR/p0.tmp test/test_packet_p0_fixed.output
 }
 
