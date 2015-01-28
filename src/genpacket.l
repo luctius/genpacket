@@ -43,6 +43,11 @@ int comment_caller = 0;
 "exclude"        { return OP_EXCLUDE; }
 "start"          { return OP_START; }
 "end"            { return OP_END; }
+"xor_in"         { return OP_XOR_IN; }
+"xor_out"        { return OP_XOR_OUT; }
+"reflect_in"     { return OP_REFLECT_IN; }
+"reflect_out"    { return OP_REFLECT_OUT; }
+"poly"           { return OP_POLY; }
 
 <INITIAL,PP>"="  { return '='; }
 <INITIAL,PP>"{"  { BEGIN(INITIAL); return '{'; }
@@ -56,6 +61,7 @@ int comment_caller = 0;
 "uint"[1-9][0-9]? { yylval.t.ft=FT_UNSIGNED; yylval.t.ft_sz=strtol(&yytext[4], NULL, 10); return TYPE; }
 "char"            { yylval.t.ft=FT_CHAR;     yylval.t.ft_sz=(sizeof(char) * CHAR_BIT); return TYPE; }
 
+<INITIAL,PP>(true|false)        { if(strcmp(yytext,"true")==0) yylval.b=true; else yylval.b=false; return BOOL; }
 <INITIAL,PP>\-[0-9]+            { yylval.v = v_set_i(strtol(yytext, NULL, 10) ); return INTEGER; }
 <INITIAL,PP>\+?[0-9]+           { yylval.v = v_set_u(strtol(yytext, NULL, 10) ); return INTEGER; }
 <INITIAL,PP>[\-\]?[0-9]+        { yylval.v = v_set_i(strtol(yytext, NULL, 10) ); return INTEGER; }

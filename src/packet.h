@@ -117,6 +117,11 @@ struct packet {
     int pipe;
     uint8_t * data;
     bool crc_valid;
+    bool crc_reflect_in;
+    bool crc_reflect_out;
+    uint32_t crc_xor_in;
+    uint32_t crc_xor_out;
+    uint32_t crc_poly;
     int option_list_sz;
     struct poption *option_list;
 };

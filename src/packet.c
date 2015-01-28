@@ -456,6 +456,14 @@ char *option_to_str(int pkt_idx, int idx) {
     ctr += sprintf(&sp[ctr], "[type: %s] ", type_to_str(o->type) );
     ctr += sprintf(&sp[ctr], "[data_width: %d] ", o->data_width);
     if (o->crc_method != NULL)   ctr += sprintf(&sp[ctr], "[crc_method: %s] ", o->crc_method);
+    
+    if (o->crc_method != NULL && strcmp(o->crc_method,"crc_custom")==0) {
+        ctr += sprintf(&sp[ctr], "[crc_xor_in: %d] ", p->crc_xor_in);
+        ctr += sprintf(&sp[ctr], "[crc_xor_out: %d] ", p->crc_xor_out);
+        ctr += sprintf(&sp[ctr], "[crc_reflect_in: %s] ", p->crc_reflect_in ? "true" : "false");
+        ctr += sprintf(&sp[ctr], "[crc_reflect_out: %s] ", p->crc_reflect_out ? "true" : "false");
+        ctr += sprintf(&sp[ctr], "[crc_poly: %d] ", p->crc_poly);
+    }
 
     if (o->default_set) ctr += sprintf(&sp[ctr], "[default: %s] ", v_to_str(o->default_val) );
 

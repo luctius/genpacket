@@ -76,6 +76,31 @@ void cb_op_datasize_v(struct value v) {
     o->data_size_i = v_get_i(v);
 }
 
+void cb_op_xor_in_v(struct value v) {
+    struct packet *p = get_curr_packet();
+    p->crc_xor_in = v_get_u(v);
+}
+
+void cb_op_xor_out_v(struct value v) {
+    struct packet *p = get_curr_packet();
+    p->crc_xor_out = v_get_u(v);
+}
+
+void cb_op_reflect_in_b(bool b) {
+    struct packet *p = get_curr_packet();
+    p->crc_reflect_in = b;
+}
+
+void cb_op_reflect_out_b(bool b) {
+    struct packet *p = get_curr_packet();
+    p->crc_reflect_out = b;
+}
+
+void cb_op_poly_v(struct value v) {
+    struct packet *p = get_curr_packet();
+    p->crc_poly = v_get_i(v);
+}
+
 void cb_op_default_v(struct value v){
     struct packet *p = get_curr_packet();
     struct poption *o = get_curr_option();
