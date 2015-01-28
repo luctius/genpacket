@@ -147,6 +147,50 @@ static int test_p3_calculated(struct genpacket_ctx *ctx, int head) {
 
     return retval;
 }
+int genpacket_p0_fixed_send(struct p0_fixed *packet) {
+write(genpacket_ctx.params.wfds[0], &packet->frame0, 1);
+    write(genpacket_ctx.params.wfds[0], &packet->attribute0, 1);
+    write(genpacket_ctx.params.wfds[0], &packet->attribute1, 2);
+    write(genpacket_ctx.params.wfds[0], &packet->attribute2, 4);
+    write(genpacket_ctx.params.wfds[0], &packet->data0, 4);
+    write(genpacket_ctx.params.wfds[0], &packet->data1, 2);
+    write(genpacket_ctx.params.wfds[0], &packet->data2, 4);
+    write(genpacket_ctx.params.wfds[0], &packet->data3, 3);
+    write(genpacket_ctx.params.wfds[0], &packet->data4, 3);
+    write(genpacket_ctx.params.wfds[0], &packet->frame1, 1);
+    write(genpacket_ctx.params.wfds[0], &packet->data5, 1);
+    write(genpacket_ctx.params.wfds[0], &packet->attribute3, 1);
+    write(genpacket_ctx.params.wfds[0], &packet->data6, 2);
+    write(genpacket_ctx.params.wfds[0], &packet->crc0, 1);
+    write(genpacket_ctx.params.wfds[0], &packet->frame2, 1);
+    }
+int genpacket_p1_fixed_send(struct p1_fixed *packet) {
+write(genpacket_ctx.params.wfds[0], &packet->attribute0, 1);
+    write(genpacket_ctx.params.wfds[0], &packet->attribute1, 1);
+    write(genpacket_ctx.params.wfds[0], &packet->attribute2, 1);
+    write(genpacket_ctx.params.wfds[0], &packet->data0, 4);
+    write(genpacket_ctx.params.wfds[0], &packet->attribute3, 1);
+    write(genpacket_ctx.params.wfds[0], &packet->crc0, 4);
+    }
+int genpacket_p2_fixed_send(struct p2_fixed *packet) {
+write(genpacket_ctx.params.wfds[0], &packet->frame0, 1);
+    write(genpacket_ctx.params.wfds[0], &packet->attribute0, 1);
+    write(genpacket_ctx.params.wfds[0], &packet->attribute1, 1);
+    write(genpacket_ctx.params.wfds[0], &packet->attribute2, 1);
+    write(genpacket_ctx.params.wfds[0], &packet->data0, 40);
+    write(genpacket_ctx.params.wfds[0], &packet->crc0, 2);
+    }
+int genpacket_p3_calculated_send(struct p3_calculated *packet) {
+write(genpacket_ctx.params.wfds[0], &packet->frame0, 1);
+    write(genpacket_ctx.params.wfds[0], &packet->attribute0, 1);
+    write(genpacket_ctx.params.wfds[0], &packet->sz2, 1);
+    write(genpacket_ctx.params.wfds[0], &packet->sz, 1);
+    write(genpacket_ctx.params.wfds[0], &packet->attribute1, 1);
+    write(genpacket_ctx.params.wfds[0], &packet->data0, 0);
+    write(genpacket_ctx.params.wfds[0], &packet->attribute2, 1);
+    write(genpacket_ctx.params.wfds[0], &packet->data1, 0);
+    write(genpacket_ctx.params.wfds[0], &packet->crc0, 1);
+    }
 
 static bool check_fds(struct genpacket_ctx *ctx, int timeout) {
 

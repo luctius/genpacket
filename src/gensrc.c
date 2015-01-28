@@ -20,6 +20,7 @@
 #include "skels/source_skeleton.h"
 #include "skels/structs.h"
 #include "skels/var_declaration.h"
+#include "skels/write_data.h"
 
 #define rnd_to_pwr2(sz) do { if ( (sz & (sz-1) ) != 0) { sz |= sz>>1; sz |= sz>>2; sz |= sz>>4; sz |= sz>>8; sz |= sz>>16; sz++; } } while (0)
 
@@ -206,11 +207,33 @@ void generate_call_recv_tests(FILE *stream, struct source_skeleton_gen_struct *r
 }
 
 void generate_send_func(FILE *stream, struct send_func_impl_gen_struct *record, unsigned int indent) {
+    struct packet *p = NULL;
+    for (int j = 0; j < packet_list_sz; j++) {
+        p = &packet_list[j];
+        if (strcmp(record->packet_name, p->name) == 0) break;
+    }
 
+    if (p == NULL) {
+        fprintf(stderr, "error: unable to find packet: %s\n", record->packet_name);
+        return;
+    }
+
+
+    for (int j = 0; j < p->option_list_sz; j++) {
+        struct poption *o = &p->option_list[j];
+        if (o->otype == O_DATA) {
+            generatep_write_data(stream, indent, o->name, 0, record->prefix, (o->data_width / CHAR_BIT) * o->data_size_i);
+        }
+        else generatep_write_data(stream, indent, o->name, 0, record->prefix, (o->data_width / CHAR_BIT) );
+    }
 }
 
 void generate_send_functions_impl(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent) {
+    for (int i = 0; i < packet_list_sz; i++) {
+        struct packet *p = &packet_list[i];
 
+        generatep_send_func_impl(stream, indent, p->name, record->prefix, NULL);
+    }
 }
 
 void generate_public_src(const char *path, const char *prefix, const char *ifndefname) {

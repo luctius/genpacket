@@ -121,7 +121,9 @@ gengen_sources = \
 	src/skels/structs.c										\
 	src/skels/structs.h										\
 	src/skels/var_declaration.c								\
-	src/skels/var_declaration.h							
+	src/skels/var_declaration.h								\
+	src/skels/write_data.c									\
+	src/skels/write_data.h
 
 EXTRA_DIST = \ 
 	src/skels/assignment.h_skel									\
@@ -137,7 +139,8 @@ EXTRA_DIST = \
 	src/skels/send_function_decl.h_skel							\
 	src/skels/source_skeleton.h_skel							\
 	src/skels/structs.h_skel									\
-	src/skels/var_declaration.h_skel								
+	src/skels/var_declaration.h_skel							\
+	src/skels/write_data.h_skel
 
 #$(BUILT_SOURCES) $(TESTS)
 
