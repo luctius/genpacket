@@ -14,11 +14,6 @@ extern "C" {
 
 #define GENPACKET_NRO_PIPES (1)
 
-enum genpacket_direction {
-    GENPACKET_R=1,
-    GENPACKET_W=2,
-};
-
 struct p0_fixed {
     uint8_t frame0;
     uint8_t attribute0;
@@ -83,8 +78,9 @@ int genpacket_p2_fixed_send(struct p2_fixed *packet);
 int genpacket_p3_calculated_send(struct p3_calculated *packet);
 
 struct genpacket_params {
-    int pipe_fds[GENPACKET_NRO_PIPES];
-    enum genpacket_direction pipe_dir[GENPACKET_NRO_PIPES];
+    int rfds[GENPACKET_NRO_PIPES];
+    int wfds[GENPACKET_NRO_PIPES];
+
     void *private_ctx;
 };
 

@@ -81,7 +81,9 @@ struct cqc {
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <unistd.h>
 #include <poll.h>
+
 
 #include "genpacket.h"
 
@@ -95,13 +97,14 @@ struct cqc {
 struct genpacket_ctx {
     struct genpacket_params params;
 
+    /* TODO: One receive queue per pipe */
     uint8_t recv_buff[64];
     struct cqc recv_buff_cqc;
 
-    struct pollfd fds[GENPACKET_NRO_PIPES];
+    struct pollfd pfds[GENPACKET_NRO_PIPES * 2];
 };
 
-static struct genpacket_ctx ctx;
+static struct genpacket_ctx genpacket_ctx;
 
 static bool test_p0_fixed(struct genpacket_ctx *ctx, int head) {
     int cnt = cqc_cnt(ctx->recv_buff_cqc);
@@ -145,56 +148,84 @@ static int test_p3_calculated(struct genpacket_ctx *ctx, int head) {
     return retval;
 }
 
-static bool check_fds_read(struct genpacket_ctx *ctx, int timeout) {
-    int i = 0;
+static bool check_fds(struct genpacket_ctx *ctx, int timeout) {
 
-    struct pollfd fds[GENPACKET_NRO_PIPES];
-    fds[i].fd = ctx->params.pipe_fds[i];
-    fds[i].events = 0;
+    if (poll(ctx->pfds, GENPACKET_NRO_PIPES *2, timeout) > 0) return true;
+    return false;
+}
 
-    if (ctx->params.pipe_dir[i] & GENPACKET_R > 0) fds[i].events |= POLLIN;
-    if (ctx->params.pipe_dir[i] & GENPACKET_W > 0) fds[i].events |= POLLOUT;
+static bool check_read_fds(struct genpacket_ctx *ctx, int pipe) {
+    for (int i = 0; i < (GENPACKET_NRO_PIPES *2); i++) {
+        /* TODO: check for specific pipe here! */
+        if ( (ctx->pfds[i].revents & POLLIN) > 0) return true;
+    }
 
-    if (poll(fds, GENPACKET_NRO_PIPES, timeout) > 0) return true;
+    return false;
+}
+
+static bool check_write_fds(struct genpacket_ctx *ctx, int pipe) {
+    for (int i = 0; i < (GENPACKET_NRO_PIPES *2); i++) {
+        /* TODO: check for specific pipe here! */
+        if ( (ctx->pfds[i].revents & POLLOUT) > 0) return true;
+    }
+
     return false;
 }
 
 int genpacket_init(struct genpacket_params *params) {
-    memcpy(&ctx.params, params, sizeof(struct genpacket_params) );
+    memcpy(&genpacket_ctx.params, params, sizeof(struct genpacket_params) );
 
-    cqc_init(ctx.recv_buff_cqc,ARRAY_SZ(ctx.recv_buff));
-    memset(&ctx.recv_buff, 0x0, cqc_qsz(ctx.recv_buff_cqc) );
+    cqc_init(genpacket_ctx.recv_buff_cqc,ARRAY_SZ(genpacket_ctx.recv_buff));
+    memset(&genpacket_ctx.recv_buff, 0x0, cqc_qsz(genpacket_ctx.recv_buff_cqc) );
+
+    int fd = 0;
+    for (int i = 0; i < GENPACKET_NRO_PIPES; i++) {
+        genpacket_ctx.pfds[fd].fd = genpacket_ctx.params.rfds[i];
+        genpacket_ctx.pfds[fd].events = POLLIN;
+
+        if (genpacket_ctx.params.rfds[i] == genpacket_ctx.params.wfds[i]) {
+            genpacket_ctx.pfds[fd].events |= POLLOUT;
+        }
+        else {
+            fd++;
+            genpacket_ctx.pfds[fd].fd = genpacket_ctx.params.wfds[i];
+            genpacket_ctx.pfds[fd].events = POLLOUT;
+        }
+    }
 
     return (EXIT_SUCCESS);
 }
 
 int genpacket_process(int timeout) {
-    if (check_fds_read(&ctx, timeout) ) {
-        if (cqc_space(ctx.recv_buff_cqc) > 0) {
-            int readsz = cqc_space_to_end(ctx.recv_buff_cqc);
-            int head = ctx.recv_buff_cqc.head;
-            int rdsz_r = read(ctx.params.pipe_fds[0], &ctx.recv_buff[head], readsz);
-            ctx.recv_buff_cqc.head += rdsz_r;
-        }
+    if (check_fds(&genpacket_ctx, timeout) ) {
+        /* TODO: check_read per pipe */
+        if (check_read_fds(&genpacket_ctx, 0) ) {
+            if (cqc_space(genpacket_ctx.recv_buff_cqc) > 0) {
+                int readsz = cqc_space_to_end(genpacket_ctx.recv_buff_cqc);
+                int head = genpacket_ctx.recv_buff_cqc.head;
+                int rdsz_r = read(genpacket_ctx.params.rfds[0], &genpacket_ctx.recv_buff[head], readsz);
+                genpacket_ctx.recv_buff_cqc.head += rdsz_r;
+            }
 
-        /* 
-           These test functions return '-1' when their packet is not (completely) found. 
-           Else they will return the size of the packet.
-        */
-        
-        while (cqc_space(ctx.recv_buff_cqc) < GENPACKET_READ_SZ) {
-            int head = cqc_peek(ctx.recv_buff_cqc, 0);
-            int size = -1;
-
+            /* 
+               These test functions return '-1' when their packet is not (completely) found. 
+               Else they will return the size of the packet.
+            */
             
-            if ( (size == -1) && (size = (test_p0_fixed(&ctx, head) ) ) ) genpacket_p0_fixed_received( (struct p0_fixed *) &ctx.recv_buff[head], ctx.params.private_ctx);
-            if ( (size == -1) && (size = (test_p1_fixed(&ctx, head) ) ) ) genpacket_p1_fixed_received( (struct p1_fixed *) &ctx.recv_buff[head], ctx.params.private_ctx);
-            if ( (size == -1) && (size = (test_p2_fixed(&ctx, head) ) ) ) genpacket_p2_fixed_received( (struct p2_fixed *) &ctx.recv_buff[head], ctx.params.private_ctx);
-            if ( (size == -1) && (size = (test_p3_calculated(&ctx, head) ) ) ) genpacket_p3_calculated_received( (struct p3_calculated *) &ctx.recv_buff[head], ctx.params.private_ctx);
+            while (cqc_space(genpacket_ctx.recv_buff_cqc) < GENPACKET_READ_SZ) {
+                int head = cqc_peek(genpacket_ctx.recv_buff_cqc, 0);
+                int size = -1;
+
+                
+                if ( (size == -1) && (size = (test_p0_fixed(&genpacket_ctx, head) ) ) ) genpacket_p0_fixed_received( (struct p0_fixed *) &genpacket_ctx.recv_buff[head], genpacket_ctx.params.private_ctx);
+                if ( (size == -1) && (size = (test_p1_fixed(&genpacket_ctx, head) ) ) ) genpacket_p1_fixed_received( (struct p1_fixed *) &genpacket_ctx.recv_buff[head], genpacket_ctx.params.private_ctx);
+                if ( (size == -1) && (size = (test_p2_fixed(&genpacket_ctx, head) ) ) ) genpacket_p2_fixed_received( (struct p2_fixed *) &genpacket_ctx.recv_buff[head], genpacket_ctx.params.private_ctx);
+                if ( (size == -1) && (size = (test_p3_calculated(&genpacket_ctx, head) ) ) ) genpacket_p3_calculated_received( (struct p3_calculated *) &genpacket_ctx.recv_buff[head], genpacket_ctx.params.private_ctx);
 
 
-            if (size == -1) ctx.recv_buff_cqc.tail--;
-            else ctx.recv_buff_cqc.tail -= size;
+                if (size == -1) genpacket_ctx.recv_buff_cqc.tail--;
+                else genpacket_ctx.recv_buff_cqc.tail -= size;
+            }
         }
     }
 
