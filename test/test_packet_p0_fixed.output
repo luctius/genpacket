@@ -12,5 +12,5 @@
 	"attribute3": 1,
 	"data6": [2,3],
 	"crc0": 97,
-	"crc_valid": true
+	"crc_valid": false
 }

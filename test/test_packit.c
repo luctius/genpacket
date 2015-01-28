@@ -6,14 +6,16 @@
 
 START_TEST (test_crc8)
 {
-    uint8_t crc_calc = crc8_slow(0, (uint8_t*)strdup("teststring"), 10);
-    ck_assert_int_eq(crc_calc,0x87);
+    // ./pycrc.py --model=crc-8 --check-string=teststring
+    uint8_t crc_calc = crc8((uint8_t*)strdup("teststring"), 10);
+    ck_assert_int_eq(crc_calc,0x66);
 }
 END_TEST
 
 START_TEST (test_crc32)
 {
-    uint32_t crc_calc = crc32(0, strdup("teststring"), 10);
+    // ./pycrc.py --model=crc-32 --check-string=teststring  
+    uint32_t crc_calc = crc32(strdup("teststring"), 10);
     ck_assert_int_eq(crc_calc,0x1F58F83E);
 }
 END_TEST
