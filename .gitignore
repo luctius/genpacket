@@ -56,6 +56,10 @@ src/packit
 test/test_packit
 test/bats
 src/skels/*.[ch]
+test/genpacket.[ch]
+test/genpacket_receive
+test/genpacket_send
+
 
 # editor files
 .*.swp
