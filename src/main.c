@@ -42,7 +42,7 @@ int main(int argc, char **argv) {
         if (cmdline_packit_parser (argc, argv, &packit_args) != 0)
                  exit(1);
         packet_desc = packit_args.packetdesc_arg;
-        debug_flag = packit_args.packetdesc_arg;
+        debug_flag = packit_args.debug_flag;
     }
     
     p_fp=fopen(packet_desc,"r");
