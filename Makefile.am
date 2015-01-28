@@ -90,22 +90,33 @@ endif
 #libgp_la_SOURCES = $(BUILT_SOURCES)
 
 gengen_sources = src/skels/header.h src/skels/header.c\
-				src/skels/structs.c src/skels/structs.h \
-				src/skels/send_function.c src/skels/send_function.h \
-                src/skels/receive_callback.c src/skels/receive_callback.h \
-                src/skels/source_skeleton.c src/skels/source_skeleton.h \
-                src/skels/function_call.c src/skels/function_call.h \
-                src/skels/assignment.c src/skels/assignment.h \
-				src/skels/var_declaration.c src/skels/var_declaration.h
+			src/skels/structs.c src/skels/structs.h \
+			src/skels/send_function.c src/skels/send_function.h \
+			src/skels/receive_callback.c src/skels/receive_callback.h \
+			src/skels/source_skeleton.c src/skels/source_skeleton.h \
+			src/skels/function_call.c src/skels/function_call.h \
+			src/skels/assignment.c src/skels/assignment.h \
+			src/skels/var_declaration.c src/skels/var_declaration.h \
+			src/skels/calculated_packet_test_function.c src/skels/calculated_packet_test_function.h \
+			src/skels/dynamic_packet_test_function.c src/skels/dynamic_packet_test_function.h \
+			src/skels/fixed_packet_no_frame_test_function.c src/skels/fixed_packet_no_frame_test_function.h \
+			src/skels/fixed_packet_test_function.c src/skels/fixed_packet_test_function.h \
+			src/skels/cqc.c src/skels/cqc.h
 
 EXTRA_DIST = src/skels/header.h_skel \
 			src/skels/structs.h_skel \
-            src/skels/send_function.h_skel \
-            src/skels/receive_callback.h_skel \
+			src/skels/send_function.h_skel \
+			src/skels/receive_callback.h_skel \
 			src/skels/var_declaration.h_skel \
 			src/skels/function_call.h_skel \
 			src/skels/assignment.h_skel \
-			src/skels/source_skeleton.h_skel
+			src/skels/source_skeleton.h_skel \
+			src/skels/calculated_packet_test_function.h_skel \
+			src/skels/dynamic_packet_test_function.h_skel \
+			src/skels/fixed_packet_no_frame_test_function.h_skel \
+			src/skels/fixed_packet_test_function.h_skel \
+			src/skels/cqc.h_skel
+
 #$(BUILT_SOURCES) \
 $(TESTS)
 

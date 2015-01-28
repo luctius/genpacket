@@ -32,7 +32,7 @@ struct @prefix@_params {
 };
 
 int @prefix@_init(struct @prefix@_params *params);
-int @prefix@_process();
+int @prefix@_process(int timeout);
 
 #ifdef __cplusplus
 }

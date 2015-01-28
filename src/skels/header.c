@@ -191,7 +191,7 @@ generate_header(FILE *stream, struct header_gen_struct *record, unsigned int ind
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "int ");
   fprintf (stream, "%s", (record->prefix ? record->prefix : ""));
-  fprintf (stream, "%s", "_process();");
+  fprintf (stream, "%s", "_process(int timeout);");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
@@ -362,7 +362,7 @@ genstring_header(struct header_gen_struct *record, unsigned int indent)
   strcat (output, indent_str);
   strcat (output, "int ");
   if (record->prefix) strcat (output, record->prefix);
-  strcat (output, "_process();");
+  strcat (output, "_process(int timeout);");
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "\n");
@@ -414,7 +414,7 @@ strcnt_header(struct header_gen_struct *record, unsigned int indent)
   length += (record->receive_functions ? strlen (record->receive_functions) : 0) * 1;
   length += (record->send_functions ? strlen (record->send_functions) : 0) * 1;
 
-  return length + 556;
+  return length + 567;
 }
 
 void

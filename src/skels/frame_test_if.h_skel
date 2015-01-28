@@ -1,0 +1,1 @@
+@if@type:string == "int"@then@if (packet->@frame_name != @value_int:int@) found = false;@endif@

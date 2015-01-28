@@ -17,40 +17,34 @@ extern "C" {
 
 struct source_skeleton_gen_struct
 {
+  const char *call_recv_tests;
   const char *cmd_options;
   const char *genpacket;
   const char *ifndefname;
-  const char *init_receive_buffers;
-  const char *init_send_buffers;
   const char *prefix;
-  const char *receive_buffers;
-  const char *send_buffers;
+  int read_sz;
+  int size;
+  const char *test_packets;
   const char *version;
 };
 
-extern void generate_init_receive_buffers(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent);
+extern void generate_call_recv_tests(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent);
 
 
-extern void generate_init_send_buffers(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent);
-
-
-extern void generate_receive_buffers(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent);
-
-
-extern void generate_send_buffers(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent);
+extern void generate_test_packets(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent);
 
 
 void
 generate_source_skeleton(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent);
 
 void
-generatep_source_skeleton(FILE *stream, unsigned int indent, const char *cmd_options, const char *genpacket, const char *ifndefname, const char *init_receive_buffers, const char *init_send_buffers, const char *prefix, const char *receive_buffers, const char *send_buffers, const char *version);
+generatep_source_skeleton(FILE *stream, unsigned int indent, const char *call_recv_tests, const char *cmd_options, const char *genpacket, const char *ifndefname, const char *prefix, int read_sz, int size, const char *test_packets, const char *version);
 
 char *
 genstring_source_skeleton(struct source_skeleton_gen_struct *record, unsigned int indent);
 
 char *
-genstringp_source_skeleton(unsigned int indent, const char *cmd_options, const char *genpacket, const char *ifndefname, const char *init_receive_buffers, const char *init_send_buffers, const char *prefix, const char *receive_buffers, const char *send_buffers, const char *version);
+genstringp_source_skeleton(unsigned int indent, const char *call_recv_tests, const char *cmd_options, const char *genpacket, const char *ifndefname, const char *prefix, int read_sz, int size, const char *test_packets, const char *version);
 
 int
 strcnt_source_skeleton(struct source_skeleton_gen_struct *record, unsigned int indent);

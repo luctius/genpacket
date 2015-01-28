@@ -38,6 +38,17 @@ generate_string(const char *s, FILE *stream, unsigned int indent)
   free (indent_str);
 }
 
+
+static char *
+int_to_string(int i)
+{
+  static char buffer[256];
+
+  snprintf (buffer, 255, "%d", i);
+
+  return buffer;
+}
+
 void
 generate_source_skeleton(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent)
 {
@@ -109,6 +120,9 @@ generate_source_skeleton(FILE *stream, struct source_skeleton_gen_struct *record
   fprintf (stream, "%s", "#include <stdlib.h>");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "#include <stdbool.h>");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "#include <string.h>");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
@@ -138,6 +152,13 @@ generate_source_skeleton(FILE *stream, struct source_skeleton_gen_struct *record
   fprintf (stream, "%s", "#define ARRAY_SZ(a) (sizeof(a) / sizeof(a[0]))");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "#define ");
+  fprintf (stream, "%s", (record->ifndefname ? record->ifndefname : ""));
+  fprintf (stream, "%s", "_READ_SZ (");
+  fprintf (stream, "%d", record->read_sz);
+  fprintf (stream, "%s", ")");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "struct ");
@@ -152,22 +173,12 @@ generate_source_skeleton(FILE *stream, struct source_skeleton_gen_struct *record
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
-  indent = 4;
-  fprintf (stream, "%s", "    ");
-  if (record->receive_buffers)
-    generate_string (record->receive_buffers, stream, indent + strlen (indent_str));
-  else
-    generate_receive_buffers (stream, record, indent + strlen (indent_str));
-  indent = 0;
+  fprintf (stream, "%s", "    uint8_t recv_buff[");
+  fprintf (stream, "%d", record->size);
+  fprintf (stream, "%s", "];");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
-  indent = 4;
-  fprintf (stream, "%s", "    ");
-  if (record->send_buffers)
-    generate_string (record->send_buffers, stream, indent + strlen (indent_str));
-  else
-    generate_send_buffers (stream, record, indent + strlen (indent_str));
-  indent = 0;
+  fprintf (stream, "%s", "    struct cqc recv_buff_cqc;");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
@@ -189,9 +200,16 @@ generate_source_skeleton(FILE *stream, struct source_skeleton_gen_struct *record
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
-  fprintf (stream, "%s", "static bool check_fds(struct ");
+  if (record->test_packets)
+    generate_string (record->test_packets, stream, indent + strlen (indent_str));
+  else
+    generate_test_packets (stream, record, indent + strlen (indent_str));
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "static bool check_fds_read(struct ");
   fprintf (stream, "%s", (record->prefix ? record->prefix : ""));
-  fprintf (stream, "%s", "_ctx *ctx) {");
+  fprintf (stream, "%s", "_ctx *ctx, int timeout) {");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "    int i = 0;");
@@ -199,55 +217,34 @@ generate_source_skeleton(FILE *stream, struct source_skeleton_gen_struct *record
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
-  fprintf (stream, "%s", "#if ");
+  fprintf (stream, "%s", "    struct pollfd fds[");
   fprintf (stream, "%s", (record->ifndefname ? record->ifndefname : ""));
-  fprintf (stream, "%s", "_NRO_PIPES > 1");
+  fprintf (stream, "%s", "_NRO_PIPES];");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
-  fprintf (stream, "%s", "    for (i = 0; i < ");
-  fprintf (stream, "%s", (record->ifndefname ? record->ifndefname : ""));
-  fprintf (stream, "%s", "_NRO_PIPES; i++) {");
+  fprintf (stream, "%s", "    fds[i].fd = ctx->params.pipe_fds[i];");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
-  fprintf (stream, "%s", "#endif");
-  fprintf (stream, "%s", "\n");
-  fprintf (stream, "%s", indent_str);
-  fprintf (stream, "%s", "        fds[i].fd = ctx->params.pipe_fds[i];");
-  fprintf (stream, "%s", "\n");
-  fprintf (stream, "%s", indent_str);
-  fprintf (stream, "%s", "        fds[i].events = 0;");
+  fprintf (stream, "%s", "    fds[i].events = 0;");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
-  fprintf (stream, "%s", "        if (ctx->params.pipe_dir[i] & ");
+  fprintf (stream, "%s", "    if (ctx->params.pipe_dir[i] & ");
   fprintf (stream, "%s", (record->ifndefname ? record->ifndefname : ""));
   fprintf (stream, "%s", "_R > 0) fds[i].events |= POLLIN;");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
-  fprintf (stream, "%s", "        if (ctx->params.pipe_dir[i] & ");
+  fprintf (stream, "%s", "    if (ctx->params.pipe_dir[i] & ");
   fprintf (stream, "%s", (record->ifndefname ? record->ifndefname : ""));
   fprintf (stream, "%s", "_W > 0) fds[i].events |= POLLOUT;");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
-  fprintf (stream, "%s", "#if ");
-  fprintf (stream, "%s", (record->ifndefname ? record->ifndefname : ""));
-  fprintf (stream, "%s", "_NRO_PIPES > 1");
-  fprintf (stream, "%s", "\n");
-  fprintf (stream, "%s", indent_str);
-  fprintf (stream, "%s", "    }");
-  fprintf (stream, "%s", "\n");
-  fprintf (stream, "%s", indent_str);
-  fprintf (stream, "%s", "#endif");
-  fprintf (stream, "%s", "\n");
-  fprintf (stream, "%s", indent_str);
-  fprintf (stream, "%s", "\n");
-  fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "    if (poll(fds, ");
   fprintf (stream, "%s", (record->ifndefname ? record->ifndefname : ""));
-  fprintf (stream, "%s", "_NRO_PIPES, 0) > 0) return true;");
+  fprintf (stream, "%s", "_NRO_PIPES, timeout) > 0) return true;");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "    return false;");
@@ -272,22 +269,15 @@ generate_source_skeleton(FILE *stream, struct source_skeleton_gen_struct *record
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
-  indent = 4;
-  fprintf (stream, "%s", "    ");
-  if (record->init_receive_buffers)
-    generate_string (record->init_receive_buffers, stream, indent + strlen (indent_str));
-  else
-    generate_init_receive_buffers (stream, record, indent + strlen (indent_str));
-  indent = 0;
+  fprintf (stream, "%s", "    cqc_init(ctx.recv_buff_cqc,ARRAY_SZ(ctx.recv_buff));");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
-  indent = 4;
-  fprintf (stream, "%s", "    ");
-  if (record->init_send_buffers)
-    generate_string (record->init_send_buffers, stream, indent + strlen (indent_str));
-  else
-    generate_init_send_buffers (stream, record, indent + strlen (indent_str));
-  indent = 0;
+  fprintf (stream, "%s", "    memset(&ctx.recv_buff, 0x0, cqc_qsz(ctx.recv_buff_cqc) );");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "    return (EXIT_SUCCESS);");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "}");
@@ -297,7 +287,88 @@ generate_source_skeleton(FILE *stream, struct source_skeleton_gen_struct *record
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "int ");
   fprintf (stream, "%s", (record->prefix ? record->prefix : ""));
-  fprintf (stream, "%s", "_process() {");
+  fprintf (stream, "%s", "_process(int timeout) {");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "    if (check_fds_read(&ctx, timeout) ) {");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "        if (cqc_space(ctx.recv_buff_cqc) > 0) {");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "            int readsz = cqc_space_to_end(ctx.recv_buff_cqc);");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "            int head = ctx.recv_buff_cqc.head;");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "            int rdsz_r = read(ctx.params.pipe_fds[0], &ctx.recv_buff[head], readsz);");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "            ctx.recv_buff_cqc.head += rdsz_r;");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "        }");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "        /* ");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "           These test functions return '-1' when their packet is not (completely) found. ");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "           Else they will return the size of the packet.");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "        */");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  indent = 8;
+  fprintf (stream, "%s", "        ");
+  indent = 0;
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "        while (cqc_space(ctx.recv_buff_cqc) < ");
+  fprintf (stream, "%s", (record->ifndefname ? record->ifndefname : ""));
+  fprintf (stream, "%s", "_READ_SZ) {");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "            int head = cqc_peek(ctx.recv_buff_cqc, 0);");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "            int size = -1;");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  indent = 12;
+  fprintf (stream, "%s", "            ");
+  if (record->call_recv_tests)
+    generate_string (record->call_recv_tests, stream, indent + strlen (indent_str));
+  else
+    generate_call_recv_tests (stream, record, indent + strlen (indent_str));
+  indent = 0;
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "            if (size == -1) ctx.recv_buff_cqc.tail--;");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "            else ctx.recv_buff_cqc.tail -= size;");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "        }");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "    }");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "    return (EXIT_SUCCESS);");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "}");
@@ -308,18 +379,18 @@ generate_source_skeleton(FILE *stream, struct source_skeleton_gen_struct *record
 }
 
 void
-generatep_source_skeleton(FILE *stream, unsigned int indent, const char *cmd_options, const char *genpacket, const char *ifndefname, const char *init_receive_buffers, const char *init_send_buffers, const char *prefix, const char *receive_buffers, const char *send_buffers, const char *version)
+generatep_source_skeleton(FILE *stream, unsigned int indent, const char *call_recv_tests, const char *cmd_options, const char *genpacket, const char *ifndefname, const char *prefix, int read_sz, int size, const char *test_packets, const char *version)
 {
   struct source_skeleton_gen_struct record;
   
+  record.call_recv_tests = call_recv_tests;
   record.cmd_options = cmd_options;
   record.genpacket = genpacket;
   record.ifndefname = ifndefname;
-  record.init_receive_buffers = init_receive_buffers;
-  record.init_send_buffers = init_send_buffers;
   record.prefix = prefix;
-  record.receive_buffers = receive_buffers;
-  record.send_buffers = send_buffers;
+  record.read_sz = read_sz;
+  record.size = size;
+  record.test_packets = test_packets;
   record.version = version;
 
   generate_source_skeleton (stream, &record, indent);
@@ -396,6 +467,9 @@ genstring_source_skeleton(struct source_skeleton_gen_struct *record, unsigned in
   strcat (output, "#include <stdlib.h>");
   strcat (output, "\n");
   strcat (output, indent_str);
+  strcat (output, "#include <stdbool.h>");
+  strcat (output, "\n");
+  strcat (output, indent_str);
   strcat (output, "#include <string.h>");
   strcat (output, "\n");
   strcat (output, indent_str);
@@ -425,6 +499,13 @@ genstring_source_skeleton(struct source_skeleton_gen_struct *record, unsigned in
   strcat (output, "#define ARRAY_SZ(a) (sizeof(a) / sizeof(a[0]))");
   strcat (output, "\n");
   strcat (output, indent_str);
+  strcat (output, "#define ");
+  if (record->ifndefname) strcat (output, record->ifndefname);
+  strcat (output, "_READ_SZ (");
+  strcat (output, int_to_string (record->read_sz));
+  strcat (output, ")");
+  strcat (output, "\n");
+  strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "struct ");
@@ -439,12 +520,12 @@ genstring_source_skeleton(struct source_skeleton_gen_struct *record, unsigned in
   strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
-  strcat (output, "    ");
-  if (record->receive_buffers) strcat (output, record->receive_buffers);
+  strcat (output, "    uint8_t recv_buff[");
+  strcat (output, int_to_string (record->size));
+  strcat (output, "];");
   strcat (output, "\n");
   strcat (output, indent_str);
-  strcat (output, "    ");
-  if (record->send_buffers) strcat (output, record->send_buffers);
+  strcat (output, "    struct cqc recv_buff_cqc;");
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "\n");
@@ -466,9 +547,13 @@ genstring_source_skeleton(struct source_skeleton_gen_struct *record, unsigned in
   strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
-  strcat (output, "static bool check_fds(struct ");
+  if (record->test_packets) strcat (output, record->test_packets);
+  strcat (output, indent_str);
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "static bool check_fds_read(struct ");
   if (record->prefix) strcat (output, record->prefix);
-  strcat (output, "_ctx *ctx) {");
+  strcat (output, "_ctx *ctx, int timeout) {");
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "    int i = 0;");
@@ -476,55 +561,34 @@ genstring_source_skeleton(struct source_skeleton_gen_struct *record, unsigned in
   strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
-  strcat (output, "#if ");
+  strcat (output, "    struct pollfd fds[");
   if (record->ifndefname) strcat (output, record->ifndefname);
-  strcat (output, "_NRO_PIPES > 1");
+  strcat (output, "_NRO_PIPES];");
   strcat (output, "\n");
   strcat (output, indent_str);
-  strcat (output, "    for (i = 0; i < ");
-  if (record->ifndefname) strcat (output, record->ifndefname);
-  strcat (output, "_NRO_PIPES; i++) {");
+  strcat (output, "    fds[i].fd = ctx->params.pipe_fds[i];");
   strcat (output, "\n");
   strcat (output, indent_str);
-  strcat (output, "#endif");
-  strcat (output, "\n");
-  strcat (output, indent_str);
-  strcat (output, "        fds[i].fd = ctx->params.pipe_fds[i];");
-  strcat (output, "\n");
-  strcat (output, indent_str);
-  strcat (output, "        fds[i].events = 0;");
+  strcat (output, "    fds[i].events = 0;");
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
-  strcat (output, "        if (ctx->params.pipe_dir[i] & ");
+  strcat (output, "    if (ctx->params.pipe_dir[i] & ");
   if (record->ifndefname) strcat (output, record->ifndefname);
   strcat (output, "_R > 0) fds[i].events |= POLLIN;");
   strcat (output, "\n");
   strcat (output, indent_str);
-  strcat (output, "        if (ctx->params.pipe_dir[i] & ");
+  strcat (output, "    if (ctx->params.pipe_dir[i] & ");
   if (record->ifndefname) strcat (output, record->ifndefname);
   strcat (output, "_W > 0) fds[i].events |= POLLOUT;");
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
-  strcat (output, "#if ");
-  if (record->ifndefname) strcat (output, record->ifndefname);
-  strcat (output, "_NRO_PIPES > 1");
-  strcat (output, "\n");
-  strcat (output, indent_str);
-  strcat (output, "    }");
-  strcat (output, "\n");
-  strcat (output, indent_str);
-  strcat (output, "#endif");
-  strcat (output, "\n");
-  strcat (output, indent_str);
-  strcat (output, "\n");
-  strcat (output, indent_str);
   strcat (output, "    if (poll(fds, ");
   if (record->ifndefname) strcat (output, record->ifndefname);
-  strcat (output, "_NRO_PIPES, 0) > 0) return true;");
+  strcat (output, "_NRO_PIPES, timeout) > 0) return true;");
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "    return false;");
@@ -549,12 +613,15 @@ genstring_source_skeleton(struct source_skeleton_gen_struct *record, unsigned in
   strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
-  strcat (output, "    ");
-  if (record->init_receive_buffers) strcat (output, record->init_receive_buffers);
+  strcat (output, "    cqc_init(ctx.recv_buff_cqc,ARRAY_SZ(ctx.recv_buff));");
   strcat (output, "\n");
   strcat (output, indent_str);
-  strcat (output, "    ");
-  if (record->init_send_buffers) strcat (output, record->init_send_buffers);
+  strcat (output, "    memset(&ctx.recv_buff, 0x0, cqc_qsz(ctx.recv_buff_cqc) );");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "    return (EXIT_SUCCESS);");
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "}");
@@ -564,7 +631,81 @@ genstring_source_skeleton(struct source_skeleton_gen_struct *record, unsigned in
   strcat (output, indent_str);
   strcat (output, "int ");
   if (record->prefix) strcat (output, record->prefix);
-  strcat (output, "_process() {");
+  strcat (output, "_process(int timeout) {");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "    if (check_fds_read(&ctx, timeout) ) {");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "        if (cqc_space(ctx.recv_buff_cqc) > 0) {");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "            int readsz = cqc_space_to_end(ctx.recv_buff_cqc);");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "            int head = ctx.recv_buff_cqc.head;");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "            int rdsz_r = read(ctx.params.pipe_fds[0], &ctx.recv_buff[head], readsz);");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "            ctx.recv_buff_cqc.head += rdsz_r;");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "        }");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "        /* ");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "           These test functions return '-1' when their packet is not (completely) found. ");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "           Else they will return the size of the packet.");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "        */");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "        ");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "        while (cqc_space(ctx.recv_buff_cqc) < ");
+  if (record->ifndefname) strcat (output, record->ifndefname);
+  strcat (output, "_READ_SZ) {");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "            int head = cqc_peek(ctx.recv_buff_cqc, 0);");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "            int size = -1;");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "            ");
+  if (record->call_recv_tests) strcat (output, record->call_recv_tests);
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "            if (size == -1) ctx.recv_buff_cqc.tail--;");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "            else ctx.recv_buff_cqc.tail -= size;");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "        }");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "    }");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "    return (EXIT_SUCCESS);");
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "}");
@@ -577,18 +718,18 @@ genstring_source_skeleton(struct source_skeleton_gen_struct *record, unsigned in
 }
 
 char *
-genstringp_source_skeleton(unsigned int indent, const char *cmd_options, const char *genpacket, const char *ifndefname, const char *init_receive_buffers, const char *init_send_buffers, const char *prefix, const char *receive_buffers, const char *send_buffers, const char *version)
+genstringp_source_skeleton(unsigned int indent, const char *call_recv_tests, const char *cmd_options, const char *genpacket, const char *ifndefname, const char *prefix, int read_sz, int size, const char *test_packets, const char *version)
 {
   struct source_skeleton_gen_struct record;
   
+  record.call_recv_tests = call_recv_tests;
   record.cmd_options = cmd_options;
   record.genpacket = genpacket;
   record.ifndefname = ifndefname;
-  record.init_receive_buffers = init_receive_buffers;
-  record.init_send_buffers = init_send_buffers;
   record.prefix = prefix;
-  record.receive_buffers = receive_buffers;
-  record.send_buffers = send_buffers;
+  record.read_sz = read_sz;
+  record.size = size;
+  record.test_packets = test_packets;
   record.version = version;
 
   return genstring_source_skeleton (&record, indent);
@@ -603,26 +744,26 @@ strcnt_source_skeleton(struct source_skeleton_gen_struct *record, unsigned int i
   length += (record->version ? strlen (record->version) : 0) * 1;
   length += (record->cmd_options ? strlen (record->cmd_options) : 0) * 1;
   length += (record->prefix ? strlen (record->prefix) : 0) * 9;
-  length += (record->receive_buffers ? strlen (record->receive_buffers) : 0) * 1;
-  length += (record->send_buffers ? strlen (record->send_buffers) : 0) * 1;
   length += (record->ifndefname ? strlen (record->ifndefname) : 0) * 7;
-  length += (record->init_receive_buffers ? strlen (record->init_receive_buffers) : 0) * 1;
-  length += (record->init_send_buffers ? strlen (record->init_send_buffers) : 0) * 1;
+  length += strlen (int_to_string (record->read_sz)) * 1;
+  length += strlen (int_to_string (record->size)) * 1;
+  length += (record->test_packets ? strlen (record->test_packets) : 0) * 1;
+  length += (record->call_recv_tests ? strlen (record->call_recv_tests) : 0) * 1;
 
-  return length + 1382;
+  return length + 2434;
 }
 
 void
 init_source_skeleton_gen_struct(struct source_skeleton_gen_struct *record)
 {
+  record->call_recv_tests = 0;
   record->cmd_options = 0;
   record->genpacket = 0;
   record->ifndefname = 0;
-  record->init_receive_buffers = 0;
-  record->init_send_buffers = 0;
   record->prefix = 0;
-  record->receive_buffers = 0;
-  record->send_buffers = 0;
+  record->read_sz = 0;
+  record->size = 0;
+  record->test_packets = 0;
   record->version = 0;
 }
 
