@@ -118,26 +118,31 @@ EXTRA_DIST = src/skels/header.h_skel \
 			src/skels/fixed_packet_test_function.h_skel \
 			src/skels/cqc.h_skel
 
-#$(BUILT_SOURCES) \
-$(TESTS)
+#$(BUILT_SOURCES) $(TESTS)
+
+TEST_EXTENSIONS = .test .ctest
 
 built-clean:
 	cd @srcdir@ && rm -f $(BUILT_SOURCES)
 
+test/genpacket.c: src/genpacket
+	./src/genpacket -i - -p test/fixed_gptest.gp -o ./test/
 
-
-
-TESTS = test/test_packit test/test_packit_output.test
-check_PROGRAMS = test/test_packit
+TESTS = test/test_packit test/test_packit_output.test test/test_genpacket_output.test
+check_PROGRAMS = test/test_packit test/genpacket_receive test/genpacket_send
 test_test_packit_SOURCES = test/test_packit.c $(genpacket_program_sources)
 test_test_packit_CFLAGS = @check_CFLAGS@ -I src
 test_test_packit_LDADD = @check_LIBS@
+test_genpacket_send_SOURCES = test/genpacket_send.c test/genpacket.c
+test_genpacket_send_CFLAGS =
+test_genpacket_send_LDADD =
+test_genpacket_receive_SOURCES =  test/genpacket.c test/genpacket_receive.c
+test_genpacket_receive_CFLAGS =
+test_genpacket_receive_LDADD =
 
 TEST_LOG_DRIVER = env AM_TAP_BATS='test/bats/bin/bats' $(SHELL) \
                   tap-driver.sh
                   
-TEST_EXTENSIONS = .test .ctest
-
 LOG_DRIVER =  env AM_TAP_AWK='$(AWK)' $(SHELL) \
                   tap-driver.sh
 

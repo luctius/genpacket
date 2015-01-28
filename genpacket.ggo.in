@@ -11,3 +11,5 @@ option "input" i "Input file use - to get data from STDIN" default="-" string
 option "packetdesc" p "Packet description file" string
 
 option "packetindex" n "Packet description to use if multiple are defined in the packet description file" default="0" int optional
+
+option "output-path" o "Output Path of the GenPacket generated source files" default="./" string optional

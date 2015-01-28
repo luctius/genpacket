@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
     }
 
     if (strcmp(basename(argv[0]), "genpacket") == 0) {
-        generate_packet_files("./", "genpacket");
+        generate_packet_files(args_info.output_path_arg, "genpacket");
     }
     
     if (strcmp(basename(argv[0]), "packit") == 0) {
