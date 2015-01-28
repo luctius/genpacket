@@ -5,7 +5,6 @@
 #include "genpacket.h"
 
 void genpacket_p0_fixed_received(struct p0_fixed *packet, void *private_ctx) {
-    printf("hello world\n");
 }
 
 void genpacket_p1_fixed_received(struct p1_fixed *packet, void *private_ctx) {
