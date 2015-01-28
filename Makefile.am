@@ -13,6 +13,7 @@ GIT_VERSION := "$(shell git describe --abbrev=10 --dirty --always)"
 
 genpacket_program_sources = \
                     src/cmdline.c \
+                    src/cmdline_packit.c \
                     $(gengen_sources) \
                     src/genpacket.tab.c \
                     src/genpacket.lex.c \
@@ -36,6 +37,9 @@ src_genpacket_CFLAGS = -ggdb -O0 -Wall -Wextra -Wformat=2 -Wswitch-default -Wcas
 
 src/cmdline.c src/cmdline.h: genpacket.ggo
 	gengetopt --output-dir=src/ < $<
+    
+src/cmdline_packit.c src/cmdline_packit.h: packit.ggo
+	gengetopt -f cmdline_packit_parser -a packit_args_info -F cmdline_packit --output-dir=src/ < $<
 
 
 src/genpacket.tab.c: src/genpacket.y
@@ -80,8 +84,7 @@ GENERATE = $(GENGEN)
 $(gengen_sources): $(EXTRA_DIST)
 	name="`echo $* | sed 's/^.*\///g'`"; \
 	echo "$$name"; \
-	$(GENERATE) -i $*.h_skel -F $*.h --output-format=c --separate-files --output-dir=$(srcdir)/src/skels/ --force -f $$name
-	echo $(GENERATE) -i $< -F $*.h --output-format=c -f $$name  --separate-files --output-dir=$(srcdir) --force
+	$(GENERATE) -i $*.h_skel -F $*.h --output-format=c --separate-files  --force -f $$name
 endif
 
 
@@ -126,7 +129,7 @@ built-clean:
 	cd @srcdir@ && rm -f $(BUILT_SOURCES)
 
 test/genpacket.c: src/genpacket
-	./src/genpacket -i - -p test/fixed_gptest.gp -o ./test/
+	./src/genpacket -i - -p test/fixed_basic.gp -o ./test/
 
 TESTS = test/test_packit test/test_packit_output.test test/test_genpacket_output.test
 check_PROGRAMS = test/test_packit test/genpacket_receive test/genpacket_send

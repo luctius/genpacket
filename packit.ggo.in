@@ -1,6 +1,6 @@
-package "genpacket"
+package "packit"
 version "0.0.1"
-purpose "Generate encoder/decoder for user defined packet formats."
+purpose "Commandline encoder/decoder for user defined packet formats."
  
 args "<command line options>"
  
@@ -8,7 +8,7 @@ option "debug" d "show debug output" flag off
 
 option "input" i "Input file use - to get data from STDIN" default="-" string
 
-option "packetdesc" p "Packet description file" string optional
+option "packetdesc" p "Packet description file" string
 
 option "packetindex" n "Packet description to use if multiple are defined in the packet description file" default="0" int optional
 
