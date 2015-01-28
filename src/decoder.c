@@ -267,7 +267,7 @@ void calculate_crc(struct packet * p, struct poption * o) {
         }*/
         uint64_t crc = custom_crc(&crc_config,p->data, o->data_byte_offset);
         memcpy(&packet_crc, p->data + o->data_byte_offset,o->data_width/8);
-        if (crc == packet_crc) {
+        if ((crc&((1<<o->data_width)-1)) == (packet_crc&((1<<o->data_width)-1))) {
             p->crc_valid = true;
         } 
         gp_debug("Expected: %x Received: %x", crc, packet_crc&((1<<o->data_width)-1));
