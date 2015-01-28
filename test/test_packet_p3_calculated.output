@@ -1,0 +1,10 @@
+{
+	"name": "p3_calculated",
+	"attribute0": 10,
+	"attribute1": 10,
+	"data0": [1,2,3,4],
+	"attribute2": 10,
+	"data1": [1,2,3],
+	"crc0": 28,
+	"crc_valid": true
+}

@@ -22,6 +22,7 @@ genpacket_program_sources = \
                     src/gensrc.c \
                     src/decoder.c \
                     src/debug_print.c \
+                    src/crc_custom.c \
                     src/crc.c \
                     src/json_printer.c
 
@@ -133,6 +134,11 @@ test_test_packit_CFLAGS = @check_CFLAGS@ -I src
 test_test_packit_LDADD = @check_LIBS@
 
 TEST_LOG_DRIVER = env AM_TAP_BATS='test/bats/bin/bats' $(SHELL) \
+                  tap-driver.sh
+                  
+TEST_EXTENSIONS = .test .ctest
+
+LOG_DRIVER =  env AM_TAP_AWK='$(AWK)' $(SHELL) \
                   tap-driver.sh
 
 

@@ -3,10 +3,14 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include "crc_custom.h"
 
-uint8_t crc8_slow(uint32_t crc, uint8_t *data, size_t len);
-uint8_t crc8(uint32_t crc, uint8_t *data, size_t len);
-uint32_t crc32(uint32_t crc, const void *buf, size_t size);
+#define CRC8_POLY 0x07
+
+uint64_t custom_crc(crc_cfg_t *cfg,const void *data, size_t len);
+uint8_t crc8(const uint8_t *data, size_t len);
+uint16_t crc16(const uint8_t *data, size_t len);
+uint32_t crc32(const uint8_t *data, size_t len);
 
 
 #endif

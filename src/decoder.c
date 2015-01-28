@@ -226,7 +226,7 @@ void calculate_crc(struct packet * p, struct poption * o) {
     p->crc_valid = false;
     if (strcmp(o->crc_method,"crc_8")==0) {
         //gp_debug("Calc crc from: %d to %d", frame_at_idx, byte_offset);
-        uint8_t crc = crc8(0, p->data, o->data_byte_offset);
+        uint8_t crc = crc8(p->data, o->data_byte_offset);
         if (crc == p->data[o->data_byte_offset]) {
             p->crc_valid = true;
         }
@@ -234,8 +234,8 @@ void calculate_crc(struct packet * p, struct poption * o) {
     } else if (strcmp(o->crc_method,"crc_32")==0) {
         gp_debug("CRC 32 method o: %d",o->data_byte_offset);
         uint32_t packet_crc;
-        uint32_t crc = crc32(0, p->data, o->data_byte_offset);
-        memcpy(&packet_crc, &p->data[o->data_byte_offset],4);
+        uint32_t crc = crc32(p->data, o->data_byte_offset);
+        memcpy(&packet_crc, p->data + o->data_byte_offset,sizeof(uint32_t));
         if (crc == packet_crc) {
             p->crc_valid = true;
         } 
