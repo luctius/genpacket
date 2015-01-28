@@ -240,6 +240,37 @@ void calculate_crc(struct packet * p, struct poption * o) {
             p->crc_valid = true;
         } 
         gp_debug("Expected: %x Received: %x", crc, packet_crc);
+    } else if (strcmp(o->crc_method,"crc_16")==0) {
+        gp_debug("CRC 16 method o: %d",o->data_byte_offset);
+        uint16_t packet_crc;
+        uint16_t crc = crc16(p->data, o->data_byte_offset);
+        memcpy(&packet_crc, p->data + o->data_byte_offset,sizeof(uint16_t));
+        if (crc == packet_crc) {
+            p->crc_valid = true;
+        } 
+        gp_debug("Expected: %x Received: %x", crc, packet_crc&((1<<o->data_width)-1));
+    } else if (strcmp(o->crc_method,"crc_custom")==0) {
+        gp_debug("CRC custom method o: %d %d",o->data_byte_offset, o->data_width);
+        uint64_t packet_crc;
+        crc_cfg_t crc_config = {
+            .width          = o->data_width,
+            .poly           = p->crc_poly,
+            .xor_in         = p->crc_xor_in,
+            .reflect_in     = p->crc_reflect_in,
+            .xor_out        = p->crc_xor_out,
+            .reflect_out    = p->crc_reflect_out,
+        };
+        
+        gp_debug("CRC settings:\nwidth:%d\npoly:0x%x\nxor_in:0x%x\nxor_out:0x%x\nreflect_in:%d\nreflect_out:%d\n",o->data_width, p->crc_poly,p->crc_xor_in,p->crc_xor_out,p->crc_reflect_in,p->crc_reflect_out);
+        /*for(int i=0;i<o->data_byte_offset;i++) {
+            printf("%02x",p->data[i]);
+        }*/
+        uint64_t crc = custom_crc(&crc_config,p->data, o->data_byte_offset);
+        memcpy(&packet_crc, p->data + o->data_byte_offset,o->data_width/8);
+        if (crc == packet_crc) {
+            p->crc_valid = true;
+        } 
+        gp_debug("Expected: %x Received: %x", crc, packet_crc&((1<<o->data_width)-1));
     } else if (strcmp(o->crc_method,"crc_citt")==0) {
         gp_debug("CITT CRC method");
     }

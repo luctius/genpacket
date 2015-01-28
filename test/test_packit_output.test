@@ -29,3 +29,13 @@
     src/packit -i test/test_packet_p3_calculated.dat -n3 -p test/fixed_basic.gp > $BATS_TMPDIR/p3.tmp
     cat $BATS_TMPDIR/p3.tmp | python -m json.tool 
 }
+
+@test "testpacket_p4 output is valid" {
+    src/packit -i test/test_packet_p4_calculated.dat -n4 -p test/fixed_basic.gp > $BATS_TMPDIR/p4.tmp
+    diff $BATS_TMPDIR/p4.tmp test/test_packet_p4_calculated.output
+}
+
+@test "testpacket_p4 output is valid json" {
+    src/packit -i test/test_packet_p4_calculated.dat -n4 -p test/fixed_basic.gp > $BATS_TMPDIR/p4.tmp
+    cat $BATS_TMPDIR/p4.tmp | python -m json.tool 
+}

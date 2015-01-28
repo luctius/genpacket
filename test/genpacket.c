@@ -147,6 +147,16 @@ static int test_p3_calculated(struct genpacket_ctx *ctx, int head) {
 
     return retval;
 }
+static int test_p4_calculated(struct genpacket_ctx *ctx, int head) {
+    int cnt = cqc_cnt(ctx->recv_buff_cqc);
+    if (cnt < 8) return -1;
+
+    int retval = 8;
+    struct p4_calculated *packet = (struct p4_calculated *) &ctx->recv_buff[head];
+    return -1;
+
+    return retval;
+}
 
 static bool check_fds(struct genpacket_ctx *ctx, int timeout) {
 
@@ -221,6 +231,7 @@ int genpacket_process(int timeout) {
                 if ( (size == -1) && (size = (test_p1_fixed(&genpacket_ctx, head) ) ) ) genpacket_p1_fixed_received( (struct p1_fixed *) &genpacket_ctx.recv_buff[head], genpacket_ctx.params.private_ctx);
                 if ( (size == -1) && (size = (test_p2_fixed(&genpacket_ctx, head) ) ) ) genpacket_p2_fixed_received( (struct p2_fixed *) &genpacket_ctx.recv_buff[head], genpacket_ctx.params.private_ctx);
                 if ( (size == -1) && (size = (test_p3_calculated(&genpacket_ctx, head) ) ) ) genpacket_p3_calculated_received( (struct p3_calculated *) &genpacket_ctx.recv_buff[head], genpacket_ctx.params.private_ctx);
+                if ( (size == -1) && (size = (test_p4_calculated(&genpacket_ctx, head) ) ) ) genpacket_p4_calculated_received( (struct p4_calculated *) &genpacket_ctx.recv_buff[head], genpacket_ctx.params.private_ctx);
 
 
                 if (size == -1) genpacket_ctx.recv_buff_cqc.tail--;

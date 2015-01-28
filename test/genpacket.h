@@ -66,16 +66,31 @@ struct p3_calculated {
     
 };
 
+struct p4_calculated {
+    uint8_t frame0;
+    uint8_t attribute0;
+    uint8_t sz2;
+    uint8_t sz;
+    uint8_t attribute1;
+    uint8_t *data0;
+    uint8_t attribute2;
+    uint8_t *data1;
+    uint16_t crc0;
+    
+};
+
 
 extern void genpacket_p0_fixed_received(struct p0_fixed *packet, void *private_ctx);
 extern void genpacket_p1_fixed_received(struct p1_fixed *packet, void *private_ctx);
 extern void genpacket_p2_fixed_received(struct p2_fixed *packet, void *private_ctx);
 extern void genpacket_p3_calculated_received(struct p3_calculated *packet, void *private_ctx);
+extern void genpacket_p4_calculated_received(struct p4_calculated *packet, void *private_ctx);
 
 int genpacket_p0_fixed_send(struct p0_fixed *packet);
 int genpacket_p1_fixed_send(struct p1_fixed *packet);
 int genpacket_p2_fixed_send(struct p2_fixed *packet);
 int genpacket_p3_calculated_send(struct p3_calculated *packet);
+int genpacket_p4_calculated_send(struct p4_calculated *packet);
 
 struct genpacket_params {
     int rfds[GENPACKET_NRO_PIPES];
