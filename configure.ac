@@ -67,7 +67,7 @@ AC_TYPE_UINT64_T
 AC_TYPE_UINT8_T
 AC_HEADER_STDBOOL
 
-AC_CONFIG_FILES([Makefile genpacket.ggo])
+AC_CONFIG_FILES([Makefile genpacket.ggo packit.ggo])
 				 
 AC_REQUIRE_AUX_FILE([tap-driver.sh])
 AC_OUTPUT
