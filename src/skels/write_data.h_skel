@@ -1,0 +1,1 @@
+write(@prefix@_ctx.params.wfds[@pipe:int@], &packet->@name@, @size:int@);
