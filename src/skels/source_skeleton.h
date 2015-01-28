@@ -23,12 +23,16 @@ struct source_skeleton_gen_struct
   const char *ifndefname;
   const char *prefix;
   int read_sz;
+  const char *send_functions_impl;
   int size;
   const char *test_packets;
   const char *version;
 };
 
 extern void generate_call_recv_tests(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent);
+
+
+extern void generate_send_functions_impl(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent);
 
 
 extern void generate_test_packets(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent);
@@ -38,13 +42,13 @@ void
 generate_source_skeleton(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent);
 
 void
-generatep_source_skeleton(FILE *stream, unsigned int indent, const char *call_recv_tests, const char *cmd_options, const char *genpacket, const char *ifndefname, const char *prefix, int read_sz, int size, const char *test_packets, const char *version);
+generatep_source_skeleton(FILE *stream, unsigned int indent, const char *call_recv_tests, const char *cmd_options, const char *genpacket, const char *ifndefname, const char *prefix, int read_sz, const char *send_functions_impl, int size, const char *test_packets, const char *version);
 
 char *
 genstring_source_skeleton(struct source_skeleton_gen_struct *record, unsigned int indent);
 
 char *
-genstringp_source_skeleton(unsigned int indent, const char *call_recv_tests, const char *cmd_options, const char *genpacket, const char *ifndefname, const char *prefix, int read_sz, int size, const char *test_packets, const char *version);
+genstringp_source_skeleton(unsigned int indent, const char *call_recv_tests, const char *cmd_options, const char *genpacket, const char *ifndefname, const char *prefix, int read_sz, const char *send_functions_impl, int size, const char *test_packets, const char *version);
 
 int
 strcnt_source_skeleton(struct source_skeleton_gen_struct *record, unsigned int indent);

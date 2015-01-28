@@ -90,33 +90,51 @@ endif
 
 #libgp_la_SOURCES = $(BUILT_SOURCES)
 
-gengen_sources = src/skels/header.h src/skels/header.c\
-			src/skels/structs.c src/skels/structs.h \
-			src/skels/send_function.c src/skels/send_function.h \
-			src/skels/receive_callback.c src/skels/receive_callback.h \
-			src/skels/source_skeleton.c src/skels/source_skeleton.h \
-			src/skels/function_call.c src/skels/function_call.h \
-			src/skels/assignment.c src/skels/assignment.h \
-			src/skels/var_declaration.c src/skels/var_declaration.h \
-			src/skels/calculated_packet_test_function.c src/skels/calculated_packet_test_function.h \
-			src/skels/dynamic_packet_test_function.c src/skels/dynamic_packet_test_function.h \
-			src/skels/fixed_packet_no_frame_test_function.c src/skels/fixed_packet_no_frame_test_function.h \
-			src/skels/fixed_packet_test_function.c src/skels/fixed_packet_test_function.h \
-			src/skels/cqc.c src/skels/cqc.h
+gengen_sources = \
+	src/skels/assignment.c									\
+	src/skels/assignment.h									\
+	src/skels/calculated_packet_test_function_impl.c		\
+	src/skels/calculated_packet_test_function_impl.h		\
+	src/skels/cqc.c											\
+	src/skels/cqc.h											\
+	src/skels/dynamic_packet_test_function_impl.c			\
+	src/skels/dynamic_packet_test_function_impl.h			\
+	src/skels/fixed_packet_no_frame_test_function_impl.c	\
+	src/skels/fixed_packet_no_frame_test_function_impl.h	\
+	src/skels/fixed_packet_test_function_impl.c				\
+	src/skels/fixed_packet_test_function_impl.h				\
+	src/skels/function_call.c								\
+	src/skels/function_call.h								\
+	src/skels/header.c										\
+	src/skels/header.h										\
+	src/skels/receive_callback_decl.c						\
+	src/skels/receive_callback_decl.h						\
+	src/skels/send_func_impl.c								\
+	src/skels/send_func_impl.h								\
+	src/skels/send_function_decl.c							\
+	src/skels/send_function_decl.h							\
+	src/skels/source_skeleton.c								\
+	src/skels/source_skeleton.h								\
+	src/skels/structs.c										\
+	src/skels/structs.h										\
+	src/skels/var_declaration.c								\
+	src/skels/var_declaration.h							
 
-EXTRA_DIST = src/skels/header.h_skel \
-			src/skels/structs.h_skel \
-			src/skels/send_function.h_skel \
-			src/skels/receive_callback.h_skel \
-			src/skels/var_declaration.h_skel \
-			src/skels/function_call.h_skel \
-			src/skels/assignment.h_skel \
-			src/skels/source_skeleton.h_skel \
-			src/skels/calculated_packet_test_function.h_skel \
-			src/skels/dynamic_packet_test_function.h_skel \
-			src/skels/fixed_packet_no_frame_test_function.h_skel \
-			src/skels/fixed_packet_test_function.h_skel \
-			src/skels/cqc.h_skel
+EXTRA_DIST = \ 
+	src/skels/assignment.h_skel									\
+	src/skels/calculated_packet_test_function_impl.h_skel		\
+	src/skels/cqc.h_skel										\
+	src/skels/dynamic_packet_test_function_impl.h_skel			\
+	src/skels/fixed_packet_no_frame_test_function_impl.h_skel	\
+	src/skels/fixed_packet_test_function_impl.h_skel			\
+	src/skels/function_call.h_skel								\
+	src/skels/header.h_skel										\
+	src/skels/receive_callback_decl.h_skel						\
+	src/skels/send_func_impl.h_skel								\
+	src/skels/send_function_decl.h_skel							\
+	src/skels/source_skeleton.h_skel							\
+	src/skels/structs.h_skel									\
+	src/skels/var_declaration.h_skel								
 
 #$(BUILT_SOURCES) $(TESTS)
 

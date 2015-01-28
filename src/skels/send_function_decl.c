@@ -4,10 +4,10 @@
  * http://www.gnu.org/software/gengen
  */
 
-#include "send_function.h"
+#include "send_function_decl.h"
 
 void
-generate_send_function(FILE *stream, struct send_function_gen_struct *record, unsigned int indent)
+generate_send_function_decl(FILE *stream, struct send_function_decl_gen_struct *record, unsigned int indent)
 {
   char *indent_str;
   unsigned int i;
@@ -32,18 +32,18 @@ generate_send_function(FILE *stream, struct send_function_gen_struct *record, un
 }
 
 void
-generatep_send_function(FILE *stream, unsigned int indent, const char *packet_name, const char *prefix)
+generatep_send_function_decl(FILE *stream, unsigned int indent, const char *packet_name, const char *prefix)
 {
-  struct send_function_gen_struct record;
+  struct send_function_decl_gen_struct record;
   
   record.packet_name = packet_name;
   record.prefix = prefix;
 
-  generate_send_function (stream, &record, indent);
+  generate_send_function_decl (stream, &record, indent);
 }
 
 char *
-genstring_send_function(struct send_function_gen_struct *record, unsigned int indent)
+genstring_send_function_decl(struct send_function_decl_gen_struct *record, unsigned int indent)
 {
   char *indent_str, *output;
   unsigned int i;
@@ -54,7 +54,7 @@ genstring_send_function(struct send_function_gen_struct *record, unsigned int in
     indent_str[i] = ' ';
   indent_str[indent] = '\0';
 
-  len = strcnt_send_function (record, indent);
+  len = strcnt_send_function_decl (record, indent);
   output = (char *) malloc (len + 1);
   output[0] = '\0';
 
@@ -74,18 +74,18 @@ genstring_send_function(struct send_function_gen_struct *record, unsigned int in
 }
 
 char *
-genstringp_send_function(unsigned int indent, const char *packet_name, const char *prefix)
+genstringp_send_function_decl(unsigned int indent, const char *packet_name, const char *prefix)
 {
-  struct send_function_gen_struct record;
+  struct send_function_decl_gen_struct record;
   
   record.packet_name = packet_name;
   record.prefix = prefix;
 
-  return genstring_send_function (&record, indent);
+  return genstring_send_function_decl (&record, indent);
 }
 
 int
-strcnt_send_function(struct send_function_gen_struct *record, unsigned int indent)
+strcnt_send_function_decl(struct send_function_decl_gen_struct *record, unsigned int indent)
 {
   int length = 0;
   
@@ -96,7 +96,7 @@ strcnt_send_function(struct send_function_gen_struct *record, unsigned int inden
 }
 
 void
-init_send_function_gen_struct(struct send_function_gen_struct *record)
+init_send_function_decl_gen_struct(struct send_function_decl_gen_struct *record)
 {
   record->packet_name = 0;
   record->prefix = 0;

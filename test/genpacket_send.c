@@ -10,8 +10,8 @@ void genpacket_p0_fixed_received(struct p0_fixed *packet, void *private_ctx) {
 
 int main() {
     struct genpacket_params params = {
-        .pipe_fds = {  STDIN_FILENO, },
-        .pipe_dir = { GENPACKET_R, },
+        .rfds = {  STDIN_FILENO, },
+        .wfds = {  STDOUT_FILENO, },
         .private_ctx = NULL,
     };
 

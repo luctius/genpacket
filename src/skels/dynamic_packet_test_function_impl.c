@@ -4,7 +4,7 @@
  * http://www.gnu.org/software/gengen
  */
 
-#include "fixed_packet_test_function.h"
+#include "dynamic_packet_test_function_impl.h"
 
 
 static void
@@ -50,7 +50,7 @@ int_to_string(int i)
 }
 
 void
-generate_fixed_packet_test_function(FILE *stream, struct fixed_packet_test_function_gen_struct *record, unsigned int indent)
+generate_dynamic_packet_test_function_impl(FILE *stream, struct dynamic_packet_test_function_impl_gen_struct *record, unsigned int indent)
 {
   char *indent_str;
   unsigned int i;
@@ -92,10 +92,10 @@ generate_fixed_packet_test_function(FILE *stream, struct fixed_packet_test_funct
   fprintf (stream, "%s", indent_str);
   indent = 4;
   fprintf (stream, "%s", "    ");
-  if (record->test_frame_fixed)
-    generate_string (record->test_frame_fixed, stream, indent + strlen (indent_str));
+  if (record->test_frame_dynamic)
+    generate_string (record->test_frame_dynamic, stream, indent + strlen (indent_str));
   else
-    generate_test_frame_fixed (stream, record, indent + strlen (indent_str));
+    generate_test_frame_dynamic (stream, record, indent + strlen (indent_str));
   indent = 0;
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
@@ -112,20 +112,20 @@ generate_fixed_packet_test_function(FILE *stream, struct fixed_packet_test_funct
 }
 
 void
-generatep_fixed_packet_test_function(FILE *stream, unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_fixed)
+generatep_dynamic_packet_test_function_impl(FILE *stream, unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_dynamic)
 {
-  struct fixed_packet_test_function_gen_struct record;
+  struct dynamic_packet_test_function_impl_gen_struct record;
   
   record.name = name;
   record.packet_size = packet_size;
   record.prefix = prefix;
-  record.test_frame_fixed = test_frame_fixed;
+  record.test_frame_dynamic = test_frame_dynamic;
 
-  generate_fixed_packet_test_function (stream, &record, indent);
+  generate_dynamic_packet_test_function_impl (stream, &record, indent);
 }
 
 char *
-genstring_fixed_packet_test_function(struct fixed_packet_test_function_gen_struct *record, unsigned int indent)
+genstring_dynamic_packet_test_function_impl(struct dynamic_packet_test_function_impl_gen_struct *record, unsigned int indent)
 {
   char *indent_str, *output;
   unsigned int i;
@@ -136,7 +136,7 @@ genstring_fixed_packet_test_function(struct fixed_packet_test_function_gen_struc
     indent_str[i] = ' ';
   indent_str[indent] = '\0';
 
-  len = strcnt_fixed_packet_test_function (record, indent);
+  len = strcnt_dynamic_packet_test_function_impl (record, indent);
   output = (char *) malloc (len + 1);
   output[0] = '\0';
 
@@ -170,7 +170,7 @@ genstring_fixed_packet_test_function(struct fixed_packet_test_function_gen_struc
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "    ");
-  if (record->test_frame_fixed) strcat (output, record->test_frame_fixed);
+  if (record->test_frame_dynamic) strcat (output, record->test_frame_dynamic);
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "\n");
@@ -188,37 +188,37 @@ genstring_fixed_packet_test_function(struct fixed_packet_test_function_gen_struc
 }
 
 char *
-genstringp_fixed_packet_test_function(unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_fixed)
+genstringp_dynamic_packet_test_function_impl(unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_dynamic)
 {
-  struct fixed_packet_test_function_gen_struct record;
+  struct dynamic_packet_test_function_impl_gen_struct record;
   
   record.name = name;
   record.packet_size = packet_size;
   record.prefix = prefix;
-  record.test_frame_fixed = test_frame_fixed;
+  record.test_frame_dynamic = test_frame_dynamic;
 
-  return genstring_fixed_packet_test_function (&record, indent);
+  return genstring_dynamic_packet_test_function_impl (&record, indent);
 }
 
 int
-strcnt_fixed_packet_test_function(struct fixed_packet_test_function_gen_struct *record, unsigned int indent)
+strcnt_dynamic_packet_test_function_impl(struct dynamic_packet_test_function_impl_gen_struct *record, unsigned int indent)
 {
   int length = 0;
   
   length += (record->name ? strlen (record->name) : 0) * 3;
   length += (record->prefix ? strlen (record->prefix) : 0) * 1;
   length += strlen (int_to_string (record->packet_size)) * 2;
-  length += (record->test_frame_fixed ? strlen (record->test_frame_fixed) : 0) * 1;
+  length += (record->test_frame_dynamic ? strlen (record->test_frame_dynamic) : 0) * 1;
 
   return length + 242;
 }
 
 void
-init_fixed_packet_test_function_gen_struct(struct fixed_packet_test_function_gen_struct *record)
+init_dynamic_packet_test_function_impl_gen_struct(struct dynamic_packet_test_function_impl_gen_struct *record)
 {
   record->name = 0;
   record->packet_size = 0;
   record->prefix = 0;
-  record->test_frame_fixed = 0;
+  record->test_frame_dynamic = 0;
 }
 

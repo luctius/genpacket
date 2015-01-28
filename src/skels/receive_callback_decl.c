@@ -4,10 +4,10 @@
  * http://www.gnu.org/software/gengen
  */
 
-#include "receive_callback.h"
+#include "receive_callback_decl.h"
 
 void
-generate_receive_callback(FILE *stream, struct receive_callback_gen_struct *record, unsigned int indent)
+generate_receive_callback_decl(FILE *stream, struct receive_callback_decl_gen_struct *record, unsigned int indent)
 {
   char *indent_str;
   unsigned int i;
@@ -34,19 +34,19 @@ generate_receive_callback(FILE *stream, struct receive_callback_gen_struct *reco
 }
 
 void
-generatep_receive_callback(FILE *stream, unsigned int indent, const char *packet_name, const char *prefix, const char *type)
+generatep_receive_callback_decl(FILE *stream, unsigned int indent, const char *packet_name, const char *prefix, const char *type)
 {
-  struct receive_callback_gen_struct record;
+  struct receive_callback_decl_gen_struct record;
   
   record.packet_name = packet_name;
   record.prefix = prefix;
   record.type = type;
 
-  generate_receive_callback (stream, &record, indent);
+  generate_receive_callback_decl (stream, &record, indent);
 }
 
 char *
-genstring_receive_callback(struct receive_callback_gen_struct *record, unsigned int indent)
+genstring_receive_callback_decl(struct receive_callback_decl_gen_struct *record, unsigned int indent)
 {
   char *indent_str, *output;
   unsigned int i;
@@ -57,7 +57,7 @@ genstring_receive_callback(struct receive_callback_gen_struct *record, unsigned 
     indent_str[i] = ' ';
   indent_str[indent] = '\0';
 
-  len = strcnt_receive_callback (record, indent);
+  len = strcnt_receive_callback_decl (record, indent);
   output = (char *) malloc (len + 1);
   output[0] = '\0';
 
@@ -79,19 +79,19 @@ genstring_receive_callback(struct receive_callback_gen_struct *record, unsigned 
 }
 
 char *
-genstringp_receive_callback(unsigned int indent, const char *packet_name, const char *prefix, const char *type)
+genstringp_receive_callback_decl(unsigned int indent, const char *packet_name, const char *prefix, const char *type)
 {
-  struct receive_callback_gen_struct record;
+  struct receive_callback_decl_gen_struct record;
   
   record.packet_name = packet_name;
   record.prefix = prefix;
   record.type = type;
 
-  return genstring_receive_callback (&record, indent);
+  return genstring_receive_callback_decl (&record, indent);
 }
 
 int
-strcnt_receive_callback(struct receive_callback_gen_struct *record, unsigned int indent)
+strcnt_receive_callback_decl(struct receive_callback_decl_gen_struct *record, unsigned int indent)
 {
   int length = 0;
   
@@ -103,7 +103,7 @@ strcnt_receive_callback(struct receive_callback_gen_struct *record, unsigned int
 }
 
 void
-init_receive_callback_gen_struct(struct receive_callback_gen_struct *record)
+init_receive_callback_decl_gen_struct(struct receive_callback_decl_gen_struct *record)
 {
   record->packet_name = 0;
   record->prefix = 0;

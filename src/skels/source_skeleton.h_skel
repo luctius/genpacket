@@ -17,7 +17,9 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+#include <unistd.h>
 #include <poll.h>
+
 
 #include "@prefix@.h"
 
@@ -31,61 +33,91 @@
 struct @prefix@_ctx {
     struct @prefix@_params params;
 
+    /* TODO: One receive queue per pipe */
     uint8_t recv_buff[@size:int@];
     struct cqc recv_buff_cqc;
 
-    struct pollfd fds[@ifndefname@_NRO_PIPES];
+    struct pollfd pfds[@ifndefname@_NRO_PIPES * 2];
 };
 
-static struct @prefix@_ctx ctx;
+static struct @prefix@_ctx @prefix@_ctx;
 
 @test_packets:method{iteration=true}@
+@send_functions_impl:method{iteration=true}@
 
-static bool check_fds_read(struct @prefix@_ctx *ctx, int timeout) {
-    int i = 0;
+static bool check_fds(struct @prefix@_ctx *ctx, int timeout) {
 
-    struct pollfd fds[@ifndefname@_NRO_PIPES];
-    fds[i].fd = ctx->params.pipe_fds[i];
-    fds[i].events = 0;
+    if (poll(ctx->pfds, @ifndefname@_NRO_PIPES *2, timeout) > 0) return true;
+    return false;
+}
 
-    if (ctx->params.pipe_dir[i] & @ifndefname@_R > 0) fds[i].events |= POLLIN;
-    if (ctx->params.pipe_dir[i] & @ifndefname@_W > 0) fds[i].events |= POLLOUT;
+static bool check_read_fds(struct @prefix@_ctx *ctx, int pipe) {
+    for (int i = 0; i < (@ifndefname@_NRO_PIPES *2); i++) {
+        /* TODO: check for specific pipe here! */
+        if ( (ctx->pfds[i].revents & POLLIN) > 0) return true;
+    }
 
-    if (poll(fds, @ifndefname@_NRO_PIPES, timeout) > 0) return true;
+    return false;
+}
+
+static bool check_write_fds(struct @prefix@_ctx *ctx, int pipe) {
+    for (int i = 0; i < (@ifndefname@_NRO_PIPES *2); i++) {
+        /* TODO: check for specific pipe here! */
+        if ( (ctx->pfds[i].revents & POLLOUT) > 0) return true;
+    }
+
     return false;
 }
 
 int @prefix@_init(struct @prefix@_params *params) {
-    memcpy(&ctx.params, params, sizeof(struct @prefix@_params) );
+    memcpy(&@prefix@_ctx.params, params, sizeof(struct @prefix@_params) );
 
-    cqc_init(ctx.recv_buff_cqc,ARRAY_SZ(ctx.recv_buff));
-    memset(&ctx.recv_buff, 0x0, cqc_qsz(ctx.recv_buff_cqc) );
+    cqc_init(@prefix@_ctx.recv_buff_cqc,ARRAY_SZ(@prefix@_ctx.recv_buff));
+    memset(&@prefix@_ctx.recv_buff, 0x0, cqc_qsz(@prefix@_ctx.recv_buff_cqc) );
+
+    int fd = 0;
+    for (int i = 0; i < @ifndefname@_NRO_PIPES; i++) {
+        @prefix@_ctx.pfds[fd].fd = @prefix@_ctx.params.rfds[i];
+        @prefix@_ctx.pfds[fd].events = POLLIN;
+
+        if (@prefix@_ctx.params.rfds[i] == @prefix@_ctx.params.wfds[i]) {
+            @prefix@_ctx.pfds[fd].events |= POLLOUT;
+        }
+        else {
+            fd++;
+            @prefix@_ctx.pfds[fd].fd = @prefix@_ctx.params.wfds[i];
+            @prefix@_ctx.pfds[fd].events = POLLOUT;
+        }
+    }
 
     return (EXIT_SUCCESS);
 }
 
 int @prefix@_process(int timeout) {
-    if (check_fds_read(&ctx, timeout) ) {
-        if (cqc_space(ctx.recv_buff_cqc) > 0) {
-            int readsz = cqc_space_to_end(ctx.recv_buff_cqc);
-            int head = ctx.recv_buff_cqc.head;
-            int rdsz_r = read(ctx.params.pipe_fds[0], &ctx.recv_buff[head], readsz);
-            ctx.recv_buff_cqc.head += rdsz_r;
-        }
+    if (check_fds(&@prefix@_ctx, timeout) ) {
+        /* TODO: check_read per pipe */
+        if (check_read_fds(&@prefix@_ctx, 0) ) {
+            if (cqc_space(@prefix@_ctx.recv_buff_cqc) > 0) {
+                int readsz = cqc_space_to_end(@prefix@_ctx.recv_buff_cqc);
+                int head = @prefix@_ctx.recv_buff_cqc.head;
+                int rdsz_r = read(@prefix@_ctx.params.rfds[0], &@prefix@_ctx.recv_buff[head], readsz);
+                @prefix@_ctx.recv_buff_cqc.head += rdsz_r;
+            }
 
-        /* 
-           These test functions return '-1' when their packet is not (completely) found. 
-           Else they will return the size of the packet.
-        */
-        
-        while (cqc_space(ctx.recv_buff_cqc) < @ifndefname@_READ_SZ) {
-            int head = cqc_peek(ctx.recv_buff_cqc, 0);
-            int size = -1;
+            /* 
+               These test functions return '-1' when their packet is not (completely) found. 
+               Else they will return the size of the packet.
+            */
+            
+            while (cqc_space(@prefix@_ctx.recv_buff_cqc) < @ifndefname@_READ_SZ) {
+                int head = cqc_peek(@prefix@_ctx.recv_buff_cqc, 0);
+                int size = -1;
 
-            @call_recv_tests:method@
+                @call_recv_tests:method@
 
-            if (size == -1) ctx.recv_buff_cqc.tail--;
-            else ctx.recv_buff_cqc.tail -= size;
+                if (size == -1) @prefix@_ctx.recv_buff_cqc.tail--;
+                else @prefix@_ctx.recv_buff_cqc.tail -= size;
+            }
         }
     }
 

@@ -112,30 +112,6 @@ generate_header(FILE *stream, struct header_gen_struct *record, unsigned int ind
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
-  fprintf (stream, "%s", "enum ");
-  fprintf (stream, "%s", (record->prefix ? record->prefix : ""));
-  fprintf (stream, "%s", "_direction {");
-  fprintf (stream, "%s", "\n");
-  fprintf (stream, "%s", indent_str);
-  indent = 4;
-  fprintf (stream, "%s", "    ");
-  fprintf (stream, "%s", (record->ifndefname ? record->ifndefname : ""));
-  fprintf (stream, "%s", "_R=1,");
-  indent = 0;
-  fprintf (stream, "%s", "\n");
-  fprintf (stream, "%s", indent_str);
-  indent = 4;
-  fprintf (stream, "%s", "    ");
-  fprintf (stream, "%s", (record->ifndefname ? record->ifndefname : ""));
-  fprintf (stream, "%s", "_W=2,");
-  indent = 0;
-  fprintf (stream, "%s", "\n");
-  fprintf (stream, "%s", indent_str);
-  fprintf (stream, "%s", "};");
-  fprintf (stream, "%s", "\n");
-  fprintf (stream, "%s", indent_str);
-  fprintf (stream, "%s", "\n");
-  fprintf (stream, "%s", indent_str);
   if (record->packets)
     generate_string (record->packets, stream, indent + strlen (indent_str));
   else
@@ -162,16 +138,16 @@ generate_header(FILE *stream, struct header_gen_struct *record, unsigned int ind
   fprintf (stream, "%s", "_params {");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
-  fprintf (stream, "%s", "    int pipe_fds[");
+  fprintf (stream, "%s", "    int rfds[");
   fprintf (stream, "%s", (record->ifndefname ? record->ifndefname : ""));
   fprintf (stream, "%s", "_NRO_PIPES];");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
-  fprintf (stream, "%s", "    enum ");
-  fprintf (stream, "%s", (record->prefix ? record->prefix : ""));
-  fprintf (stream, "%s", "_direction pipe_dir[");
+  fprintf (stream, "%s", "    int wfds[");
   fprintf (stream, "%s", (record->ifndefname ? record->ifndefname : ""));
   fprintf (stream, "%s", "_NRO_PIPES];");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "    void *private_ctx;");
@@ -296,26 +272,6 @@ genstring_header(struct header_gen_struct *record, unsigned int indent)
   strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
-  strcat (output, "enum ");
-  if (record->prefix) strcat (output, record->prefix);
-  strcat (output, "_direction {");
-  strcat (output, "\n");
-  strcat (output, indent_str);
-  strcat (output, "    ");
-  if (record->ifndefname) strcat (output, record->ifndefname);
-  strcat (output, "_R=1,");
-  strcat (output, "\n");
-  strcat (output, indent_str);
-  strcat (output, "    ");
-  if (record->ifndefname) strcat (output, record->ifndefname);
-  strcat (output, "_W=2,");
-  strcat (output, "\n");
-  strcat (output, indent_str);
-  strcat (output, "};");
-  strcat (output, "\n");
-  strcat (output, indent_str);
-  strcat (output, "\n");
-  strcat (output, indent_str);
   if (record->packets) strcat (output, record->packets);
   strcat (output, indent_str);
   strcat (output, "\n");
@@ -333,16 +289,16 @@ genstring_header(struct header_gen_struct *record, unsigned int indent)
   strcat (output, "_params {");
   strcat (output, "\n");
   strcat (output, indent_str);
-  strcat (output, "    int pipe_fds[");
+  strcat (output, "    int rfds[");
   if (record->ifndefname) strcat (output, record->ifndefname);
   strcat (output, "_NRO_PIPES];");
   strcat (output, "\n");
   strcat (output, indent_str);
-  strcat (output, "    enum ");
-  if (record->prefix) strcat (output, record->prefix);
-  strcat (output, "_direction pipe_dir[");
+  strcat (output, "    int wfds[");
   if (record->ifndefname) strcat (output, record->ifndefname);
   strcat (output, "_NRO_PIPES];");
+  strcat (output, "\n");
+  strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "    void *private_ctx;");
@@ -407,14 +363,14 @@ strcnt_header(struct header_gen_struct *record, unsigned int indent)
 {
   int length = 0;
   
-  length += (record->ifndefname ? strlen (record->ifndefname) : 0) * 8;
+  length += (record->ifndefname ? strlen (record->ifndefname) : 0) * 6;
   length += strlen (int_to_string (record->nro_pipes)) * 1;
-  length += (record->prefix ? strlen (record->prefix) : 0) * 6;
   length += (record->packets ? strlen (record->packets) : 0) * 1;
   length += (record->receive_functions ? strlen (record->receive_functions) : 0) * 1;
   length += (record->send_functions ? strlen (record->send_functions) : 0) * 1;
+  length += (record->prefix ? strlen (record->prefix) : 0) * 4;
 
-  return length + 567;
+  return length + 498;
 }
 
 void

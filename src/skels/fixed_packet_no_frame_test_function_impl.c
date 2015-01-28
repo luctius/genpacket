@@ -4,7 +4,7 @@
  * http://www.gnu.org/software/gengen
  */
 
-#include "fixed_packet_no_frame_test_function.h"
+#include "fixed_packet_no_frame_test_function_impl.h"
 
 
 static char *
@@ -18,7 +18,7 @@ int_to_string(int i)
 }
 
 void
-generate_fixed_packet_no_frame_test_function(FILE *stream, struct fixed_packet_no_frame_test_function_gen_struct *record, unsigned int indent)
+generate_fixed_packet_no_frame_test_function_impl(FILE *stream, struct fixed_packet_no_frame_test_function_impl_gen_struct *record, unsigned int indent)
 {
   char *indent_str;
   unsigned int i;
@@ -57,19 +57,19 @@ generate_fixed_packet_no_frame_test_function(FILE *stream, struct fixed_packet_n
 }
 
 void
-generatep_fixed_packet_no_frame_test_function(FILE *stream, unsigned int indent, const char *name, int packet_size, const char *prefix)
+generatep_fixed_packet_no_frame_test_function_impl(FILE *stream, unsigned int indent, const char *name, int packet_size, const char *prefix)
 {
-  struct fixed_packet_no_frame_test_function_gen_struct record;
+  struct fixed_packet_no_frame_test_function_impl_gen_struct record;
   
   record.name = name;
   record.packet_size = packet_size;
   record.prefix = prefix;
 
-  generate_fixed_packet_no_frame_test_function (stream, &record, indent);
+  generate_fixed_packet_no_frame_test_function_impl (stream, &record, indent);
 }
 
 char *
-genstring_fixed_packet_no_frame_test_function(struct fixed_packet_no_frame_test_function_gen_struct *record, unsigned int indent)
+genstring_fixed_packet_no_frame_test_function_impl(struct fixed_packet_no_frame_test_function_impl_gen_struct *record, unsigned int indent)
 {
   char *indent_str, *output;
   unsigned int i;
@@ -80,7 +80,7 @@ genstring_fixed_packet_no_frame_test_function(struct fixed_packet_no_frame_test_
     indent_str[i] = ' ';
   indent_str[indent] = '\0';
 
-  len = strcnt_fixed_packet_no_frame_test_function (record, indent);
+  len = strcnt_fixed_packet_no_frame_test_function_impl (record, indent);
   output = (char *) malloc (len + 1);
   output[0] = '\0';
 
@@ -114,19 +114,19 @@ genstring_fixed_packet_no_frame_test_function(struct fixed_packet_no_frame_test_
 }
 
 char *
-genstringp_fixed_packet_no_frame_test_function(unsigned int indent, const char *name, int packet_size, const char *prefix)
+genstringp_fixed_packet_no_frame_test_function_impl(unsigned int indent, const char *name, int packet_size, const char *prefix)
 {
-  struct fixed_packet_no_frame_test_function_gen_struct record;
+  struct fixed_packet_no_frame_test_function_impl_gen_struct record;
   
   record.name = name;
   record.packet_size = packet_size;
   record.prefix = prefix;
 
-  return genstring_fixed_packet_no_frame_test_function (&record, indent);
+  return genstring_fixed_packet_no_frame_test_function_impl (&record, indent);
 }
 
 int
-strcnt_fixed_packet_no_frame_test_function(struct fixed_packet_no_frame_test_function_gen_struct *record, unsigned int indent)
+strcnt_fixed_packet_no_frame_test_function_impl(struct fixed_packet_no_frame_test_function_impl_gen_struct *record, unsigned int indent)
 {
   int length = 0;
   
@@ -138,7 +138,7 @@ strcnt_fixed_packet_no_frame_test_function(struct fixed_packet_no_frame_test_fun
 }
 
 void
-init_fixed_packet_no_frame_test_function_gen_struct(struct fixed_packet_no_frame_test_function_gen_struct *record)
+init_fixed_packet_no_frame_test_function_impl_gen_struct(struct fixed_packet_no_frame_test_function_impl_gen_struct *record)
 {
   record->name = 0;
   record->packet_size = 0;
