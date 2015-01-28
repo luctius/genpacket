@@ -51,3 +51,17 @@ calculated packet "p3_calculated" {
     data data_size="sz2"
     crc crc_8
 }
+
+// test with
+// echo -e "sddsdsblaaat\x10\xa\x3\x4\xa\x1\x2\x3\x4\xa\x1\x2\x3\x1c" | src/packit -i - -p test/fixed_basic.gp -n4
+calculated packet "p4_calculated" {
+    frame 0x10
+    attribute
+    size "sz2"
+    size "sz"
+    attribute
+    data data_size="sz"
+    attribute
+    data data_size="sz2"
+    crc crc_custom type=uint16 poly=0x07 xor_in=0xff xor_out=0 reflect_in=true reflect_out=false
+}

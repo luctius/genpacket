@@ -25,17 +25,19 @@ bool has_parse_error = false;
     char *s;
     struct value v;
     struct type t;
+    bool b;
 }
 
 %token PK_TFIXED PK_TDYNAMIC PK_TCALC
 %token PACKET PA_SIZE PA_PIPE
 %token PO_FRAME PO_ATTR PO_SIZE PO_CRC PO_DATA
-%token OP_TYPE OP_DATAWIDTH OP_DEFAULT OP_VALUES OP_EXCLUDE OP_START OP_END OP_DATASIZE
+%token OP_TYPE OP_DATAWIDTH OP_DEFAULT OP_VALUES OP_EXCLUDE OP_START OP_END OP_DATASIZE OP_POLY OP_XOR_IN OP_XOR_OUT OP_REFLECT_IN OP_REFLECT_OUT
 %token ENDL
 
 %token <s> VAR CRC_VAR STRING
 %token <t> TYPE
 %token <v> INTEGER FLOAT
+%token <b> BOOL
 
 %%
 
@@ -122,6 +124,11 @@ c_param:
     | op_start
     | op_end
     | op_exclude
+    | op_xor_in
+    | op_xor_out
+    | op_reflect_in
+    | op_reflect_out
+    | op_poly
 ;
 
 data_plist: d_param
@@ -138,6 +145,21 @@ d_param:
 op_type: OP_TYPE
     | OP_TYPE '=' TYPE          { cb_op_type($3); }
 ;
+
+op_poly: OP_POLY
+    | OP_POLY '=' INTEGER     { cb_op_poly_v($3); }
+
+op_xor_in: OP_XOR_IN
+    | OP_XOR_IN '=' INTEGER     { cb_op_xor_in_v($3); }
+
+op_xor_out: OP_XOR_OUT
+    | OP_XOR_OUT '=' INTEGER     { cb_op_xor_out_v($3); }
+    
+op_reflect_in: OP_REFLECT_IN
+    | OP_REFLECT_IN '=' BOOL     { cb_op_reflect_in_b($3); }
+
+op_reflect_out: OP_REFLECT_OUT
+    | OP_REFLECT_OUT '=' BOOL     { cb_op_reflect_out_b($3); }
 
 op_datawidth: OP_DATAWIDTH
     | OP_DATAWIDTH '=' TYPE     { cb_op_datawidth_type($3); }
