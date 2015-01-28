@@ -22,7 +22,6 @@ genpacket_program_sources = \
                     src/gensrc.c \
                     src/decoder.c \
                     src/debug_print.c \
-                    src/crc8.c \
                     src/crc_custom.c \
                     src/crc.c \
                     src/json_printer.c

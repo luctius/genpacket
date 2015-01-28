@@ -11,7 +11,7 @@
 */
 
 
-uint8_t crc8(uint8_t *data, size_t len) {
+uint8_t crc8(const uint8_t *data, size_t len) {
     crc_cfg_t crc_config = {
         .width          = 8,
         .poly           = 0x07,
@@ -25,6 +25,28 @@ uint8_t crc8(uint8_t *data, size_t len) {
 }
 
 /* using the configuration:
+ *    Width        = 16
+ *    Poly         = 0x8005
+ *    XorIn        = 0x0000
+ *    ReflectIn    = True
+ *    XorOut       = 0x0000
+ *    ReflectOut   = True
+*/
+
+uint16_t crc16(const uint8_t *data, size_t len) {
+    crc_cfg_t crc_config = {
+        .width          = 16,
+        .poly           = 0x8005,
+        .xor_in         = 0x0000,
+        .reflect_in     = true,
+        .xor_out        = 0x0000,
+        .reflect_out    = true,
+    };
+    
+    return (uint16_t) custom_crc(&crc_config, data, len);
+}
+
+/* using the configuration:
 *    Width        = 32
 *    Poly         = 0x04c11db7
 *    XorIn        = 0xffffffff
@@ -33,7 +55,7 @@ uint8_t crc8(uint8_t *data, size_t len) {
 *    ReflectOut   = True
 */
 
-uint32_t crc32(const void *data, size_t len) {
+uint32_t crc32(const uint8_t *data, size_t len) {
     crc_cfg_t crc_config = {
         .width          = 32,
         .poly           = 0x04c11db7,
@@ -48,7 +70,7 @@ uint32_t crc32(const void *data, size_t len) {
 
 
 
-uint64_t custom_crc(crc_cfg_t *cfg,uint8_t *data, size_t len) {
+uint64_t custom_crc(crc_cfg_t *cfg,const void *data, size_t len) {
     cfg->msb_mask = (crc_t)1u << (cfg->width - 1);
     cfg->crc_mask = (cfg->msb_mask - 1) | cfg->msb_mask;
     cfg->crc_shift = cfg->width < 8 ? 8 - cfg->width : 0;

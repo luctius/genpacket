@@ -12,6 +12,14 @@ START_TEST (test_crc8)
 }
 END_TEST
 
+START_TEST (test_crc16)
+{
+    // ./pycrc.py --model=crc-16 --check-string=teststring  
+    uint16_t crc_calc = crc16(strdup("teststring"), 10);
+    ck_assert_int_eq(crc_calc,0x7cba);
+}
+END_TEST
+
 START_TEST (test_crc32)
 {
     // ./pycrc.py --model=crc-32 --check-string=teststring  
@@ -31,6 +39,7 @@ Suite * test_suite(void) {
     tc_core = tcase_create("Core");
 
     tcase_add_test(tc_core, test_crc8);
+    tcase_add_test(tc_core, test_crc16);
     tcase_add_test(tc_core, test_crc32);
     suite_add_tcase(s, tc_core);
 
