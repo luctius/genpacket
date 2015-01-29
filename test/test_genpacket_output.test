@@ -1,8 +1,32 @@
 #!/usr/bin/env bats
 
 @test "genpacket_p0_send output is valid" {
-    test/genpacket_send | src/packit -i - -p test/fixed_basic.gp > $BATS_TMPDIR/p0.tmp
+    test/genpacket_send -p0 | src/packit -i - -p test/fixed_basic.gp > $BATS_TMPDIR/p0.tmp
     diff $BATS_TMPDIR/p0.tmp test/test_packet_p0_fixed.output
 }
 
+@test "genpacket_p1_send output is valid" {
+    test/genpacket_send -p1 | src/packit -i - -p test/fixed_basic.gp > $BATS_TMPDIR/p1.tmp
+    diff $BATS_TMPDIR/p1.tmp test/test_packet_p1_fixed.output
+}
+
+@test "genpacket_p2_send output is valid" {
+    test/genpacket_send -p2 | src/packit -i - -p test/fixed_basic.gp > $BATS_TMPDIR/p2.tmp
+    #diff $BATS_TMPDIR/p1.tmp test/test_packet_p1_fixed.output
+}
+
+@test "genpacket_p3_send output is valid" {
+    test/genpacket_send -p3 | src/packit -i - -p test/calculated_basic.gp > $BATS_TMPDIR/p1.tmp
+    diff $BATS_TMPDIR/p3.tmp test/test_packet_p3_calculated.output
+}
+
+@test "genpacket_p4_send output is valid" {
+    test/genpacket_send -p4 | src/packit -i - -p test/calculated_basic.gp > $BATS_TMPDIR/p1.tmp
+    diff $BATS_TMPDIR/p4.tmp test/test_packet_p4_calculated.output
+}
+
+@test "genpacket_p5_send output is valid" {
+    test/genpacket_send -p5 | src/packit -i - -p test/fixed_basic.gp > $BATS_TMPDIR/p5.tmp
+    diff $BATS_TMPDIR/p5.tmp test/test_packet_p5_fixed.output
+}
 
