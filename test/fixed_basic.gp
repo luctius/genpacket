@@ -67,6 +67,8 @@ calculated packet "p4_calculated" {
     crc crc_custom type=uint16 poly=0x0777 xor_in=0xffff xor_out=0 reflect_in=true reflect_out=false
 }
 
+// test with
+// echo -e "sddsdsblaaat\xA5\x2B\xF0\0F" | src/packit -i - -p test/fixed_basic.gp -n5
 fixed packet "p5_fixed" {
     frame 0x10 type=uint4
     hidden type=uint4
