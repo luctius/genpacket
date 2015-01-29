@@ -4,7 +4,7 @@
 #include <ctype.h>
 
 #include "packet.h"
-#include "gensrc.h"
+#include "generate.h"
 
 #include "skels/assignment.h"
 #include "skels/calculated_packet_test_function_impl.h"

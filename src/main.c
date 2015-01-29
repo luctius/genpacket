@@ -13,7 +13,7 @@
 
 #include "packet.h"
 #include "genpacket.tab.h"
-#include "gensrc.h"
+#include "generate.h"
 #include "cmdline.h"
 #include "cmdline_packit.h"
 #include "decoder.h"
