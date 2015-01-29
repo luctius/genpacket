@@ -59,6 +59,7 @@ src/skels/*.[ch]
 test/genpacket.[ch]
 test/genpacket_receive
 test/genpacket_send
+test/test_genpacket
 
 
 # editor files
