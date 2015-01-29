@@ -125,7 +125,7 @@ gengen_sources = \
 	src/skels/write_data.c									\
 	src/skels/write_data.h
 
-EXTRA_DIST = \ 
+EXTRA_DIST = \
 	src/skels/assignment.h_skel									\
 	src/skels/calculated_packet_test_function_impl.h_skel		\
 	src/skels/cqc.h_skel										\
@@ -163,9 +163,6 @@ test_test_genpacket_LDADD = @check_LIBS@
 test_genpacket_send_SOURCES = test/genpacket_send.c test/genpacket.c
 test_genpacket_send_CFLAGS =
 test_genpacket_send_LDADD =
-test_genpacket_receive_SOURCES =  test/genpacket.c test/genpacket_receive.c
-test_genpacket_receive_CFLAGS =
-test_genpacket_receive_LDADD =
 
 TEST_LOG_DRIVER = env AM_TAP_BATS='test/bats/bin/bats' $(SHELL) \
                   tap-driver.sh
