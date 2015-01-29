@@ -2,9 +2,13 @@ static bool test_@name@(struct @prefix@_ctx *ctx, int head) {
     int cnt = cqc_cnt(ctx->recv_buff_cqc);
     if (cnt < @packet_size:int@) return -1;
 
-    int retval = @packet_size:int@;
     struct @name@ *packet = (struct @name@ *) &ctx->recv_buff[head];
+
     @test_frame_fixed:method@
 
-    return retval;
+    /* Call receive function. */
+    if (ctx->params.@prefix@_@name@_received != NULL)
+            ctx->params.@prefix@_@name@_received(packet, ctx->params.private_ctx);
+
+    return @packet_size:int@;
 }

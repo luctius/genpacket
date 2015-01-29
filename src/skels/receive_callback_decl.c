@@ -18,13 +18,12 @@ generate_receive_callback_decl(FILE *stream, struct receive_callback_decl_gen_st
   indent_str[indent] = '\0';
   indent = 0;
 
-  fprintf (stream, "%s", "extern ");
   fprintf (stream, "%s", (record->type ? record->type : ""));
-  fprintf (stream, "%s", " ");
+  fprintf (stream, "%s", " (*");
   fprintf (stream, "%s", (record->prefix ? record->prefix : ""));
   fprintf (stream, "%s", "_");
   fprintf (stream, "%s", (record->packet_name ? record->packet_name : ""));
-  fprintf (stream, "%s", "_received(struct ");
+  fprintf (stream, "%s", "_received)(struct ");
   fprintf (stream, "%s", (record->packet_name ? record->packet_name : ""));
   fprintf (stream, "%s", " *packet, void *private_ctx);");
   fprintf (stream, "%s", "\n");
@@ -61,13 +60,12 @@ genstring_receive_callback_decl(struct receive_callback_decl_gen_struct *record,
   output = (char *) malloc (len + 1);
   output[0] = '\0';
 
-  strcat (output, "extern ");
   if (record->type) strcat (output, record->type);
-  strcat (output, " ");
+  strcat (output, " (*");
   if (record->prefix) strcat (output, record->prefix);
   strcat (output, "_");
   if (record->packet_name) strcat (output, record->packet_name);
-  strcat (output, "_received(struct ");
+  strcat (output, "_received)(struct ");
   if (record->packet_name) strcat (output, record->packet_name);
   strcat (output, " *packet, void *private_ctx);");
   strcat (output, "\n");
@@ -99,7 +97,7 @@ strcnt_receive_callback_decl(struct receive_callback_decl_gen_struct *record, un
   length += (record->prefix ? strlen (record->prefix) : 0) * 1;
   length += (record->packet_name ? strlen (record->packet_name) : 0) * 2;
 
-  return length + 58;
+  return length + 54;
 }
 
 void

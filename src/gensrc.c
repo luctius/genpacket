@@ -202,7 +202,7 @@ void generate_call_recv_tests(FILE *stream, struct source_skeleton_gen_struct *r
     for (int i = 0; i < packet_list_sz; i++) {
         struct packet *p = &packet_list[i];
 
-        fprintf(stream, "%*s" "if ( (size == -1) && (size = (test_%s(&%s_ctx, head) ) ) ) %s_%s_received( (struct %s *) &%s_ctx.recv_buff[head], %s_ctx.params.private_ctx);\n", indent, "", p->name, record->prefix, record->prefix, p->name, p->name, record->prefix, record->prefix);
+        fprintf(stream, "%*s" "if (size == -1) size = (test_%s(&%s_ctx, head) );\n", indent, "", p->name, record->prefix);
     }
 }
 
@@ -274,3 +274,4 @@ void generate_packet_files(const char *path, const char *prefix) {
     generate_public_hdr(path, prefix, ifndef_buf);
     generate_public_src(path, prefix, ifndef_buf);
 }
+

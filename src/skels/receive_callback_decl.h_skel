@@ -1,1 +1,1 @@
-extern @type@ @prefix@_@packet_name@_received(struct @packet_name@ *packet, void *private_ctx);
+@type@ (*@prefix@_@packet_name@_received)(struct @packet_name@ *packet, void *private_ctx);

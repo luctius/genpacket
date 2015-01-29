@@ -90,6 +90,8 @@ generate_dynamic_packet_test_function_impl(FILE *stream, struct dynamic_packet_t
   fprintf (stream, "%s", " *) &ctx->recv_buff[head];");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
   indent = 4;
   fprintf (stream, "%s", "    ");
   if (record->test_frame_dynamic)
@@ -97,6 +99,25 @@ generate_dynamic_packet_test_function_impl(FILE *stream, struct dynamic_packet_t
   else
     generate_test_frame_dynamic (stream, record, indent + strlen (indent_str));
   indent = 0;
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "    /* Call receive function. */");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "    if (ctx->params.");
+  fprintf (stream, "%s", (record->prefix ? record->prefix : ""));
+  fprintf (stream, "%s", "_");
+  fprintf (stream, "%s", (record->name ? record->name : ""));
+  fprintf (stream, "%s", "_received != NULL)");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "            ctx->params.");
+  fprintf (stream, "%s", (record->prefix ? record->prefix : ""));
+  fprintf (stream, "%s", "_");
+  fprintf (stream, "%s", (record->name ? record->name : ""));
+  fprintf (stream, "%s", "_received(packet, ctx->params.private_ctx);");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
@@ -169,8 +190,29 @@ genstring_dynamic_packet_test_function_impl(struct dynamic_packet_test_function_
   strcat (output, " *) &ctx->recv_buff[head];");
   strcat (output, "\n");
   strcat (output, indent_str);
+  strcat (output, "\n");
+  strcat (output, indent_str);
   strcat (output, "    ");
   if (record->test_frame_dynamic) strcat (output, record->test_frame_dynamic);
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "    /* Call receive function. */");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "    if (ctx->params.");
+  if (record->prefix) strcat (output, record->prefix);
+  strcat (output, "_");
+  if (record->name) strcat (output, record->name);
+  strcat (output, "_received != NULL)");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "            ctx->params.");
+  if (record->prefix) strcat (output, record->prefix);
+  strcat (output, "_");
+  if (record->name) strcat (output, record->name);
+  strcat (output, "_received(packet, ctx->params.private_ctx);");
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "\n");
@@ -205,12 +247,12 @@ strcnt_dynamic_packet_test_function_impl(struct dynamic_packet_test_function_imp
 {
   int length = 0;
   
-  length += (record->name ? strlen (record->name) : 0) * 3;
-  length += (record->prefix ? strlen (record->prefix) : 0) * 1;
+  length += (record->name ? strlen (record->name) : 0) * 5;
+  length += (record->prefix ? strlen (record->prefix) : 0) * 3;
   length += strlen (int_to_string (record->packet_size)) * 2;
   length += (record->test_frame_dynamic ? strlen (record->test_frame_dynamic) : 0) * 1;
 
-  return length + 242;
+  return length + 396;
 }
 
 void

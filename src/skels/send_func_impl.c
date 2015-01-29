@@ -60,11 +60,21 @@ generate_send_func_impl(FILE *stream, struct send_func_impl_gen_struct *record, 
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
   indent = 4;
+  fprintf (stream, "%s", "    ");
+  indent = 0;
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  indent = 4;
   if (record->send_func)
     generate_string (record->send_func, stream, indent + strlen (indent_str));
   else
     generate_send_func (stream, record, indent + strlen (indent_str));
   indent = 0;
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "    return 0;");
+  fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "}");
   fprintf (stream, "%s", "\n");
@@ -110,7 +120,15 @@ genstring_send_func_impl(struct send_func_impl_gen_struct *record, unsigned int 
   strcat (output, " *packet) {");
   strcat (output, "\n");
   strcat (output, indent_str);
+  strcat (output, "    ");
+  strcat (output, "\n");
+  strcat (output, indent_str);
   if (record->send_func) strcat (output, record->send_func);
+  strcat (output, indent_str);
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "    return 0;");
+  strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "}");
   strcat (output, "\n");
@@ -142,7 +160,7 @@ strcnt_send_func_impl(struct send_func_impl_gen_struct *record, unsigned int ind
   length += (record->packet_name ? strlen (record->packet_name) : 0) * 2;
   length += (record->send_func ? strlen (record->send_func) : 0) * 1;
 
-  return length + 38;
+  return length + 64;
 }
 
 void

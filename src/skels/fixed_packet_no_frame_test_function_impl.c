@@ -44,6 +44,36 @@ generate_fixed_packet_no_frame_test_function_impl(FILE *stream, struct fixed_pac
   fprintf (stream, "%s", ") return -1;");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "    struct ");
+  fprintf (stream, "%s", (record->name ? record->name : ""));
+  fprintf (stream, "%s", " *packet = (struct ");
+  fprintf (stream, "%s", (record->name ? record->name : ""));
+  fprintf (stream, "%s", " *) &ctx->recv_buff[head];");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "    /* Call receive function. */");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "    if (ctx->params.");
+  fprintf (stream, "%s", (record->prefix ? record->prefix : ""));
+  fprintf (stream, "%s", "_");
+  fprintf (stream, "%s", (record->name ? record->name : ""));
+  fprintf (stream, "%s", "_received != NULL)");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "            ctx->params.");
+  fprintf (stream, "%s", (record->prefix ? record->prefix : ""));
+  fprintf (stream, "%s", "_");
+  fprintf (stream, "%s", (record->name ? record->name : ""));
+  fprintf (stream, "%s", "_received(packet, ctx->params.private_ctx);");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "    return ");
   fprintf (stream, "%d", record->packet_size);
   fprintf (stream, "%s", ";");
@@ -99,6 +129,36 @@ genstring_fixed_packet_no_frame_test_function_impl(struct fixed_packet_no_frame_
   strcat (output, ") return -1;");
   strcat (output, "\n");
   strcat (output, indent_str);
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "    struct ");
+  if (record->name) strcat (output, record->name);
+  strcat (output, " *packet = (struct ");
+  if (record->name) strcat (output, record->name);
+  strcat (output, " *) &ctx->recv_buff[head];");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "    /* Call receive function. */");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "    if (ctx->params.");
+  if (record->prefix) strcat (output, record->prefix);
+  strcat (output, "_");
+  if (record->name) strcat (output, record->name);
+  strcat (output, "_received != NULL)");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "            ctx->params.");
+  if (record->prefix) strcat (output, record->prefix);
+  strcat (output, "_");
+  if (record->name) strcat (output, record->name);
+  strcat (output, "_received(packet, ctx->params.private_ctx);");
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "\n");
+  strcat (output, indent_str);
   strcat (output, "    return ");
   strcat (output, int_to_string (record->packet_size));
   strcat (output, ";");
@@ -130,11 +190,11 @@ strcnt_fixed_packet_no_frame_test_function_impl(struct fixed_packet_no_frame_tes
 {
   int length = 0;
   
-  length += (record->name ? strlen (record->name) : 0) * 1;
-  length += (record->prefix ? strlen (record->prefix) : 0) * 1;
+  length += (record->name ? strlen (record->name) : 0) * 5;
+  length += (record->prefix ? strlen (record->prefix) : 0) * 3;
   length += strlen (int_to_string (record->packet_size)) * 2;
 
-  return length + 143;
+  return length + 359;
 }
 
 void

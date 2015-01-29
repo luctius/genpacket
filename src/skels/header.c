@@ -119,13 +119,6 @@ generate_header(FILE *stream, struct header_gen_struct *record, unsigned int ind
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
-  if (record->receive_functions)
-    generate_string (record->receive_functions, stream, indent + strlen (indent_str));
-  else
-    generate_receive_functions (stream, record, indent + strlen (indent_str));
-  fprintf (stream, "%s", indent_str);
-  fprintf (stream, "%s", "\n");
-  fprintf (stream, "%s", indent_str);
   if (record->send_functions)
     generate_string (record->send_functions, stream, indent + strlen (indent_str));
   else
@@ -147,6 +140,15 @@ generate_header(FILE *stream, struct header_gen_struct *record, unsigned int ind
   fprintf (stream, "%s", (record->ifndefname ? record->ifndefname : ""));
   fprintf (stream, "%s", "_NRO_PIPES];");
   fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
+  indent = 4;
+  if (record->receive_functions)
+    generate_string (record->receive_functions, stream, indent + strlen (indent_str));
+  else
+    generate_receive_functions (stream, record, indent + strlen (indent_str));
+  indent = 0;
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
@@ -276,10 +278,6 @@ genstring_header(struct header_gen_struct *record, unsigned int indent)
   strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
-  if (record->receive_functions) strcat (output, record->receive_functions);
-  strcat (output, indent_str);
-  strcat (output, "\n");
-  strcat (output, indent_str);
   if (record->send_functions) strcat (output, record->send_functions);
   strcat (output, indent_str);
   strcat (output, "\n");
@@ -298,6 +296,10 @@ genstring_header(struct header_gen_struct *record, unsigned int indent)
   if (record->ifndefname) strcat (output, record->ifndefname);
   strcat (output, "_NRO_PIPES];");
   strcat (output, "\n");
+  strcat (output, indent_str);
+  strcat (output, "\n");
+  strcat (output, indent_str);
+  if (record->receive_functions) strcat (output, record->receive_functions);
   strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
@@ -366,9 +368,9 @@ strcnt_header(struct header_gen_struct *record, unsigned int indent)
   length += (record->ifndefname ? strlen (record->ifndefname) : 0) * 6;
   length += strlen (int_to_string (record->nro_pipes)) * 1;
   length += (record->packets ? strlen (record->packets) : 0) * 1;
-  length += (record->receive_functions ? strlen (record->receive_functions) : 0) * 1;
   length += (record->send_functions ? strlen (record->send_functions) : 0) * 1;
   length += (record->prefix ? strlen (record->prefix) : 0) * 4;
+  length += (record->receive_functions ? strlen (record->receive_functions) : 0) * 1;
 
   return length + 498;
 }
