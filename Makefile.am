@@ -157,10 +157,10 @@ check_PROGRAMS = test/test_packit test/test_genpacket test/genpacket_send
 test_test_packit_SOURCES = test/test_packit.c $(genpacket_program_sources)
 test_test_packit_CFLAGS = @check_CFLAGS@ -I src
 test_test_packit_LDADD = @check_LIBS@
-test_test_genpacket_SOURCES = test/test_genpacket.c test/genpacket.c
+test_test_genpacket_SOURCES = test/genpacket.c test/test_genpacket.c
 test_test_genpacket_CFLAGS = @check_CFLAGS@ -I test
 test_test_genpacket_LDADD = @check_LIBS@
-test_genpacket_send_SOURCES = test/genpacket_send.c test/genpacket.c
+test_genpacket_send_SOURCES = test/genpacket.c test/genpacket_send.c
 test_genpacket_send_CFLAGS =
 test_genpacket_send_LDADD =
 
