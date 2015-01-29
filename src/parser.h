@@ -26,4 +26,10 @@ void cb_op_start(char *attr);
 void cb_op_end(char *attr);
 void cb_op_exclude(char *attr);
 
+void cb_op_poly_v(struct value v);
+void cb_op_xor_in_v(struct value v);
+void cb_op_xor_out_v(struct value v);
+void cb_op_reflect_in_b(bool b);
+void cb_op_reflect_out_b(bool b);
+
 #endif /* PARSER_H */
