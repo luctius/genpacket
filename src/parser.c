@@ -40,6 +40,10 @@ void cb_crc_option(char *method) {
     o->crc_method = method;
 }
 
+void cb_hidden_option() {
+    add_option(O_HIDDEN);
+}
+
 void cb_data_option() {
     add_option(O_DATA);
 }

@@ -14,11 +14,12 @@ extern int line_num;
 extern bool has_parse_error;
 
 enum po_type {
-    O_FRAME,
     O_ATTRIBUTE,
-    O_SIZE,
-    O_DATA,
     O_CRC,
+    O_DATA,
+    O_FRAME,
+    O_HIDDEN,
+    O_SIZE,
 };
 
 struct type {
@@ -101,6 +102,7 @@ struct poption {
 
     struct value frame_val;
     
+    uint32_t bit_alignment;
     uint32_t data_byte_offset;
 };
 

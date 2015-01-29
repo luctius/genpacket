@@ -12,6 +12,7 @@ void cb_attr_option(void);
 void cb_size_option(void);
 void cb_crc_option(char *method);
 void cb_data_option(void);
+void cb_hidden_option(void);
 void cb_op_name(char *name);
 
 void cb_op_type(struct type t);

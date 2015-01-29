@@ -28,7 +28,6 @@ void parse_debug(struct packet *packet, struct poption *option, const char *fmt,
     va_list args;
     va_start(args, fmt);
 
-    has_parse_error = true;
     fprintf(stderr, "[line: %d] debug: ", line_num);
     if (packet != NULL) {
         fprintf(stderr, "[%s", packet->name);
@@ -132,6 +131,8 @@ void add_option(enum po_type otype) {
                        break;
         case O_CRC:    defname = "crc%d";
                        break;
+        case O_HIDDEN: defname = "hidden%d";
+                       break;
         default:       defname = "default%d";
                        break;
     }
@@ -210,16 +211,33 @@ void check_curr_packet(void) {
     int total_sz_bits = 0;
     for (int i = 0; i < p->option_list_sz; i++) {
         struct poption *o = &p->option_list[i];
+
+        o->bit_alignment = total_sz_bits;
+
         if (o->otype == O_DATA) {
             if (o->data_size_i != -1) total_sz_bits += o->type.ft_sz * o->data_size_i;
             else data_sz_unkown = true;
         }
         else total_sz_bits += o->type.ft_sz;
     }
-    if (data_sz_unkown == false && (total_sz_bits % 8) == 0) p->size = total_sz_bits/8;
+    if (data_sz_unkown == false && (total_sz_bits % CHAR_BIT) == 0) p->size = total_sz_bits/CHAR_BIT;
+
+    parse_debug(p, NULL, "first pass, given size %u, total size %u", p->size, total_sz_bits / CHAR_BIT);
 
     for (int i = 0; i < p->option_list_sz; i++) {
         struct poption *o = &p->option_list[i];
+
+        if ( (o->bit_alignment % CHAR_BIT) != 0) {
+            switch(o->otype) {
+                case O_FRAME:
+                case O_ATTRIBUTE:
+                case O_HIDDEN: break;
+                case O_SIZE: parse_error(p, o, "size field is not byte aligned (0x%X)", o->bit_alignment); break;
+                case O_DATA: parse_error(p, o, "data field is not byte aligned (0x%X)", o->bit_alignment); break;
+                case O_CRC: parse_error(p, o, "crc field is not byte aligned (0x%X)", o->bit_alignment); break;
+                default: break;
+            }
+        }
 
         if (o->data_size_str != NULL) {
             struct poption top = { .name = o->data_size_str, };
@@ -264,7 +282,10 @@ void check_curr_packet(void) {
                             if (data_mbrs_wo_sz > 1 || p->size == 0) {
                                 parse_error(p, o, "fixed size packet, but no size given for packet or data member");
                             }
-                            else o->data_size_i = ( ( (p->size * CHAR_BIT) - total_sz_bits) / o->type.ft_sz);
+                            else if ( (p->size * CHAR_BIT) > total_sz_bits) {
+                                o->data_size_i = ( ( (p->size * CHAR_BIT) - total_sz_bits) / o->type.ft_sz);
+                                parse_debug(p,o, "updating sizeless data member to (%d * %s)", o->data_size_i, type_to_str(o->type) );
+                            }
                         }
                     }
                 }
@@ -333,16 +354,19 @@ void check_curr_packet(void) {
     total_sz_bits = 0;
     for (int i = 0; i < p->option_list_sz; i++) {
         struct poption *o = &p->option_list[i];
+        parse_debug(p,o,"incremental size: %u", total_sz_bits);
+
         if ( (o->otype == O_DATA) && ( (o->data_size_i != -1) || (p->ptype == PT_FIXED) ) ) {
             total_sz_bits += o->type.ft_sz * o->data_size_i;
         }
         else total_sz_bits += o->type.ft_sz;
+
     }
     if (total_sz_bits % CHAR_BIT != 0) {
         parse_error(p, NULL, "packet not byte aligned");
     }
     if ( (p->size != 0) && (p->size < (total_sz_bits / CHAR_BIT) ) ) {
-        parse_error(p, NULL, "packet size is smaller than all members combined");
+        parse_error(p, NULL, "packet size is smaller than all members combined (%u vs total %u)", p->size, total_sz_bits/CHAR_BIT);
     }
     else if (p->ptype == PT_FIXED && (total_sz_bits) != (p->size * CHAR_BIT) ) {
         parse_error(p, NULL, "packet size given cannot be correct");
@@ -392,6 +416,8 @@ void check_curr_option(void) {
             }
             break;
         case O_ATTRIBUTE: // attr(ibute) <"name"> type=<type> default=<value> values=<value1>,<value2>
+            break;
+        case O_HIDDEN: // hidden default=<value>
             break;
         case O_SIZE: // size <"name"> type=<type> data_width=<type> exclude=<"attr1">,<"attrN">
             break;

@@ -26,12 +26,13 @@ int comment_caller = 0;
 <PP>"size"       { return PA_SIZE; }
 <PP>"pipe"       { return PA_PIPE; }
 
-"frame"          { return PO_FRAME; }
 "attr"           { return PO_ATTR; }
 "attribute"      { return PO_ATTR; }
-"size"           { return PO_SIZE; }
 "crc"            { return PO_CRC; }
 "data"           { return PO_DATA; }
+"frame"          { return PO_FRAME; }
+"hidden"         { return PO_HIDDEN; }
+"size"           { return PO_SIZE; }
 
 "type"           { return OP_TYPE; }
 "data_width"     { return OP_DATAWIDTH; }

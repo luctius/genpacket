@@ -30,7 +30,7 @@ bool has_parse_error = false;
 
 %token PK_TFIXED PK_TDYNAMIC PK_TCALC
 %token PACKET PA_SIZE PA_PIPE
-%token PO_FRAME PO_ATTR PO_SIZE PO_CRC PO_DATA
+%token PO_FRAME PO_ATTR PO_SIZE PO_CRC PO_DATA PO_HIDDEN
 %token OP_TYPE OP_DATAWIDTH OP_DEFAULT OP_VALUES OP_EXCLUDE OP_START OP_END OP_DATASIZE OP_POLY OP_XOR_IN OP_XOR_OUT OP_REFLECT_IN OP_REFLECT_OUT
 %token ENDL
 
@@ -71,20 +71,24 @@ option_list: option
 ;
 
 option: 
-    | PO_FRAME STRING INTEGER   { cb_frame_option($3); cb_op_name($2); } frame_plist { check_curr_option(); }
-    | PO_FRAME INTEGER          { cb_frame_option($2); } frame_plist                 { check_curr_option(); }
-
     | PO_ATTR STRING            { cb_attr_option(); cb_op_name($2); } attr_plist     { check_curr_option(); }
     | PO_ATTR                   { cb_attr_option(); } attr_plist                     { check_curr_option(); }
-
-    | PO_SIZE STRING            { cb_size_option(); cb_op_name($2); } size_plist     { check_curr_option(); }
-    | PO_SIZE                   { cb_size_option(); } size_plist                     { check_curr_option(); }
 
     | PO_CRC STRING CRC_VAR     { cb_crc_option($3); cb_op_name($2); } crc_plist     { check_curr_option(); }
     | PO_CRC CRC_VAR            { cb_crc_option($2); } crc_plist                     { check_curr_option(); }
 
     | PO_DATA STRING            { cb_data_option(); cb_op_name($2); } data_plist     { check_curr_option(); }
     | PO_DATA                   { cb_data_option(); } data_plist                     { check_curr_option(); }
+
+    | PO_FRAME STRING INTEGER   { cb_frame_option($3); cb_op_name($2); } frame_plist { check_curr_option(); }
+    | PO_FRAME INTEGER          { cb_frame_option($2); } frame_plist                 { check_curr_option(); }
+
+    | PO_HIDDEN STRING          { cb_hidden_option(); cb_op_name($2); } hidden_plist     { check_curr_option(); }
+    | PO_HIDDEN                 { cb_hidden_option(); } hidden_plist                     { check_curr_option(); }
+
+    | PO_SIZE STRING            { cb_size_option(); cb_op_name($2); } size_plist     { check_curr_option(); }
+    | PO_SIZE                   { cb_size_option(); } size_plist                     { check_curr_option(); }
+
 ;
 
 frame_plist: f_param
@@ -129,6 +133,15 @@ c_param:
     | op_reflect_in
     | op_reflect_out
     | op_poly
+;
+
+hidden_plist: h_param
+    | hidden_plist h_param
+;
+
+h_param:
+    | op_type
+    | op_default
 ;
 
 data_plist: d_param
