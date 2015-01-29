@@ -1,4 +1,4 @@
-AC_INIT(level_detector, 0.1.0)
+AC_INIT(genpacket, 0.1.0)
 AC_CONFIG_SRCDIR([src/main.c])
 AM_INIT_AUTOMAKE([subdir-objects])
 
