@@ -35,7 +35,7 @@ AM_CONDITIONAL(NO_GENGEN, test -z "$ac_cv_path_GENGEN" )
 AM_CONDITIONAL(NO_CROSSCOMPILING, test "$cross_compiling" = no )
 AC_DEFINE([_GNU_SOURCE], 1, [Use GNU extensions])
 
-PKG_CHECK_EXISTS([check], [PKG_CHECK_MODULES([check], check, [], [])], [AC_MSG_NOTICE([libCheck not found, tests will not be able to run]) ])
+PKG_CHECK_EXISTS([check], [PKG_CHECK_MODULES([check], [check >= 0.9.12], [], [])], [AC_MSG_NOTICE([libCheck not found, tests will not be able to run]) ])
 
 #AM_PATH_CHECK([0.9.0],[],[AC_MSG_ERROR([check is missing])])
 
