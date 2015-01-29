@@ -66,3 +66,13 @@ calculated packet "p4_calculated" {
     data data_size="sz2"
     crc crc_custom type=uint16 poly=0x0777 xor_in=0xffff xor_out=0 reflect_in=true reflect_out=false
 }
+
+fixed packet "p5_fixed" {
+    frame 0x10 type=uint4
+    hidden type=uint4
+    attribute type=uint6
+    attribute type=bit
+    attribute type=bit
+    data data_size=2 type=uint8
+}
+
