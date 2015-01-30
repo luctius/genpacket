@@ -112,6 +112,7 @@ void update_data_offsets(struct packet *p, FILE * input_stream) {
 		switch (o->otype) { 
             case O_SIZE:
                 o->data_byte_offset = bit_offset / BYTE_SIZE;
+                o->bit_alignment = bit_offset;
                 
                 if (p->ptype == PT_CALCULATED) {
                     p->size += p->data[o->data_byte_offset];
@@ -131,6 +132,7 @@ void update_data_offsets(struct packet *p, FILE * input_stream) {
                 bit_offset += o->data_width;
             break;
             case O_DATA:
+                o->bit_alignment = bit_offset;
                 if (p->ptype == PT_CALCULATED) {
                     s_o = get_option_by_name(p,o->data_size_str);
     
@@ -145,11 +147,13 @@ void update_data_offsets(struct packet *p, FILE * input_stream) {
                 }
             break;
             case O_CRC:
+                o->bit_alignment = bit_offset;
                  o->data_byte_offset = bit_offset / BYTE_SIZE;
                 calculate_crc(p,o);
                 bit_offset += o->data_width;
             break;
             default:
+                o->bit_alignment = bit_offset;
                 o->data_byte_offset = bit_offset / BYTE_SIZE;
                 bit_offset += o->data_width;
             break;

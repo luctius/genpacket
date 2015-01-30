@@ -10,10 +10,10 @@ void print_packet_as_json(int pkt_idx) {
     for (int idx = 0; idx < p->option_list_sz; idx++) {
 	    struct poption *o = &p->option_list[idx];
         memset(str_buf,0,sizeof(str_buf)*sizeof(char));
-        //gp_debug("i: %d o otype: %d otype: %d",i, o->otype,otype);
+        //gp_debug("bit: %d byte: %d diff: %d",o->bit_alignment,o->data_byte_offset,o->bit_alignment/BYTE_SIZE);
 		switch (o->otype) {
 			case O_ATTRIBUTE:
-                buffer_to_json_type_str(p->data, o->data_byte_offset, str_buf, &o->type, o->data_width);
+                buffer_to_json_type_str(p->data, o->bit_alignment, str_buf, o);
                 printf(",\n\t\"%s\": %s",o->name, str_buf);
             break;
             case O_DATA:
@@ -24,7 +24,7 @@ void print_packet_as_json(int pkt_idx) {
                     printf("[");
             
                 for(int i=0;i<o->data_size_i;i++) {
-                    buffer_to_json_type_str(p->data, o->data_byte_offset+i, str_buf, &o->type, o->data_width);
+                    buffer_to_json_type_str(p->data, o->bit_alignment+(i*BYTE_SIZE), str_buf, o);
                     printf("%s",str_buf);
                     if (i != o->data_size_i - 1 && o->type.ft != FT_CHAR)
                         printf(",");
@@ -37,7 +37,7 @@ void print_packet_as_json(int pkt_idx) {
             break;
             case O_CRC:
                 printf(",\n\t\"%s\": ",o->name);
-                buffer_to_json_type_str(p->data, o->data_byte_offset, str_buf, &o->type, o->data_width);
+                buffer_to_json_type_str(p->data, o->bit_alignment, str_buf, o);
                 printf("%s",str_buf);
                 printf(",\n\t\"crc_valid\": ");
                 if (p->crc_valid) {
@@ -54,27 +54,46 @@ void print_packet_as_json(int pkt_idx) {
     free(str_buf);
 }
 
-void buffer_to_json_type_str(uint8_t * buf, int buf_idx,char * type_str, struct type * t, int dw) {
-    switch(t->ft) {
-        case FT_UNSIGNED:
-            if (dw == 8) {
-                sprintf(type_str,"%"PRIu8, buf[buf_idx]);
-            } else if (dw == 16) {
-                uint16_t tmp;
-                memcpy(&tmp, &buf[buf_idx],2);
-                sprintf(type_str,"%"PRIu16, tmp);
-            } else if (dw == 32) {
-                uint32_t tmp;
-                memcpy(&tmp, &buf[buf_idx],4);
-                sprintf(type_str,"%"PRIu32, tmp);
-            } else if (dw == 64) {
-                uint64_t tmp;
-                memcpy(&tmp, &buf[buf_idx],8);
-                sprintf(type_str,"%"PRIu64, tmp);
-            }
+void buffer_to_json_type_str(uint8_t * buf, int buf_bit_idx,char * type_str, struct poption *o) {
+    int dw = o->data_width;
+    uint8_t check_bits = dw % BYTE_SIZE;
+    uint64_t bit_mask = 0xffffffffffffffff;
+    uint32_t buf_idx = 0;
+    if (buf_bit_idx >= BYTE_SIZE) {
+        buf_idx = buf_bit_idx / BYTE_SIZE;
+    }
+    
+    uint32_t data_sz_bytes = 1;
+    if (!check_bits) {
+        data_sz_bytes = dw / BYTE_SIZE;
+    }
+    uint64_t tmp_u=0;
+    uint64_t tmp_s=0;
+    switch(o->type.ft) {
+            case FT_UNSIGNED:
+            //if (dw < 8) {
+                if (check_bits) {
+                    bit_mask = (1<<check_bits)-1;
+                }
+                uint8_t val = buf[buf_idx]; 
+                
+                
+                //bit_mask >>= o->bit_alignment % BYTE_SIZE;
+                //val >>= o->bit_alignment % BYTE_SIZE;
+               // val &= & bit_mask;
+               
+                //sprintf(type_str,"%"PRIu8, val);
+                memcpy(&tmp_u, &buf[buf_idx],data_sz_bytes);
+                
+                tmp_u >>= o->bit_alignment % BYTE_SIZE;
+                
+                gp_debug("Val: %x bitmsk: %x raw val: %x shift: %x", tmp_u, bit_mask, buf[buf_idx], o->bit_alignment % BYTE_SIZE);
+                
+                sprintf(type_str,"%"PRIu64, tmp_u&bit_mask);
+                //}
         break;
         case FT_SIGNED:
-            if (dw == 8) {
+            /*if (dw == 8) {
                 sprintf(type_str,"%"PRId8, buf[buf_idx]);
             } else if (dw == 16) {
                 int16_t tmp;
@@ -88,17 +107,19 @@ void buffer_to_json_type_str(uint8_t * buf, int buf_idx,char * type_str, struct 
                 int64_t tmp;
                 memcpy(&tmp, &buf[buf_idx],8);
                 sprintf(type_str,"%"PRId64, tmp);
-            }
+            }*/
+            memcpy(&tmp_u, &buf[buf_idx],data_sz_bytes);
+            sprintf(type_str,"%"PRIu64, tmp_s);
         break;
         case FT_FLOAT:
             if (dw == 32) {
-                float tmp;
-                memcpy(&tmp, &buf[buf_idx],4);
-                sprintf(type_str,"%f", tmp);
+                float tmp_f_32;
+                memcpy(&tmp_f_32, &buf[buf_idx],4);
+                sprintf(type_str,"%f", tmp_f_32);
             } else if (dw == 64) {
-                double tmp;
-                memcpy(&tmp, &buf[buf_idx],8);
-                sprintf(type_str,"%lf", tmp);
+                double tmp_f_64;
+                memcpy(&tmp_f_64, &buf[buf_idx],8);
+                sprintf(type_str,"%lf", tmp_f_64);
             }
         break;
         case FT_CHAR:
