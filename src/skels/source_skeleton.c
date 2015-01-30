@@ -141,6 +141,11 @@ generate_source_skeleton(FILE *stream, struct source_skeleton_gen_struct *record
   fprintf (stream, "%s", ".h\"");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "#include \"");
+  fprintf (stream, "%s", (record->prefix ? record->prefix : ""));
+  fprintf (stream, "%s", "_cqc.h\"");
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "#ifndef FIX_UNUSED");
@@ -652,6 +657,11 @@ genstring_source_skeleton(struct source_skeleton_gen_struct *record, unsigned in
   strcat (output, ".h\"");
   strcat (output, "\n");
   strcat (output, indent_str);
+  strcat (output, "#include \"");
+  if (record->prefix) strcat (output, record->prefix);
+  strcat (output, "_cqc.h\"");
+  strcat (output, "\n");
+  strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "#ifndef FIX_UNUSED");
@@ -1056,7 +1066,7 @@ strcnt_source_skeleton(struct source_skeleton_gen_struct *record, unsigned int i
   length += (record->genpacket ? strlen (record->genpacket) : 0) * 2;
   length += (record->version ? strlen (record->version) : 0) * 1;
   length += (record->cmd_options ? strlen (record->cmd_options) : 0) * 1;
-  length += (record->prefix ? strlen (record->prefix) : 0) * 38;
+  length += (record->prefix ? strlen (record->prefix) : 0) * 39;
   length += (record->ifndefname ? strlen (record->ifndefname) : 0) * 7;
   length += strlen (int_to_string (record->read_sz)) * 1;
   length += strlen (int_to_string (record->size)) * 1;
@@ -1064,7 +1074,7 @@ strcnt_source_skeleton(struct source_skeleton_gen_struct *record, unsigned int i
   length += (record->send_functions_impl ? strlen (record->send_functions_impl) : 0) * 1;
   length += (record->call_recv_tests ? strlen (record->call_recv_tests) : 0) * 1;
 
-  return length + 3391;
+  return length + 3411;
 }
 
 void
