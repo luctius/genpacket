@@ -86,7 +86,7 @@ int main(int argc, char **argv) {
             gp_err("couldn't open input file %s for reading\n",packit_args.input_arg);
             exit(0);
         }
-        decode_using_packet(packit_args.packetindex_arg,i_fp);
+        decode_packet(packit_args.packetindex_arg,i_fp);
         fclose(i_fp);
         cmdline_packit_parser_free (&packit_args);
     }

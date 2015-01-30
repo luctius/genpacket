@@ -28,15 +28,16 @@ void parse_debug(struct packet *packet, struct poption *option, const char *fmt,
     va_list args;
     va_start(args, fmt);
 
-    fprintf(stderr, "[line: %d] debug: ", line_num);
+    //fprintf(stderr, "[line: %d] debug: ", line_num);
     if (packet != NULL) {
-        fprintf(stderr, "[%s", packet->name);
-        if (option != NULL) fprintf(stderr, ".%s", option->name);
-        fprintf(stderr, "] ");
+        
+       // gp_printf_basic("[%s.%s]", packet->name, option != NULL ? option->name : NULL);
+        //if (option != NULL) fprintf(stderr, ".%s", option->name);
+        //fprintf(stderr, "] ");
     }
-
-    vfprintf(stderr, fmt, args);
-    fprintf(stderr, ".\n");
+    gp_printf_basic(GP_DEBUG_LEVEL_DEBUG, packet->name,line_num, fmt, args);
+    //vfprintf(stderr, fmt, args);
+    //fprintf(stderr, ".\n");
 }
 
 void parse_error(struct packet *packet, struct poption *option, const char *fmt, ...) {

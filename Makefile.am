@@ -87,7 +87,7 @@ GENERATE = $(GENGEN)
 $(gengen_sources): $(EXTRA_DIST)
 	name="`echo $* | sed 's/^.*\///g'`"; \
 	echo "$$name"; \
-	$(GENERATE) -i $*.h_skel -F $*.h --output-format=c --separate-files  --force -f $$name
+	$(GENERATE) -i $*.h_skel -F $*.h --output-format=c --separate-files --no-gen-version --force -f $$name
 endif
 
 
