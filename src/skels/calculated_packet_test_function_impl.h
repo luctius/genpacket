@@ -20,23 +20,23 @@ struct calculated_packet_test_function_impl_gen_struct
   const char *name;
   int packet_size;
   const char *prefix;
-  const char *test_frame_calc;
+  const char *test_frame_calc_method;
 };
 
-extern void generate_test_frame_calc(FILE *stream, struct calculated_packet_test_function_impl_gen_struct *record, unsigned int indent);
+extern void generate_test_frame_calc_method(FILE *stream, struct calculated_packet_test_function_impl_gen_struct *record, unsigned int indent);
 
 
 void
 generate_calculated_packet_test_function_impl(FILE *stream, struct calculated_packet_test_function_impl_gen_struct *record, unsigned int indent);
 
 void
-generatep_calculated_packet_test_function_impl(FILE *stream, unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_calc);
+generatep_calculated_packet_test_function_impl(FILE *stream, unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_calc_method);
 
 char *
 genstring_calculated_packet_test_function_impl(struct calculated_packet_test_function_impl_gen_struct *record, unsigned int indent);
 
 char *
-genstringp_calculated_packet_test_function_impl(unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_calc);
+genstringp_calculated_packet_test_function_impl(unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_calc_method);
 
 int
 strcnt_calculated_packet_test_function_impl(struct calculated_packet_test_function_impl_gen_struct *record, unsigned int indent);

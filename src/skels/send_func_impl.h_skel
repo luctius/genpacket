@@ -1,6 +1,6 @@
 int @prefix@_@packet_name@_send(struct @packet_name@ *packet) {
     
-    @send_func:method{iteration=true}@
+    @send_func_method:method{iteration=true}@
 
     return 0;
 }

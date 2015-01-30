@@ -38,13 +38,15 @@ struct @prefix@_ctx {
     uint8_t recv_buff[@size:int@];
     struct cqc recv_buff_cqc;
 
+    @crc_cfg_decl_method:method{iteration=true}@
+
     struct pollfd pfds[@ifndefname@_NRO_PIPES * 2];
 };
 
 static struct @prefix@_ctx @prefix@_ctx;
 
-@test_packets:method{iteration=true}@
-@send_functions_impl:method{iteration=true}@
+@test_packets_method:method{iteration=true}@
+@send_functions_impl_method:method{iteration=true}@
 
 static bool check_fds(struct @prefix@_ctx *ctx, int timeout) {
 
@@ -114,7 +116,7 @@ int @prefix@_process(int timeout) {
                 int head = cqc_peek(@prefix@_ctx.recv_buff_cqc, 0);
                 int size = -1;
 
-                @call_recv_tests:method@
+                @call_recv_tests_method:method@
 
                 if (size == -1) @prefix@_ctx.recv_buff_cqc.tail--;
                 else @prefix@_ctx.recv_buff_cqc.tail -= size;

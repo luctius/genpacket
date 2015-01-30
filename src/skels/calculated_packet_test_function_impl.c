@@ -94,10 +94,10 @@ generate_calculated_packet_test_function_impl(FILE *stream, struct calculated_pa
   fprintf (stream, "%s", indent_str);
   indent = 4;
   fprintf (stream, "%s", "    ");
-  if (record->test_frame_calc)
-    generate_string (record->test_frame_calc, stream, indent + strlen (indent_str));
+  if (record->test_frame_calc_method)
+    generate_string (record->test_frame_calc_method, stream, indent + strlen (indent_str));
   else
-    generate_test_frame_calc (stream, record, indent + strlen (indent_str));
+    generate_test_frame_calc_method (stream, record, indent + strlen (indent_str));
   indent = 0;
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
@@ -133,14 +133,14 @@ generate_calculated_packet_test_function_impl(FILE *stream, struct calculated_pa
 }
 
 void
-generatep_calculated_packet_test_function_impl(FILE *stream, unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_calc)
+generatep_calculated_packet_test_function_impl(FILE *stream, unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_calc_method)
 {
   struct calculated_packet_test_function_impl_gen_struct record;
   
   record.name = name;
   record.packet_size = packet_size;
   record.prefix = prefix;
-  record.test_frame_calc = test_frame_calc;
+  record.test_frame_calc_method = test_frame_calc_method;
 
   generate_calculated_packet_test_function_impl (stream, &record, indent);
 }
@@ -193,7 +193,7 @@ genstring_calculated_packet_test_function_impl(struct calculated_packet_test_fun
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "    ");
-  if (record->test_frame_calc) strcat (output, record->test_frame_calc);
+  if (record->test_frame_calc_method) strcat (output, record->test_frame_calc_method);
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "\n");
@@ -230,14 +230,14 @@ genstring_calculated_packet_test_function_impl(struct calculated_packet_test_fun
 }
 
 char *
-genstringp_calculated_packet_test_function_impl(unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_calc)
+genstringp_calculated_packet_test_function_impl(unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_calc_method)
 {
   struct calculated_packet_test_function_impl_gen_struct record;
   
   record.name = name;
   record.packet_size = packet_size;
   record.prefix = prefix;
-  record.test_frame_calc = test_frame_calc;
+  record.test_frame_calc_method = test_frame_calc_method;
 
   return genstring_calculated_packet_test_function_impl (&record, indent);
 }
@@ -250,7 +250,7 @@ strcnt_calculated_packet_test_function_impl(struct calculated_packet_test_functi
   length += (record->name ? strlen (record->name) : 0) * 5;
   length += (record->prefix ? strlen (record->prefix) : 0) * 3;
   length += strlen (int_to_string (record->packet_size)) * 2;
-  length += (record->test_frame_calc ? strlen (record->test_frame_calc) : 0) * 1;
+  length += (record->test_frame_calc_method ? strlen (record->test_frame_calc_method) : 0) * 1;
 
   return length + 395;
 }
@@ -261,6 +261,6 @@ init_calculated_packet_test_function_impl_gen_struct(struct calculated_packet_te
   record->name = 0;
   record->packet_size = 0;
   record->prefix = 0;
-  record->test_frame_calc = 0;
+  record->test_frame_calc_method = 0;
 }
 

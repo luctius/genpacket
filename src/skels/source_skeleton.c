@@ -196,6 +196,15 @@ generate_source_skeleton(FILE *stream, struct source_skeleton_gen_struct *record
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
+  indent = 4;
+  if (record->crc_cfg_decl_method)
+    generate_string (record->crc_cfg_decl_method, stream, indent + strlen (indent_str));
+  else
+    generate_crc_cfg_decl_method (stream, record, indent + strlen (indent_str));
+  indent = 0;
+  fprintf (stream, "%s", indent_str);
+  fprintf (stream, "%s", "\n");
+  fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "    struct pollfd pfds[");
   fprintf (stream, "%s", (record->ifndefname ? record->ifndefname : ""));
   fprintf (stream, "%s", "_NRO_PIPES * 2];");
@@ -215,15 +224,15 @@ generate_source_skeleton(FILE *stream, struct source_skeleton_gen_struct *record
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
-  if (record->test_packets)
-    generate_string (record->test_packets, stream, indent + strlen (indent_str));
+  if (record->test_packets_method)
+    generate_string (record->test_packets_method, stream, indent + strlen (indent_str));
   else
-    generate_test_packets (stream, record, indent + strlen (indent_str));
+    generate_test_packets_method (stream, record, indent + strlen (indent_str));
   fprintf (stream, "%s", indent_str);
-  if (record->send_functions_impl)
-    generate_string (record->send_functions_impl, stream, indent + strlen (indent_str));
+  if (record->send_functions_impl_method)
+    generate_string (record->send_functions_impl_method, stream, indent + strlen (indent_str));
   else
-    generate_send_functions_impl (stream, record, indent + strlen (indent_str));
+    generate_send_functions_impl_method (stream, record, indent + strlen (indent_str));
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
@@ -506,10 +515,10 @@ generate_source_skeleton(FILE *stream, struct source_skeleton_gen_struct *record
   fprintf (stream, "%s", indent_str);
   indent = 16;
   fprintf (stream, "%s", "                ");
-  if (record->call_recv_tests)
-    generate_string (record->call_recv_tests, stream, indent + strlen (indent_str));
+  if (record->call_recv_tests_method)
+    generate_string (record->call_recv_tests_method, stream, indent + strlen (indent_str));
   else
-    generate_call_recv_tests (stream, record, indent + strlen (indent_str));
+    generate_call_recv_tests_method (stream, record, indent + strlen (indent_str));
   indent = 0;
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
@@ -547,19 +556,20 @@ generate_source_skeleton(FILE *stream, struct source_skeleton_gen_struct *record
 }
 
 void
-generatep_source_skeleton(FILE *stream, unsigned int indent, const char *call_recv_tests, const char *cmd_options, const char *genpacket, const char *ifndefname, const char *prefix, int read_sz, const char *send_functions_impl, int size, const char *test_packets, const char *version)
+generatep_source_skeleton(FILE *stream, unsigned int indent, const char *call_recv_tests_method, const char *cmd_options, const char *crc_cfg_decl_method, const char *genpacket, const char *ifndefname, const char *prefix, int read_sz, const char *send_functions_impl_method, int size, const char *test_packets_method, const char *version)
 {
   struct source_skeleton_gen_struct record;
   
-  record.call_recv_tests = call_recv_tests;
+  record.call_recv_tests_method = call_recv_tests_method;
   record.cmd_options = cmd_options;
+  record.crc_cfg_decl_method = crc_cfg_decl_method;
   record.genpacket = genpacket;
   record.ifndefname = ifndefname;
   record.prefix = prefix;
   record.read_sz = read_sz;
-  record.send_functions_impl = send_functions_impl;
+  record.send_functions_impl_method = send_functions_impl_method;
   record.size = size;
-  record.test_packets = test_packets;
+  record.test_packets_method = test_packets_method;
   record.version = version;
 
   generate_source_skeleton (stream, &record, indent);
@@ -712,6 +722,10 @@ genstring_source_skeleton(struct source_skeleton_gen_struct *record, unsigned in
   strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
+  if (record->crc_cfg_decl_method) strcat (output, record->crc_cfg_decl_method);
+  strcat (output, indent_str);
+  strcat (output, "\n");
+  strcat (output, indent_str);
   strcat (output, "    struct pollfd pfds[");
   if (record->ifndefname) strcat (output, record->ifndefname);
   strcat (output, "_NRO_PIPES * 2];");
@@ -731,9 +745,9 @@ genstring_source_skeleton(struct source_skeleton_gen_struct *record, unsigned in
   strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
-  if (record->test_packets) strcat (output, record->test_packets);
+  if (record->test_packets_method) strcat (output, record->test_packets_method);
   strcat (output, indent_str);
-  if (record->send_functions_impl) strcat (output, record->send_functions_impl);
+  if (record->send_functions_impl_method) strcat (output, record->send_functions_impl_method);
   strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
@@ -1001,7 +1015,7 @@ genstring_source_skeleton(struct source_skeleton_gen_struct *record, unsigned in
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "                ");
-  if (record->call_recv_tests) strcat (output, record->call_recv_tests);
+  if (record->call_recv_tests_method) strcat (output, record->call_recv_tests_method);
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "\n");
@@ -1040,19 +1054,20 @@ genstring_source_skeleton(struct source_skeleton_gen_struct *record, unsigned in
 }
 
 char *
-genstringp_source_skeleton(unsigned int indent, const char *call_recv_tests, const char *cmd_options, const char *genpacket, const char *ifndefname, const char *prefix, int read_sz, const char *send_functions_impl, int size, const char *test_packets, const char *version)
+genstringp_source_skeleton(unsigned int indent, const char *call_recv_tests_method, const char *cmd_options, const char *crc_cfg_decl_method, const char *genpacket, const char *ifndefname, const char *prefix, int read_sz, const char *send_functions_impl_method, int size, const char *test_packets_method, const char *version)
 {
   struct source_skeleton_gen_struct record;
   
-  record.call_recv_tests = call_recv_tests;
+  record.call_recv_tests_method = call_recv_tests_method;
   record.cmd_options = cmd_options;
+  record.crc_cfg_decl_method = crc_cfg_decl_method;
   record.genpacket = genpacket;
   record.ifndefname = ifndefname;
   record.prefix = prefix;
   record.read_sz = read_sz;
-  record.send_functions_impl = send_functions_impl;
+  record.send_functions_impl_method = send_functions_impl_method;
   record.size = size;
-  record.test_packets = test_packets;
+  record.test_packets_method = test_packets_method;
   record.version = version;
 
   return genstring_source_skeleton (&record, indent);
@@ -1070,25 +1085,27 @@ strcnt_source_skeleton(struct source_skeleton_gen_struct *record, unsigned int i
   length += (record->ifndefname ? strlen (record->ifndefname) : 0) * 7;
   length += strlen (int_to_string (record->read_sz)) * 1;
   length += strlen (int_to_string (record->size)) * 1;
-  length += (record->test_packets ? strlen (record->test_packets) : 0) * 1;
-  length += (record->send_functions_impl ? strlen (record->send_functions_impl) : 0) * 1;
-  length += (record->call_recv_tests ? strlen (record->call_recv_tests) : 0) * 1;
+  length += (record->crc_cfg_decl_method ? strlen (record->crc_cfg_decl_method) : 0) * 1;
+  length += (record->test_packets_method ? strlen (record->test_packets_method) : 0) * 1;
+  length += (record->send_functions_impl_method ? strlen (record->send_functions_impl_method) : 0) * 1;
+  length += (record->call_recv_tests_method ? strlen (record->call_recv_tests_method) : 0) * 1;
 
-  return length + 3413;
+  return length + 3418;
 }
 
 void
 init_source_skeleton_gen_struct(struct source_skeleton_gen_struct *record)
 {
-  record->call_recv_tests = 0;
+  record->call_recv_tests_method = 0;
   record->cmd_options = 0;
+  record->crc_cfg_decl_method = 0;
   record->genpacket = 0;
   record->ifndefname = 0;
   record->prefix = 0;
   record->read_sz = 0;
-  record->send_functions_impl = 0;
+  record->send_functions_impl_method = 0;
   record->size = 0;
-  record->test_packets = 0;
+  record->test_packets_method = 0;
   record->version = 0;
 }
 

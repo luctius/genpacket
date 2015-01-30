@@ -57,10 +57,10 @@ generate_structs(FILE *stream, struct structs_gen_struct *record, unsigned int i
   fprintf (stream, "%s", indent_str);
   indent = 4;
   fprintf (stream, "%s", "    ");
-  if (record->struct_member)
-    generate_string (record->struct_member, stream, indent + strlen (indent_str));
+  if (record->struct_member_method)
+    generate_string (record->struct_member_method, stream, indent + strlen (indent_str));
   else
-    generate_struct_member (stream, record, indent + strlen (indent_str));
+    generate_struct_member_method (stream, record, indent + strlen (indent_str));
   indent = 0;
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
@@ -72,11 +72,11 @@ generate_structs(FILE *stream, struct structs_gen_struct *record, unsigned int i
 }
 
 void
-generatep_structs(FILE *stream, unsigned int indent, const char *struct_member, const char *struct_name)
+generatep_structs(FILE *stream, unsigned int indent, const char *struct_member_method, const char *struct_name)
 {
   struct structs_gen_struct record;
   
-  record.struct_member = struct_member;
+  record.struct_member_method = struct_member_method;
   record.struct_name = struct_name;
 
   generate_structs (stream, &record, indent);
@@ -104,7 +104,7 @@ genstring_structs(struct structs_gen_struct *record, unsigned int indent)
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "    ");
-  if (record->struct_member) strcat (output, record->struct_member);
+  if (record->struct_member_method) strcat (output, record->struct_member_method);
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "};");
@@ -117,11 +117,11 @@ genstring_structs(struct structs_gen_struct *record, unsigned int indent)
 }
 
 char *
-genstringp_structs(unsigned int indent, const char *struct_member, const char *struct_name)
+genstringp_structs(unsigned int indent, const char *struct_member_method, const char *struct_name)
 {
   struct structs_gen_struct record;
   
-  record.struct_member = struct_member;
+  record.struct_member_method = struct_member_method;
   record.struct_name = struct_name;
 
   return genstring_structs (&record, indent);
@@ -133,7 +133,7 @@ strcnt_structs(struct structs_gen_struct *record, unsigned int indent)
   int length = 0;
   
   length += (record->struct_name ? strlen (record->struct_name) : 0) * 1;
-  length += (record->struct_member ? strlen (record->struct_member) : 0) * 1;
+  length += (record->struct_member_method ? strlen (record->struct_member_method) : 0) * 1;
 
   return length + 24;
 }
@@ -141,7 +141,7 @@ strcnt_structs(struct structs_gen_struct *record, unsigned int indent)
 void
 init_structs_gen_struct(struct structs_gen_struct *record)
 {
-  record->struct_member = 0;
+  record->struct_member_method = 0;
   record->struct_name = 0;
 }
 

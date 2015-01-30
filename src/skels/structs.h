@@ -17,24 +17,24 @@ extern "C" {
 
 struct structs_gen_struct
 {
-  const char *struct_member;
+  const char *struct_member_method;
   const char *struct_name;
 };
 
-extern void generate_struct_member(FILE *stream, struct structs_gen_struct *record, unsigned int indent);
+extern void generate_struct_member_method(FILE *stream, struct structs_gen_struct *record, unsigned int indent);
 
 
 void
 generate_structs(FILE *stream, struct structs_gen_struct *record, unsigned int indent);
 
 void
-generatep_structs(FILE *stream, unsigned int indent, const char *struct_member, const char *struct_name);
+generatep_structs(FILE *stream, unsigned int indent, const char *struct_member_method, const char *struct_name);
 
 char *
 genstring_structs(struct structs_gen_struct *record, unsigned int indent);
 
 char *
-genstringp_structs(unsigned int indent, const char *struct_member, const char *struct_name);
+genstringp_structs(unsigned int indent, const char *struct_member_method, const char *struct_name);
 
 int
 strcnt_structs(struct structs_gen_struct *record, unsigned int indent);

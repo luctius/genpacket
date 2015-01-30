@@ -94,10 +94,10 @@ generate_dynamic_packet_test_function_impl(FILE *stream, struct dynamic_packet_t
   fprintf (stream, "%s", indent_str);
   indent = 4;
   fprintf (stream, "%s", "    ");
-  if (record->test_frame_dynamic)
-    generate_string (record->test_frame_dynamic, stream, indent + strlen (indent_str));
+  if (record->test_frame_dynamic_method)
+    generate_string (record->test_frame_dynamic_method, stream, indent + strlen (indent_str));
   else
-    generate_test_frame_dynamic (stream, record, indent + strlen (indent_str));
+    generate_test_frame_dynamic_method (stream, record, indent + strlen (indent_str));
   indent = 0;
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
@@ -133,14 +133,14 @@ generate_dynamic_packet_test_function_impl(FILE *stream, struct dynamic_packet_t
 }
 
 void
-generatep_dynamic_packet_test_function_impl(FILE *stream, unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_dynamic)
+generatep_dynamic_packet_test_function_impl(FILE *stream, unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_dynamic_method)
 {
   struct dynamic_packet_test_function_impl_gen_struct record;
   
   record.name = name;
   record.packet_size = packet_size;
   record.prefix = prefix;
-  record.test_frame_dynamic = test_frame_dynamic;
+  record.test_frame_dynamic_method = test_frame_dynamic_method;
 
   generate_dynamic_packet_test_function_impl (stream, &record, indent);
 }
@@ -193,7 +193,7 @@ genstring_dynamic_packet_test_function_impl(struct dynamic_packet_test_function_
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "    ");
-  if (record->test_frame_dynamic) strcat (output, record->test_frame_dynamic);
+  if (record->test_frame_dynamic_method) strcat (output, record->test_frame_dynamic_method);
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "\n");
@@ -230,14 +230,14 @@ genstring_dynamic_packet_test_function_impl(struct dynamic_packet_test_function_
 }
 
 char *
-genstringp_dynamic_packet_test_function_impl(unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_dynamic)
+genstringp_dynamic_packet_test_function_impl(unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_dynamic_method)
 {
   struct dynamic_packet_test_function_impl_gen_struct record;
   
   record.name = name;
   record.packet_size = packet_size;
   record.prefix = prefix;
-  record.test_frame_dynamic = test_frame_dynamic;
+  record.test_frame_dynamic_method = test_frame_dynamic_method;
 
   return genstring_dynamic_packet_test_function_impl (&record, indent);
 }
@@ -250,7 +250,7 @@ strcnt_dynamic_packet_test_function_impl(struct dynamic_packet_test_function_imp
   length += (record->name ? strlen (record->name) : 0) * 5;
   length += (record->prefix ? strlen (record->prefix) : 0) * 3;
   length += strlen (int_to_string (record->packet_size)) * 2;
-  length += (record->test_frame_dynamic ? strlen (record->test_frame_dynamic) : 0) * 1;
+  length += (record->test_frame_dynamic_method ? strlen (record->test_frame_dynamic_method) : 0) * 1;
 
   return length + 396;
 }
@@ -261,6 +261,6 @@ init_dynamic_packet_test_function_impl_gen_struct(struct dynamic_packet_test_fun
   record->name = 0;
   record->packet_size = 0;
   record->prefix = 0;
-  record->test_frame_dynamic = 0;
+  record->test_frame_dynamic_method = 0;
 }
 

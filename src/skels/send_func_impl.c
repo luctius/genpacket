@@ -65,10 +65,10 @@ generate_send_func_impl(FILE *stream, struct send_func_impl_gen_struct *record, 
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
   indent = 4;
-  if (record->send_func)
-    generate_string (record->send_func, stream, indent + strlen (indent_str));
+  if (record->send_func_method)
+    generate_string (record->send_func_method, stream, indent + strlen (indent_str));
   else
-    generate_send_func (stream, record, indent + strlen (indent_str));
+    generate_send_func_method (stream, record, indent + strlen (indent_str));
   indent = 0;
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
@@ -84,13 +84,13 @@ generate_send_func_impl(FILE *stream, struct send_func_impl_gen_struct *record, 
 }
 
 void
-generatep_send_func_impl(FILE *stream, unsigned int indent, const char *packet_name, const char *prefix, const char *send_func)
+generatep_send_func_impl(FILE *stream, unsigned int indent, const char *packet_name, const char *prefix, const char *send_func_method)
 {
   struct send_func_impl_gen_struct record;
   
   record.packet_name = packet_name;
   record.prefix = prefix;
-  record.send_func = send_func;
+  record.send_func_method = send_func_method;
 
   generate_send_func_impl (stream, &record, indent);
 }
@@ -123,7 +123,7 @@ genstring_send_func_impl(struct send_func_impl_gen_struct *record, unsigned int 
   strcat (output, "    ");
   strcat (output, "\n");
   strcat (output, indent_str);
-  if (record->send_func) strcat (output, record->send_func);
+  if (record->send_func_method) strcat (output, record->send_func_method);
   strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
@@ -140,13 +140,13 @@ genstring_send_func_impl(struct send_func_impl_gen_struct *record, unsigned int 
 }
 
 char *
-genstringp_send_func_impl(unsigned int indent, const char *packet_name, const char *prefix, const char *send_func)
+genstringp_send_func_impl(unsigned int indent, const char *packet_name, const char *prefix, const char *send_func_method)
 {
   struct send_func_impl_gen_struct record;
   
   record.packet_name = packet_name;
   record.prefix = prefix;
-  record.send_func = send_func;
+  record.send_func_method = send_func_method;
 
   return genstring_send_func_impl (&record, indent);
 }
@@ -158,7 +158,7 @@ strcnt_send_func_impl(struct send_func_impl_gen_struct *record, unsigned int ind
   
   length += (record->prefix ? strlen (record->prefix) : 0) * 1;
   length += (record->packet_name ? strlen (record->packet_name) : 0) * 2;
-  length += (record->send_func ? strlen (record->send_func) : 0) * 1;
+  length += (record->send_func_method ? strlen (record->send_func_method) : 0) * 1;
 
   return length + 64;
 }
@@ -168,6 +168,6 @@ init_send_func_impl_gen_struct(struct send_func_impl_gen_struct *record)
 {
   record->packet_name = 0;
   record->prefix = 0;
-  record->send_func = 0;
+  record->send_func_method = 0;
 }
 

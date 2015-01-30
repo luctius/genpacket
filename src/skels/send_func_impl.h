@@ -19,23 +19,23 @@ struct send_func_impl_gen_struct
 {
   const char *packet_name;
   const char *prefix;
-  const char *send_func;
+  const char *send_func_method;
 };
 
-extern void generate_send_func(FILE *stream, struct send_func_impl_gen_struct *record, unsigned int indent);
+extern void generate_send_func_method(FILE *stream, struct send_func_impl_gen_struct *record, unsigned int indent);
 
 
 void
 generate_send_func_impl(FILE *stream, struct send_func_impl_gen_struct *record, unsigned int indent);
 
 void
-generatep_send_func_impl(FILE *stream, unsigned int indent, const char *packet_name, const char *prefix, const char *send_func);
+generatep_send_func_impl(FILE *stream, unsigned int indent, const char *packet_name, const char *prefix, const char *send_func_method);
 
 char *
 genstring_send_func_impl(struct send_func_impl_gen_struct *record, unsigned int indent);
 
 char *
-genstringp_send_func_impl(unsigned int indent, const char *packet_name, const char *prefix, const char *send_func);
+genstringp_send_func_impl(unsigned int indent, const char *packet_name, const char *prefix, const char *send_func_method);
 
 int
 strcnt_send_func_impl(struct send_func_impl_gen_struct *record, unsigned int indent);

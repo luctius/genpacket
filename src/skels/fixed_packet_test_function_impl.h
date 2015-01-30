@@ -20,23 +20,23 @@ struct fixed_packet_test_function_impl_gen_struct
   const char *name;
   int packet_size;
   const char *prefix;
-  const char *test_frame_fixed;
+  const char *test_frame_fixed_method;
 };
 
-extern void generate_test_frame_fixed(FILE *stream, struct fixed_packet_test_function_impl_gen_struct *record, unsigned int indent);
+extern void generate_test_frame_fixed_method(FILE *stream, struct fixed_packet_test_function_impl_gen_struct *record, unsigned int indent);
 
 
 void
 generate_fixed_packet_test_function_impl(FILE *stream, struct fixed_packet_test_function_impl_gen_struct *record, unsigned int indent);
 
 void
-generatep_fixed_packet_test_function_impl(FILE *stream, unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_fixed);
+generatep_fixed_packet_test_function_impl(FILE *stream, unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_fixed_method);
 
 char *
 genstring_fixed_packet_test_function_impl(struct fixed_packet_test_function_impl_gen_struct *record, unsigned int indent);
 
 char *
-genstringp_fixed_packet_test_function_impl(unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_fixed);
+genstringp_fixed_packet_test_function_impl(unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_fixed_method);
 
 int
 strcnt_fixed_packet_test_function_impl(struct fixed_packet_test_function_impl_gen_struct *record, unsigned int indent);

@@ -105,24 +105,24 @@ generate_header(FILE *stream, struct header_gen_struct *record, unsigned int ind
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "#define ");
   fprintf (stream, "%s", (record->ifndefname ? record->ifndefname : ""));
-  fprintf (stream, "%s", "_NRO_PIPES (");
+  fprintf (stream, "%s", "_NRO_PIPES   (");
   fprintf (stream, "%d", record->nro_pipes);
   fprintf (stream, "%s", ")");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
-  if (record->packets)
-    generate_string (record->packets, stream, indent + strlen (indent_str));
+  if (record->packets_method)
+    generate_string (record->packets_method, stream, indent + strlen (indent_str));
   else
-    generate_packets (stream, record, indent + strlen (indent_str));
+    generate_packets_method (stream, record, indent + strlen (indent_str));
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
-  if (record->send_functions)
-    generate_string (record->send_functions, stream, indent + strlen (indent_str));
+  if (record->send_functions_method)
+    generate_string (record->send_functions_method, stream, indent + strlen (indent_str));
   else
-    generate_send_functions (stream, record, indent + strlen (indent_str));
+    generate_send_functions_method (stream, record, indent + strlen (indent_str));
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
@@ -144,10 +144,10 @@ generate_header(FILE *stream, struct header_gen_struct *record, unsigned int ind
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
   indent = 4;
-  if (record->receive_functions)
-    generate_string (record->receive_functions, stream, indent + strlen (indent_str));
+  if (record->receive_functions_method)
+    generate_string (record->receive_functions_method, stream, indent + strlen (indent_str));
   else
-    generate_receive_functions (stream, record, indent + strlen (indent_str));
+    generate_receive_functions_method (stream, record, indent + strlen (indent_str));
   indent = 0;
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
@@ -193,16 +193,16 @@ generate_header(FILE *stream, struct header_gen_struct *record, unsigned int ind
 }
 
 void
-generatep_header(FILE *stream, unsigned int indent, const char *ifndefname, int nro_pipes, const char *packets, const char *prefix, const char *receive_functions, const char *send_functions)
+generatep_header(FILE *stream, unsigned int indent, const char *ifndefname, int nro_pipes, const char *packets_method, const char *prefix, const char *receive_functions_method, const char *send_functions_method)
 {
   struct header_gen_struct record;
   
   record.ifndefname = ifndefname;
   record.nro_pipes = nro_pipes;
-  record.packets = packets;
+  record.packets_method = packets_method;
   record.prefix = prefix;
-  record.receive_functions = receive_functions;
-  record.send_functions = send_functions;
+  record.receive_functions_method = receive_functions_method;
+  record.send_functions_method = send_functions_method;
 
   generate_header (stream, &record, indent);
 }
@@ -267,18 +267,18 @@ genstring_header(struct header_gen_struct *record, unsigned int indent)
   strcat (output, indent_str);
   strcat (output, "#define ");
   if (record->ifndefname) strcat (output, record->ifndefname);
-  strcat (output, "_NRO_PIPES (");
+  strcat (output, "_NRO_PIPES   (");
   strcat (output, int_to_string (record->nro_pipes));
   strcat (output, ")");
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
-  if (record->packets) strcat (output, record->packets);
+  if (record->packets_method) strcat (output, record->packets_method);
   strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
-  if (record->send_functions) strcat (output, record->send_functions);
+  if (record->send_functions_method) strcat (output, record->send_functions_method);
   strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
@@ -299,7 +299,7 @@ genstring_header(struct header_gen_struct *record, unsigned int indent)
   strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
-  if (record->receive_functions) strcat (output, record->receive_functions);
+  if (record->receive_functions_method) strcat (output, record->receive_functions_method);
   strcat (output, indent_str);
   strcat (output, "\n");
   strcat (output, indent_str);
@@ -346,16 +346,16 @@ genstring_header(struct header_gen_struct *record, unsigned int indent)
 }
 
 char *
-genstringp_header(unsigned int indent, const char *ifndefname, int nro_pipes, const char *packets, const char *prefix, const char *receive_functions, const char *send_functions)
+genstringp_header(unsigned int indent, const char *ifndefname, int nro_pipes, const char *packets_method, const char *prefix, const char *receive_functions_method, const char *send_functions_method)
 {
   struct header_gen_struct record;
   
   record.ifndefname = ifndefname;
   record.nro_pipes = nro_pipes;
-  record.packets = packets;
+  record.packets_method = packets_method;
   record.prefix = prefix;
-  record.receive_functions = receive_functions;
-  record.send_functions = send_functions;
+  record.receive_functions_method = receive_functions_method;
+  record.send_functions_method = send_functions_method;
 
   return genstring_header (&record, indent);
 }
@@ -367,12 +367,12 @@ strcnt_header(struct header_gen_struct *record, unsigned int indent)
   
   length += (record->ifndefname ? strlen (record->ifndefname) : 0) * 6;
   length += strlen (int_to_string (record->nro_pipes)) * 1;
-  length += (record->packets ? strlen (record->packets) : 0) * 1;
-  length += (record->send_functions ? strlen (record->send_functions) : 0) * 1;
+  length += (record->packets_method ? strlen (record->packets_method) : 0) * 1;
+  length += (record->send_functions_method ? strlen (record->send_functions_method) : 0) * 1;
   length += (record->prefix ? strlen (record->prefix) : 0) * 4;
-  length += (record->receive_functions ? strlen (record->receive_functions) : 0) * 1;
+  length += (record->receive_functions_method ? strlen (record->receive_functions_method) : 0) * 1;
 
-  return length + 498;
+  return length + 500;
 }
 
 void
@@ -380,9 +380,9 @@ init_header_gen_struct(struct header_gen_struct *record)
 {
   record->ifndefname = 0;
   record->nro_pipes = 0;
-  record->packets = 0;
+  record->packets_method = 0;
   record->prefix = 0;
-  record->receive_functions = 0;
-  record->send_functions = 0;
+  record->receive_functions_method = 0;
+  record->send_functions_method = 0;
 }
 

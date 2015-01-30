@@ -19,32 +19,32 @@ struct header_gen_struct
 {
   const char *ifndefname;
   int nro_pipes;
-  const char *packets;
+  const char *packets_method;
   const char *prefix;
-  const char *receive_functions;
-  const char *send_functions;
+  const char *receive_functions_method;
+  const char *send_functions_method;
 };
 
-extern void generate_packets(FILE *stream, struct header_gen_struct *record, unsigned int indent);
+extern void generate_packets_method(FILE *stream, struct header_gen_struct *record, unsigned int indent);
 
 
-extern void generate_receive_functions(FILE *stream, struct header_gen_struct *record, unsigned int indent);
+extern void generate_receive_functions_method(FILE *stream, struct header_gen_struct *record, unsigned int indent);
 
 
-extern void generate_send_functions(FILE *stream, struct header_gen_struct *record, unsigned int indent);
+extern void generate_send_functions_method(FILE *stream, struct header_gen_struct *record, unsigned int indent);
 
 
 void
 generate_header(FILE *stream, struct header_gen_struct *record, unsigned int indent);
 
 void
-generatep_header(FILE *stream, unsigned int indent, const char *ifndefname, int nro_pipes, const char *packets, const char *prefix, const char *receive_functions, const char *send_functions);
+generatep_header(FILE *stream, unsigned int indent, const char *ifndefname, int nro_pipes, const char *packets_method, const char *prefix, const char *receive_functions_method, const char *send_functions_method);
 
 char *
 genstring_header(struct header_gen_struct *record, unsigned int indent);
 
 char *
-genstringp_header(unsigned int indent, const char *ifndefname, int nro_pipes, const char *packets, const char *prefix, const char *receive_functions, const char *send_functions);
+genstringp_header(unsigned int indent, const char *ifndefname, int nro_pipes, const char *packets_method, const char *prefix, const char *receive_functions_method, const char *send_functions_method);
 
 int
 strcnt_header(struct header_gen_struct *record, unsigned int indent);

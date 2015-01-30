@@ -89,10 +89,10 @@ generate_fixed_packet_test_function_impl(FILE *stream, struct fixed_packet_test_
   fprintf (stream, "%s", indent_str);
   indent = 4;
   fprintf (stream, "%s", "    ");
-  if (record->test_frame_fixed)
-    generate_string (record->test_frame_fixed, stream, indent + strlen (indent_str));
+  if (record->test_frame_fixed_method)
+    generate_string (record->test_frame_fixed_method, stream, indent + strlen (indent_str));
   else
-    generate_test_frame_fixed (stream, record, indent + strlen (indent_str));
+    generate_test_frame_fixed_method (stream, record, indent + strlen (indent_str));
   indent = 0;
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
@@ -130,14 +130,14 @@ generate_fixed_packet_test_function_impl(FILE *stream, struct fixed_packet_test_
 }
 
 void
-generatep_fixed_packet_test_function_impl(FILE *stream, unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_fixed)
+generatep_fixed_packet_test_function_impl(FILE *stream, unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_fixed_method)
 {
   struct fixed_packet_test_function_impl_gen_struct record;
   
   record.name = name;
   record.packet_size = packet_size;
   record.prefix = prefix;
-  record.test_frame_fixed = test_frame_fixed;
+  record.test_frame_fixed_method = test_frame_fixed_method;
 
   generate_fixed_packet_test_function_impl (stream, &record, indent);
 }
@@ -185,7 +185,7 @@ genstring_fixed_packet_test_function_impl(struct fixed_packet_test_function_impl
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "    ");
-  if (record->test_frame_fixed) strcat (output, record->test_frame_fixed);
+  if (record->test_frame_fixed_method) strcat (output, record->test_frame_fixed_method);
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "\n");
@@ -224,14 +224,14 @@ genstring_fixed_packet_test_function_impl(struct fixed_packet_test_function_impl
 }
 
 char *
-genstringp_fixed_packet_test_function_impl(unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_fixed)
+genstringp_fixed_packet_test_function_impl(unsigned int indent, const char *name, int packet_size, const char *prefix, const char *test_frame_fixed_method)
 {
   struct fixed_packet_test_function_impl_gen_struct record;
   
   record.name = name;
   record.packet_size = packet_size;
   record.prefix = prefix;
-  record.test_frame_fixed = test_frame_fixed;
+  record.test_frame_fixed_method = test_frame_fixed_method;
 
   return genstring_fixed_packet_test_function_impl (&record, indent);
 }
@@ -244,7 +244,7 @@ strcnt_fixed_packet_test_function_impl(struct fixed_packet_test_function_impl_ge
   length += (record->name ? strlen (record->name) : 0) * 5;
   length += (record->prefix ? strlen (record->prefix) : 0) * 3;
   length += strlen (int_to_string (record->packet_size)) * 2;
-  length += (record->test_frame_fixed ? strlen (record->test_frame_fixed) : 0) * 1;
+  length += (record->test_frame_fixed_method ? strlen (record->test_frame_fixed_method) : 0) * 1;
 
   return length + 369;
 }
@@ -255,6 +255,6 @@ init_fixed_packet_test_function_impl_gen_struct(struct fixed_packet_test_functio
   record->name = 0;
   record->packet_size = 0;
   record->prefix = 0;
-  record->test_frame_fixed = 0;
+  record->test_frame_fixed_method = 0;
 }
 

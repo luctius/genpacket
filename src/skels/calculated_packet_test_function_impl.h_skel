@@ -5,7 +5,7 @@ static int test_@name@(struct @prefix@_ctx *ctx, int head) {
     int retval = @packet_size:int@;
     struct @name@ *packet = (struct @name@ *) &ctx->recv_buff[head];
 
-    @test_frame_calc:method@
+    @test_frame_calc_method:method@
 
     /* Call receive function. */
     if (ctx->params.@prefix@_@name@_received != NULL)
