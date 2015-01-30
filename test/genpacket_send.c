@@ -72,6 +72,9 @@ int main(int argc, char *argv[]) {
         .data0      = { 5, 7, },
     };
 
+    if ( (argc > 0) && strcmp("-p0", argv[1]) ) {
+        genpacket_p0_fixed_send(&p0f);
+    }
     if ( (argc > 0) && strcmp("-p1", argv[1]) ) {
         genpacket_p1_fixed_send(&p1f);
     }
