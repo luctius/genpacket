@@ -143,7 +143,7 @@ generate_source_skeleton(FILE *stream, struct source_skeleton_gen_struct *record
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "#include \"");
   fprintf (stream, "%s", (record->prefix ? record->prefix : ""));
-  fprintf (stream, "%s", "_cqc.h\"");
+  fprintf (stream, "%s", "_tools.h\"");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "\n");
@@ -659,7 +659,7 @@ genstring_source_skeleton(struct source_skeleton_gen_struct *record, unsigned in
   strcat (output, indent_str);
   strcat (output, "#include \"");
   if (record->prefix) strcat (output, record->prefix);
-  strcat (output, "_cqc.h\"");
+  strcat (output, "_tools.h\"");
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "\n");
@@ -1074,7 +1074,7 @@ strcnt_source_skeleton(struct source_skeleton_gen_struct *record, unsigned int i
   length += (record->send_functions_impl ? strlen (record->send_functions_impl) : 0) * 1;
   length += (record->call_recv_tests ? strlen (record->call_recv_tests) : 0) * 1;
 
-  return length + 3411;
+  return length + 3413;
 }
 
 void

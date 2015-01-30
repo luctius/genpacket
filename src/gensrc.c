@@ -75,13 +75,20 @@ void generate_send_func(FILE *stream, struct send_func_impl_gen_struct *record, 
         return;
     }
 
-
     for (int j = 0; j < p->option_list_sz; j++) {
         struct poption *o = &p->option_list[j];
         if (o->otype == O_DATA) {
-            generatep_write_data(stream, indent, o->name, 0, record->prefix, (o->data_width / CHAR_BIT) * o->data_size_i);
+            generatep_write_data(stream, indent, true, o->name, 0, record->prefix, (o->data_width / CHAR_BIT) );
         }
-        else generatep_write_data(stream, indent, o->name, 0, record->prefix, (o->data_width / CHAR_BIT) );
+        else {
+            if (o->otype == O_FRAME) {
+                fprintf(stream, "\n%*s", indent, "");
+                fprintf(stream, "packet->%s = %s;\n", o->name, v_to_str(o->frame_val) );
+                fprintf(stream, "%*s", indent, "");
+            }
+
+            generatep_write_data(stream, indent, false, o->name, 0, record->prefix, (o->data_width / CHAR_BIT) );
+        }
     }
 }
 

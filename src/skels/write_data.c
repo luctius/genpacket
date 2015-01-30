@@ -35,6 +35,10 @@ generate_write_data(FILE *stream, struct write_data_gen_struct *record, unsigned
   fprintf (stream, "%d", record->pipe);
   fprintf (stream, "%s", "], &packet->");
   fprintf (stream, "%s", (record->name ? record->name : ""));
+  if (record->array)
+    {
+      fprintf (stream, "%s", "[0]");
+    }
   fprintf (stream, "%s", ", ");
   fprintf (stream, "%d", record->size);
   fprintf (stream, "%s", ");");
@@ -45,10 +49,11 @@ generate_write_data(FILE *stream, struct write_data_gen_struct *record, unsigned
 }
 
 void
-generatep_write_data(FILE *stream, unsigned int indent, const char *name, int pipe, const char *prefix, int size)
+generatep_write_data(FILE *stream, unsigned int indent, short array, const char *name, int pipe, const char *prefix, int size)
 {
   struct write_data_gen_struct record;
   
+  record.array = array;
   record.name = name;
   record.pipe = pipe;
   record.prefix = prefix;
@@ -79,6 +84,10 @@ genstring_write_data(struct write_data_gen_struct *record, unsigned int indent)
   strcat (output, int_to_string (record->pipe));
   strcat (output, "], &packet->");
   if (record->name) strcat (output, record->name);
+  if (record->array)
+    {
+      strcat (output, "[0]");
+    }
   strcat (output, ", ");
   strcat (output, int_to_string (record->size));
   strcat (output, ");");
@@ -91,10 +100,11 @@ genstring_write_data(struct write_data_gen_struct *record, unsigned int indent)
 }
 
 char *
-genstringp_write_data(unsigned int indent, const char *name, int pipe, const char *prefix, int size)
+genstringp_write_data(unsigned int indent, short array, const char *name, int pipe, const char *prefix, int size)
 {
   struct write_data_gen_struct record;
   
+  record.array = array;
   record.name = name;
   record.pipe = pipe;
   record.prefix = prefix;
@@ -111,14 +121,20 @@ strcnt_write_data(struct write_data_gen_struct *record, unsigned int indent)
   length += (record->prefix ? strlen (record->prefix) : 0) * 1;
   length += strlen (int_to_string (record->pipe)) * 1;
   length += (record->name ? strlen (record->name) : 0) * 1;
+if (record->array)
+    {
+      
+
+    }
   length += strlen (int_to_string (record->size)) * 1;
 
-  return length + 42;
+  return length + 45;
 }
 
 void
 init_write_data_gen_struct(struct write_data_gen_struct *record)
 {
+  record->array = 0;
   record->name = 0;
   record->pipe = 0;
   record->prefix = 0;

@@ -22,7 +22,7 @@
 
 
 #include "@prefix@.h"
-#include "@prefix@_cqc.h"
+#include "@prefix@_tools.h"
 
 #ifndef FIX_UNUSED
 #define FIX_UNUSED(X) (void) (X) /* avoid warnings for unused params */

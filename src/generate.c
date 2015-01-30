@@ -9,7 +9,7 @@
 
 #include "genhdr.h"
 #include "gensrc.h"
-#include "gencqc.h"
+#include "gentools.h"
 
 void generate_packet_files(const char *path, const char *prefix) {
     /* capatilise gen_name */
@@ -28,23 +28,23 @@ void generate_packet_files(const char *path, const char *prefix) {
     snprintf(psrc, PATH_MAX, "%s/%s.c", path, prefix);
     src_file = fopen(psrc, "w");
 
-    FILE *cqc_file = stdout;
-    char pcqc[PATH_MAX];
-    snprintf(pcqc, PATH_MAX, "%s/%s_cqc.h", path, prefix);
-    cqc_file = fopen(pcqc, "w");
+    FILE *tools_file = stdout;
+    char ptools[PATH_MAX];
+    snprintf(ptools, PATH_MAX, "%s/%s_tools.h", path, prefix);
+    tools_file = fopen(ptools, "w");
 
 
 
     gp_debug("generating header to %s", phdr);
     generate_public_hdr(hdr_file, prefix, ifndef_buf);
-    close(hdr_file);
+    fclose(hdr_file);
 
     gp_debug("generating source to %s", psrc);
     generate_public_src(src_file, prefix, ifndef_buf);
-    close(src_file);
+    fclose(src_file);
 
-    gp_debug("generating cqc to %s", pcqc);
-    generate_cqc_hdr(cqc_file, prefix, ifndef_buf);
-    close(cqc_file);
+    gp_debug("generating tools to %s", ptools);
+    generate_tools_hdr(tools_file, prefix, ifndef_buf);
+    fclose(tools_file);
 }
 

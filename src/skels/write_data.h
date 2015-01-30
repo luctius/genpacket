@@ -17,6 +17,7 @@ extern "C" {
 
 struct write_data_gen_struct
 {
+  short array;
   const char *name;
   int pipe;
   const char *prefix;
@@ -27,13 +28,13 @@ void
 generate_write_data(FILE *stream, struct write_data_gen_struct *record, unsigned int indent);
 
 void
-generatep_write_data(FILE *stream, unsigned int indent, const char *name, int pipe, const char *prefix, int size);
+generatep_write_data(FILE *stream, unsigned int indent, short array, const char *name, int pipe, const char *prefix, int size);
 
 char *
 genstring_write_data(struct write_data_gen_struct *record, unsigned int indent);
 
 char *
-genstringp_write_data(unsigned int indent, const char *name, int pipe, const char *prefix, int size);
+genstringp_write_data(unsigned int indent, short array, const char *name, int pipe, const char *prefix, int size);
 
 int
 strcnt_write_data(struct write_data_gen_struct *record, unsigned int indent);
