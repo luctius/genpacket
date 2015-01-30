@@ -6,31 +6,54 @@
 #include "packet.h"
 #include "gensrc.h"
 
-#include "skels/send_func_impl.h"
-#include "skels/source_skeleton.h"
-#include "skels/write_data.h"
 #include "skels/calculated_packet_test_function_impl.h"
+#include "skels/crc_cfg_decl.h"
 #include "skels/dynamic_packet_test_function_impl.h"
 #include "skels/fixed_packet_no_frame_test_function_impl.h"
 #include "skels/fixed_packet_test_function_impl.h"
+#include "skels/send_func_impl.h"
+#include "skels/source_skeleton.h"
+#include "skels/write_data.h"
 
 #define rnd_to_pwr2(sz) do { if ( (sz & (sz-1) ) != 0) { sz |= sz>>1; sz |= sz>>2; sz |= sz>>4; sz |= sz>>8; sz |= sz>>16; sz++; } } while (0)
 
-extern void generate_test_frame_dynamic(FILE *stream, struct dynamic_packet_test_function_impl_gen_struct *record, unsigned int indent) {
+void generate_crc_cfg_decl_method(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent) {
+    FIX_UNUSED(record);
+
+    for (int i = 0; i < packet_list_sz; i++) {
+        struct packet *p = &packet_list[i];
+
+        for (int j = 0; j < p->option_list_sz; j++) {
+            struct poption *o = &p->option_list[j];
+            if (o->otype == O_CRC) {
+                generatep_crc_cfg_decl(stream, indent, o->name, p->name, record->prefix);
+            }
+        }
+    }
+}
+
+void generate_crc_init_method(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent) {
+    FIX_UNUSED(stream);
+    FIX_UNUSED(record);
+    FIX_UNUSED(indent);
+
+}
+
+void generate_test_frame_dynamic_method(FILE *stream, struct dynamic_packet_test_function_impl_gen_struct *record, unsigned int indent) {
     FIX_UNUSED(record);
     FIX_UNUSED(indent);
 
     fprintf(stream, "return -1;");
 }
 
-extern void generate_test_frame_calc(FILE *stream, struct calculated_packet_test_function_impl_gen_struct *record, unsigned int indent) {
+void generate_test_frame_calc_method(FILE *stream, struct calculated_packet_test_function_impl_gen_struct *record, unsigned int indent) {
     FIX_UNUSED(record);
     FIX_UNUSED(indent);
 
     fprintf(stream, "return -1;");
 }
 
-extern void generate_test_frame_fixed(FILE *stream, struct fixed_packet_test_function_impl_gen_struct *record, unsigned int indent) {
+extern void generate_test_frame_fixed_method(FILE *stream, struct fixed_packet_test_function_impl_gen_struct *record, unsigned int indent) {
     struct packet *p = NULL;
     for (int j = 0; j < packet_list_sz; j++) {
         p = &packet_list[j];
@@ -63,7 +86,7 @@ extern void generate_test_frame_fixed(FILE *stream, struct fixed_packet_test_fun
 }
 
 
-void generate_send_func(FILE *stream, struct send_func_impl_gen_struct *record, unsigned int indent) {
+void generate_send_func_method(FILE *stream, struct send_func_impl_gen_struct *record, unsigned int indent) {
     struct packet *p = NULL;
     for (int j = 0; j < packet_list_sz; j++) {
         p = &packet_list[j];
@@ -86,13 +109,18 @@ void generate_send_func(FILE *stream, struct send_func_impl_gen_struct *record, 
                 fprintf(stream, "packet->%s = %s;\n", o->name, v_to_str(o->frame_val) );
                 fprintf(stream, "%*s", indent, "");
             }
+            if (o->otype == O_CRC) {
+                fprintf(stream, "\n%*s", indent, "");
+                //fprintf(stream, "packet->%s = %s_crc(ctx->%s_%s, );\n", o->name, p->name, o->name );
+                fprintf(stream, "%*s", indent, "");
+            }
 
             generatep_write_data(stream, indent, false, o->name, 0, record->prefix, (o->data_width / CHAR_BIT) );
         }
     }
 }
 
-void generate_call_recv_tests(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent) {
+void generate_call_recv_tests_method(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent) {
     fprintf(stream, "\n");
 
     for (int i = 0; i < packet_list_sz; i++) {
@@ -102,7 +130,7 @@ void generate_call_recv_tests(FILE *stream, struct source_skeleton_gen_struct *r
     }
 }
 
-void generate_send_functions_impl(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent) {
+void generate_send_functions_impl_method(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent) {
     for (int i = 0; i < packet_list_sz; i++) {
         struct packet *p = &packet_list[i];
 
@@ -110,7 +138,7 @@ void generate_send_functions_impl(FILE *stream, struct source_skeleton_gen_struc
     }
 }
 
-void generate_test_packets(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent) {
+void generate_test_packets_method(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent) {
     for (int i = 0; i < packet_list_sz; i++) {
         struct packet *p = &packet_list[i];
 
@@ -152,6 +180,20 @@ void generate_public_src(FILE *stream, const char *prefix, const char *ifndefnam
     rnd_to_pwr2(min_sz);
     rnd_to_pwr2(total_sz);
 
-    generatep_source_skeleton(stream, 0, NULL, "TBD", "TBD", ifndefname, prefix, min_sz, NULL, total_sz, NULL, "1");
+    struct source_skeleton_gen_struct src_skel = {
+      .call_recv_tests_method      = NULL,
+      .cmd_options                 = "TBD",
+      .crc_cfg_decl_method         = NULL,
+      .genpacket                   = "TBD",
+      .ifndefname                  = ifndefname,
+      .prefix                      = prefix,
+      .read_sz                     = min_sz,
+      .send_functions_impl_method  = NULL, 
+      .size                        = total_sz,
+      .test_packets_method         = NULL,
+      .version                     = "1",
+    };
+
+    generate_source_skeleton(stream, &src_skel, 0);
     fprintf(stream, "\n");
 }

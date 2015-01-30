@@ -97,6 +97,8 @@ endif
 #libgp_la_SOURCES = $(BUILT_SOURCES)
 
 gengen_sources = \
+	src/skels/crc_cfg_decl.c		                        \
+	src/skels/crc_cfg_decl.h		                        \
 	src/skels/calculated_packet_test_function_impl.c		\
 	src/skels/calculated_packet_test_function_impl.h		\
 	src/skels/dynamic_packet_test_function_impl.c			\
@@ -127,6 +129,7 @@ gengen_sources = \
 	src/skels/write_data.h
 
 EXTRA_DIST = \
+	src/skels/crc_cfg_decl.h_skel		                        \
 	src/skels/calculated_packet_test_function_impl.h_skel		\
 	src/skels/dynamic_packet_test_function_impl.h_skel			\
 	src/skels/fixed_packet_no_frame_test_function_impl.h_skel	\

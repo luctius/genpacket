@@ -33,7 +33,7 @@ static char *type_to_c_type_str(struct type t) {
     return bfr;
 }
 
-void generate_packets(FILE *stream, struct header_gen_struct *record, unsigned int indent) {
+void generate_packets_method(FILE *stream, struct header_gen_struct *record, unsigned int indent) {
     FIX_UNUSED(indent);
     FIX_UNUSED(record);
 
@@ -44,21 +44,21 @@ void generate_packets(FILE *stream, struct header_gen_struct *record, unsigned i
     }
 }
 
-void generate_receive_functions(FILE *stream, struct header_gen_struct *record, unsigned int indent) {
+void generate_receive_functions_method(FILE *stream, struct header_gen_struct *record, unsigned int indent) {
     for (int i = 0; i < packet_list_sz; i++) {
         struct packet *p = &packet_list[i];
         generatep_receive_callback_decl(stream, indent, p->name, record->prefix, "void");
     }
 }
 
-void generate_send_functions(FILE *stream, struct header_gen_struct *record, unsigned int indent) {
+void generate_send_functions_method(FILE *stream, struct header_gen_struct *record, unsigned int indent) {
     for (int i = 0; i < packet_list_sz; i++) {
         struct packet *p = &packet_list[i];
         generatep_send_function_decl(stream, indent, p->name, record->prefix);
     }
 }
 
-void generate_struct_member(FILE *stream, struct structs_gen_struct *record, unsigned int indent) {
+void generate_struct_member_method(FILE *stream, struct structs_gen_struct *record, unsigned int indent) {
     struct packet *p = NULL;
     for (int j = 0; j < packet_list_sz; j++) {
         p = &packet_list[j];
@@ -83,12 +83,12 @@ void generate_struct_member(FILE *stream, struct structs_gen_struct *record, uns
 void generate_public_hdr(FILE *stream, const char *prefix, const char *ifndefname) {
     struct header_gen_struct hgs;
     init_header_gen_struct(&hgs);
-    hgs.prefix      = prefix;
-    hgs.ifndefname  = ifndefname;
-    hgs.packets     = NULL;
-    hgs.receive_functions = NULL;
-    hgs.send_functions = NULL;
-    hgs.nro_pipes   = pipes;
+    hgs.prefix                   = prefix;
+    hgs.ifndefname               = ifndefname;
+    hgs.packets_method           = NULL;
+    hgs.receive_functions_method = NULL;
+    hgs.send_functions_method    = NULL;
+    hgs.nro_pipes                = pipes;
 
     generate_header(stream, &hgs, 0);
     fprintf(stream, "\n");
