@@ -22,7 +22,7 @@
  * Static table used for the table_driven implementation.
  * Must be initialised with the crc_init function.
  *****************************************************************************/
-static crc_t crc_table[256];
+//static crc_t crc_table[256];
 
 /**
  * Reflect all bits of a \a data word of \a data_len bytes.
@@ -70,6 +70,7 @@ crc_t crc_init(const crc_cfg_t *cfg)
 void crc_table_gen(const crc_cfg_t *cfg)
 {
     crc_t crc;
+    crc_t *crc_table_ptr = &cfg->crc_table[0];
     unsigned int i, j;
 
     for (i = 0; i < 256; i++) {
@@ -89,7 +90,7 @@ void crc_table_gen(const crc_cfg_t *cfg)
         if (cfg->reflect_in) {
             crc = crc_reflect(crc >> cfg->crc_shift, cfg->width) << cfg->crc_shift;
         }
-        crc_table[i] = crc & (cfg->crc_mask << cfg->crc_shift);
+        crc_table_ptr[i] = crc & (cfg->crc_mask << cfg->crc_shift);
     }
 }
 
@@ -111,14 +112,14 @@ crc_t crc_update(const crc_cfg_t *cfg, crc_t crc, const void *data, size_t data_
     if (cfg->reflect_in) {
         while (data_len--) {
             tbl_idx = ((crc >> cfg->crc_shift) ^ *d) & 0xff;
-            crc = (crc_table[tbl_idx] ^ (crc >> 8)) & (cfg->crc_mask << cfg->crc_shift);
+            crc = (cfg->crc_table[tbl_idx] ^ (crc >> 8)) & (cfg->crc_mask << cfg->crc_shift);
 
             d++;
         }
     } else {
         while (data_len--) {
             tbl_idx = ((crc >> (cfg->width - 8 + cfg->crc_shift)) ^ *d) & 0xff;
-            crc = (crc_table[tbl_idx] ^ (crc << 8)) & (cfg->crc_mask << cfg->crc_shift);
+            crc = (cfg->crc_table[tbl_idx] ^ (crc << 8)) & (cfg->crc_mask << cfg->crc_shift);
 
             d++;
         }

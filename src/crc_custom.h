@@ -60,6 +60,8 @@ typedef struct {
                                      initialise as (cfg->msb_mask - 1) | cfg->msb_mask */
     unsigned int crc_shift;     /*!< a shift count that is used when width < 8
                                      initialise as cfg->width < 8 ? 8 - cfg->width : 0 */
+
+    crc_t crc_table[256];
 } crc_cfg_t;
 
 
