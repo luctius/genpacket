@@ -12,15 +12,18 @@ SUFFIXES = .c .h .y .l .h_skel
 GIT_VERSION := "$(shell git describe --abbrev=10 --dirty --always)"
 
 genpacket_program_sources = \
+                    $(gengen_sources) \
                     src/cmdline.c \
                     src/cmdline_packit.c \
-                    $(gengen_sources) \
                     src/genpacket.tab.c \
                     src/genpacket.lex.c \
                     src/packet.c \
                     src/parser.c \
                     src/value.c \
                     src/generate.c \
+                    src/genhdr.c \
+                    src/gensrc.c \
+                    src/gencqc.c \
                     src/decoder.c \
                     src/debug_print.c \
                     src/crc_custom.c \
@@ -36,10 +39,10 @@ src_genpacket_CFLAGS = -ggdb -O0 -Wall -Wextra -Wformat=2 -Wswitch-default -Wcas
 #genpacket_LDADD = -lm libgp.la
 
 src/cmdline.c src/cmdline.h: genpacket.ggo
-	gengetopt --output-dir=src/ < $<
+	$(GENGETOPT) --output-dir=src/ < $<
     
 src/cmdline_packit.c src/cmdline_packit.h: packit.ggo
-	gengetopt -f cmdline_packit_parser -a packit_args_info -F cmdline_packit --output-dir=src/ < $<
+	$(GENGETOPT) -f cmdline_packit_parser -a packit_args_info -F cmdline_packit --output-dir=src/ < $<
 
 
 src/genpacket.tab.c: src/genpacket.y
@@ -94,8 +97,6 @@ endif
 #libgp_la_SOURCES = $(BUILT_SOURCES)
 
 gengen_sources = \
-	src/skels/assignment.c									\
-	src/skels/assignment.h									\
 	src/skels/calculated_packet_test_function_impl.c		\
 	src/skels/calculated_packet_test_function_impl.h		\
 	src/skels/cqc.c											\
@@ -106,8 +107,6 @@ gengen_sources = \
 	src/skels/fixed_packet_no_frame_test_function_impl.h	\
 	src/skels/fixed_packet_test_function_impl.c				\
 	src/skels/fixed_packet_test_function_impl.h				\
-	src/skels/function_call.c								\
-	src/skels/function_call.h								\
 	src/skels/header.c										\
 	src/skels/header.h										\
 	src/skels/receive_callback_decl.c						\
@@ -126,13 +125,11 @@ gengen_sources = \
 	src/skels/write_data.h
 
 EXTRA_DIST = \
-	src/skels/assignment.h_skel									\
 	src/skels/calculated_packet_test_function_impl.h_skel		\
 	src/skels/cqc.h_skel										\
 	src/skels/dynamic_packet_test_function_impl.h_skel			\
 	src/skels/fixed_packet_no_frame_test_function_impl.h_skel	\
 	src/skels/fixed_packet_test_function_impl.h_skel			\
-	src/skels/function_call.h_skel								\
 	src/skels/header.h_skel										\
 	src/skels/receive_callback_decl.h_skel						\
 	src/skels/send_func_impl.h_skel								\
