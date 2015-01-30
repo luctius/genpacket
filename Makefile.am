@@ -26,11 +26,12 @@ genpacket_program_sources = \
                     src/debug_print.c \
                     src/crc_custom.c \
                     src/crc.c \
-                    src/genpacket.y \
-                    src/genpacket.l \
+					src/genpacket.tab.c \
+					src/genpacket.lex.c \
                     src/json_printer.c
 
-#src/genpacket.tab.c src/genpacket.lex.c
+#src/genpacket.l
+#src/genpacket.y
 
 src_genpacket_SOURCES =  \
 					$(genpacket_program_sources) \
@@ -47,11 +48,11 @@ src/cmdline_packit.c src/cmdline_packit.h: packit.ggo
 	$(GENGETOPT) -f cmdline_packit_parser -a packit_args_info -F cmdline_packit --output-dir=src/ < $<
 
 
-#src/genpacket.tab.c: src/genpacket.y
-#	$(YACC) -d src/genpacket.y
-#
-#src/genpacket.lex.c: src/genpacket.l
-#	$(LEX) src/genpacket.l
+src/genpacket.tab.c: src/genpacket.y
+	$(YACC) -d src/genpacket.y
+
+src/genpacket.lex.c: src/genpacket.l
+	$(LEX) src/genpacket.l
 
 install-exec-hook:
 	$(LN_S) $(DESTDIR)/bin/genpacket $(DESTDIR)/bin/packit
