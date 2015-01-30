@@ -68,9 +68,9 @@ calculated packet "p4_calculated" {
 }
 
 // test with
-// echo -e "sddsdsblaaat\xA5\x2B\xF0\0F" | src/packit -i - -p test/fixed_basic.gp -n5
+// echo -e "sddsdsblaaat\x08\xA5\x2B\xF0\0F" | src/packit -i - -p test/fixed_basic.gp -n5
 fixed packet "p5_fixed" {
-    frame 0x10 type=uint4
+    frame 0x08 type=uint4
     hidden type=uint4
     attribute type=uint6
     attribute type=bit

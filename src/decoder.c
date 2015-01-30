@@ -31,9 +31,8 @@ void decode_packet(int pkt_idx, FILE * input_stream) {
         gp_debug("Read %d bytes", p->size);
         data_buffer = malloc(p->size);
         
-        int frame_byte_sz = frame_id->data_width/8;
         int timeout = 10;
-        int frame_at_idx = find_frame_in_data(p, frame_byte, frame_byte_sz,timeout,input_stream);
+        int frame_at_idx = find_frame_in_data(p, frame_byte, frame_id->data_width,timeout,input_stream);
         
         if (frame_at_idx >= 0) {
             gp_debug("Found frame at index: %d", frame_at_idx);
@@ -51,6 +50,8 @@ void decode_packet(int pkt_idx, FILE * input_stream) {
         	for(int i = 0; i < p->size; ++i) {
                 gp_debug("%d: %x",i,p->data[i]);
         	}
+        } else {
+            gp_debug("Alas frame not found");
         }
         
         //free(data_buffer);
@@ -72,13 +73,24 @@ void decode_packet(int pkt_idx, FILE * input_stream) {
 
 
 
-int find_frame_in_data(struct packet * p, int frame_byte, int frame_byte_sz,int timeout,FILE * input_stream) {
+int find_frame_in_data(struct packet * p, int frame_byte, int frame_bit_sz,int timeout,FILE * input_stream) {
+    uint8_t check_bits = frame_bit_sz % BYTE_SIZE;
+    uint32_t frame_byte_sz = 1;
+    uint8_t bit_mask = 0xff;
+    if (frame_bit_sz >= BYTE_SIZE) {
+        frame_byte_sz = frame_bit_sz / BYTE_SIZE;
+    } 
+    if (check_bits) {
+        bit_mask = (1<<check_bits)-1;
+    }
+    
     while(timeout--) {
         fread(data_buffer, p->size,1 ,input_stream);
-        int num_checked = 0;
-        for(int i = 0; i < p->size; ++i) {
-            for(int j = 0; j < frame_byte_sz; ++j) {
-                if (data_buffer[i] == ((uint8_t*)&frame_byte)[j]) {
+        uint32_t num_checked = 0;
+        for(int i = 0; i < p->size; ++i) {                
+            for(uint32_t j = 0; j < frame_byte_sz; ++j) {
+                gp_debug("Checking %x against %x",(data_buffer[i] & (1<<check_bits)-1) , ((((uint8_t*)&frame_byte)[j]) & (1<<check_bits)-1));
+                if ((data_buffer[i] & bit_mask)== ((((uint8_t*)&frame_byte)[j]) & bit_mask)) {
                     num_checked++;
                     if (num_checked == frame_byte_sz) {
                         return i;
