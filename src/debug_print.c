@@ -4,7 +4,7 @@
 
 #include "debug_print.h"
 
-enum debug_levels global_debug_lvl = GP_DEBUG_LEVEL_DEBUG;
+enum debug_levels global_debug_lvl = GP_DEBUG_LEVEL_ERROR;
 
 void gp_printf(enum debug_levels dbg_lvl, const char *module, int line, const char* format, ... ) {
     va_list args;
