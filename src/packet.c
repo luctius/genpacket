@@ -126,11 +126,9 @@ void free_option(int pidx, int oidx) {
         o->data_size_str = NULL;
     }
     if (o->start_attr != NULL) {
-        free(o->start_attr);
         o->start_attr = NULL;
     }
     if (o->end_attr != NULL) {
-        free(o->end_attr);
         o->end_attr = NULL;
     }
     if (o->crc_method != NULL) {
@@ -142,9 +140,6 @@ void free_option(int pidx, int oidx) {
     o->value_list = NULL;
     o->value_list_sz = 0;
 
-    for (int i = 0; i < o->exclude_list_sz; i++) {
-        free(o->exclude_list[i]);
-    }
     free(o->exclude_list);
     o->exclude_list_sz = 0;
     o->exclude_list = NULL;
@@ -191,6 +186,7 @@ void check_curr_packet(void) {
 
     parse_debug(p, NULL, "first pass, given size %u, total size %u", p->size, total_sz_bits / CHAR_BIT);
 
+    struct poption *o_crc_start = &p->option_list[0];
     for (int i = 0; i < p->option_list_sz; i++) {
         struct poption *o = &p->option_list[i];
 
@@ -225,12 +221,56 @@ void check_curr_packet(void) {
             if (option_name_is_unique(p, &top) ) {
                 parse_error(p, o, "end attribute \"%s\" is unknown", o->end_attr);
             }
+            else if (o == get_option_by_name(p, o->end_attr) ) {
+                int idx = get_option_idx_by_name(p, o->end_attr);
+                if (idx > 0) o->end_attr = p->option_list[idx-1].name;
+                else parse_error(p, o, "end attribute of crc is the crc field");
+            }
         }
 
         for (int j = 0; j < o->exclude_list_sz; j++) {
             struct poption top = { .name = o->exclude_list[j], };
             if (option_name_is_unique(p, &top) ) {
                 parse_error(p, o, "exclude[%d] \"%s\" is unknown", j, o->exclude_list[j]);
+            }
+        }
+
+        if (o->otype == O_CRC) {
+            if (o->start_attr == NULL) {
+                o->start_attr = o_crc_start->name;
+                if (o == get_option_by_name(p, o->start_attr) ) {
+                    parse_error(p,o, "unkown start attribute for crc field at the beginning.");
+                }
+            }
+
+            if (o->end_attr == NULL) {
+                if (i >= 1) {
+                    o->end_attr = p->option_list[i-1].name;
+
+                    if (i+1 < p->option_list_sz) {
+                        struct poption *o_crc_start = &p->option_list[i+1];
+                    }
+                }
+                else parse_error(p,o, "unkown end attribute for a crc field at the beginning.");
+            }
+
+            /* TODO: check that start is before end... */
+            int idx_start = get_option_idx_by_name(p, o->start_attr);
+            int idx_end   = get_option_idx_by_name(p, o->end_attr);
+            if (idx_start == -1) parse_error(p,o, "start attribute could not be detected");
+            if (idx_end == -1) parse_error(p,o, "end attribute could not be detected");
+            if (idx_start != -1 && idx_end != -1) {
+                if (idx_start == idx_end) parse_error(p,o, "start and end attribute are the same");
+                if (idx_start > idx_end) parse_error(p,o, "start attribute comes after end attribute");
+
+                for (int j = 0; j < o->exclude_list_sz; j++) {
+                    int eidx = get_option_idx_by_name(p, o->exclude_list[j]);
+                    if (eidx == -1) parse_error(p,o, "exclude attribute could not be detected");
+                    if (eidx == idx_start) parse_error(p,o, "start and an exclude attribute are the same");
+                    if (eidx == idx_end) parse_error(p,o, "end and an exclude attribute are the same");
+                    if (idx_start > eidx) parse_error(p,o, "start attribute comes after an exclude attribute");
+                    if (idx_end < eidx) parse_error(p,o, "end attribute comes after an exclude attribute");
+                }
             }
         }
     }
@@ -469,6 +509,9 @@ char *option_to_str(int pkt_idx, int idx) {
         ctr += sprintf(&sp[ctr], "] ");
     }
 
+    if (o->start_attr != NULL) ctr += sprintf(&sp[ctr], "[start: %s] ", o->start_attr);
+    if (o->end_attr   != NULL) ctr += sprintf(&sp[ctr], "[end: %s] ", o->end_attr);
+
     if (o->value_list_sz > 0) {
         ctr += sprintf(&sp[ctr], "[value: ");
         for (int i = 0; i < o->value_list_sz; i++) {
@@ -581,3 +624,12 @@ struct poption *get_option_by_name(struct packet * p,char* name) {
     }
     return NULL;
 }
+
+int get_option_idx_by_name(struct packet *p, const char *name) {
+    for (int i = 0; i < p->option_list_sz; i++) {
+	    struct poption *o = &p->option_list[i];
+		if (strcmp(o->name,name)==0) return i;
+    }
+    return -1;
+}
+

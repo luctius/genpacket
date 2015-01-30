@@ -159,6 +159,7 @@ bool packet_has_option_type(int pkt_idx, enum po_type option_type);
 int next_otype(struct packet * p, enum po_type otype, int idx);
 uint32_t calculate_min_size(struct packet * p);
 
+int get_option_idx_by_name(struct packet *p, const char *name);
 struct poption *get_option_by_name(struct packet * p,char* name);
 
 #define parse_error(_pack,_op,fmt, ...) \
