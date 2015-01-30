@@ -29,6 +29,7 @@ LT_INIT
 
 dnl the following is a program for generating a program that
 dnl generates a source and substitutes some values
+AC_PATH_PROGS(GENGETOPT, gengetopt)
 AC_PATH_PROGS(GENGEN, gengen)
 AM_CONDITIONAL(NO_GENGEN, test -z "$ac_cv_path_GENGEN" )
 
