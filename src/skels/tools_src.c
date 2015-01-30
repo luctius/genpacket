@@ -470,7 +470,9 @@ generate_tools_src(FILE *stream, struct tools_src_gen_struct *record, unsigned i
   fprintf (stream, "%s", "_crc_cfg_t *cfg,const void *data, size_t len) {");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
-  fprintf (stream, "%s", "    cfg->msb_mask = (crc_t)1u << (cfg->width - 1);");
+  fprintf (stream, "%s", "    cfg->msb_mask = (");
+  fprintf (stream, "%s", (record->prefix ? record->prefix : ""));
+  fprintf (stream, "%s", "_crc_t)1u << (cfg->width - 1);");
   fprintf (stream, "%s", "\n");
   fprintf (stream, "%s", indent_str);
   fprintf (stream, "%s", "    cfg->crc_mask = (cfg->msb_mask - 1) | cfg->msb_mask;");
@@ -1094,7 +1096,9 @@ genstring_tools_src(struct tools_src_gen_struct *record, unsigned int indent)
   strcat (output, "_crc_cfg_t *cfg,const void *data, size_t len) {");
   strcat (output, "\n");
   strcat (output, indent_str);
-  strcat (output, "    cfg->msb_mask = (crc_t)1u << (cfg->width - 1);");
+  strcat (output, "    cfg->msb_mask = (");
+  if (record->prefix) strcat (output, record->prefix);
+  strcat (output, "_crc_t)1u << (cfg->width - 1);");
   strcat (output, "\n");
   strcat (output, indent_str);
   strcat (output, "    cfg->crc_mask = (cfg->msb_mask - 1) | cfg->msb_mask;");
@@ -1257,9 +1261,9 @@ strcnt_tools_src(struct tools_src_gen_struct *record, unsigned int indent)
 {
   int length = 0;
   
-  length += (record->prefix ? strlen (record->prefix) : 0) * 36;
+  length += (record->prefix ? strlen (record->prefix) : 0) * 37;
 
-  return length + 6066;
+  return length + 6067;
 }
 
 void

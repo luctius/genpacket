@@ -131,7 +131,7 @@ static @prefix@_crc_t crc_finalize(const @prefix@_crc_cfg_t *cfg, @prefix@_crc_t
 }
 
 uint64_t @prefix@_crc(@prefix@_crc_cfg_t *cfg,const void *data, size_t len) {
-    cfg->msb_mask = (crc_t)1u << (cfg->width - 1);
+    cfg->msb_mask = (@prefix@_crc_t)1u << (cfg->width - 1);
     cfg->crc_mask = (cfg->msb_mask - 1) | cfg->msb_mask;
     cfg->crc_shift = cfg->width < 8 ? 8 - cfg->width : 0;
 
