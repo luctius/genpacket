@@ -99,8 +99,6 @@ endif
 gengen_sources = \
 	src/skels/calculated_packet_test_function_impl.c		\
 	src/skels/calculated_packet_test_function_impl.h		\
-	src/skels/cqc.c											\
-	src/skels/cqc.h											\
 	src/skels/dynamic_packet_test_function_impl.c			\
 	src/skels/dynamic_packet_test_function_impl.h			\
 	src/skels/fixed_packet_no_frame_test_function_impl.c	\
@@ -119,6 +117,10 @@ gengen_sources = \
 	src/skels/source_skeleton.h								\
 	src/skels/structs.c										\
 	src/skels/structs.h										\
+	src/skels/tools_src.c									\
+	src/skels/tools_src.h									\
+	src/skels/tools_hdr.c									\
+	src/skels/tools_hdr.h									\
 	src/skels/var_declaration.c								\
 	src/skels/var_declaration.h								\
 	src/skels/write_data.c									\
@@ -126,7 +128,6 @@ gengen_sources = \
 
 EXTRA_DIST = \
 	src/skels/calculated_packet_test_function_impl.h_skel		\
-	src/skels/cqc.h_skel										\
 	src/skels/dynamic_packet_test_function_impl.h_skel			\
 	src/skels/fixed_packet_no_frame_test_function_impl.h_skel	\
 	src/skels/fixed_packet_test_function_impl.h_skel			\
@@ -136,6 +137,8 @@ EXTRA_DIST = \
 	src/skels/send_function_decl.h_skel							\
 	src/skels/source_skeleton.h_skel							\
 	src/skels/structs.h_skel									\
+	src/skels/tools_src.h_skel									\
+	src/skels/tools_hdr.h_skel									\
 	src/skels/var_declaration.h_skel							\
 	src/skels/write_data.h_skel
 

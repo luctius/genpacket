@@ -57,6 +57,30 @@ struct cqc {
 
 #endif /* CQC_USE_MODULO */
 
+typedef unsigned long long int @prefix@_crc_t;
+
+typedef struct {
+    bool table_generated;   /*!< Set to false, please */
+    unsigned int width;     /*!< The width of the polynomial */
+    @prefix@_crc_t poly;             /*!< The CRC polynomial */
+    bool reflect_in;         /*!< Whether the input shall be reflected or not */
+    @prefix@_crc_t xor_in;           /*!< The initial value of the algorithm */
+    bool reflect_out;        /*!< Wether the output shall be reflected or not */
+    @prefix@_crc_t xor_out;          /*!< The value which shall be XOR-ed to the final CRC value */
+
+    /* internal parameters */
+    @prefix@_crc_t msb_mask;             /*!< a bitmask with the Most Significant Bit set to 1
+                                     initialise as (crc_t)1u << (width - 1) */
+    @prefix@_crc_t crc_mask;             /*!< a bitmask with all width bits set to 1
+                                     initialise as (cfg->msb_mask - 1) | cfg->msb_mask */
+    unsigned int crc_shift;     /*!< a shift count that is used when width < 8
+                                     initialise as cfg->width < 8 ? 8 - cfg->width : 0 */
+
+    @prefix@_crc_t crc_table[256];
+} @prefix@_crc_cfg_t;
+
+uint64_t @prefix@_crc(@prefix@_crc_cfg_t *cfg,const void *data, size_t len);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
