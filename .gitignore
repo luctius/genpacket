@@ -56,7 +56,7 @@ src/packit
 test/test_packit
 test/bats
 test/genpacket.[ch]
-test/genpacket_cqc.[ch]
+test/genpacket_tools.[ch]
 test/genpacket_receive
 test/genpacket_send
 test/test_genpacket
