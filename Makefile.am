@@ -23,7 +23,7 @@ genpacket_program_sources = \
                     src/generate.c \
                     src/genhdr.c \
                     src/gensrc.c \
-                    src/gencqc.c \
+                    src/gentools.c \
                     src/decoder.c \
                     src/debug_print.c \
                     src/crc_custom.c \
