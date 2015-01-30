@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
     }
     fclose(p_fp);
     if (has_parse_error) {
-        parse_error(NULL, NULL, "too many errors; quitting");
+        gp_err("too many errors; quitting");
         exit(EXIT_FAILURE);
     }
 

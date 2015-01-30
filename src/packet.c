@@ -8,8 +8,6 @@
 
 #include "packet.h"
 
-#include "debug_print.h"
-
 #if (CHAR_BIT != 8) 
 #error You are weird, go away!
 #endif 
@@ -23,38 +21,6 @@ struct packet *packet_list = NULL;
 extern inline bool type_is_valid(struct type t);
 extern inline bool v_is_valid(struct value v_to_check, struct type to_compare);
 extern inline bool within_max(uint64_t val, uint8_t bits, enum field_type ft);
-
-void parse_debug(struct packet *packet, struct poption *option, const char *fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-
-    //fprintf(stderr, "[line: %d] debug: ", line_num);
-    if (packet != NULL) {
-        
-       // gp_printf_basic("[%s.%s]", packet->name, option != NULL ? option->name : NULL);
-        //if (option != NULL) fprintf(stderr, ".%s", option->name);
-        //fprintf(stderr, "] ");
-    }
-    gp_printf_basic(GP_DEBUG_LEVEL_DEBUG, packet->name,line_num, fmt, args);
-    //vfprintf(stderr, fmt, args);
-    //fprintf(stderr, ".\n");
-}
-
-void parse_error(struct packet *packet, struct poption *option, const char *fmt, ...) {
-    va_list args;
-    va_start(args, fmt);
-
-    has_parse_error = true;
-    fprintf(stderr, "[line: %d] error: ", line_num);
-    if (packet != NULL) {
-        fprintf(stderr, "[%s", packet->name);
-        if (option != NULL) fprintf(stderr, ".%s", option->name);
-        fprintf(stderr, "] ");
-    }
-
-    vfprintf(stderr, fmt, args);
-    fprintf(stderr, ".\n");
-}
 
 void add_packet(enum packet_type ptype, char *name) {
     packet_list = realloc(packet_list, ++packet_list_sz * sizeof(struct packet) );

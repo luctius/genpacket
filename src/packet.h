@@ -5,6 +5,7 @@
 #include <stdbool.h>
 
 #include "value.h"
+#include "debug_print.h"
 
 #ifndef FIX_UNUSED
 #define FIX_UNUSED(X) (void) (X) /* avoid warnings for unused params */
@@ -159,5 +160,40 @@ int next_otype(struct packet * p, enum po_type otype, int idx);
 uint32_t calculate_min_size(struct packet * p);
 
 struct poption *get_option_by_name(struct packet * p,char* name);
+
+#define parse_error(_pack,_op,fmt, ...) \
+do { \
+    has_parse_error = true; \
+    struct packet *_p = NULL; \
+    struct poption *_o = NULL; \
+    if (_pack != NULL) _p = (struct packet *) _pack; \
+    if (_op != NULL) _o = (struct potion *) _op; \
+    char _str[1024]; \
+    int _ctr = 0; \
+    _ctr += snprintf(&_str[_ctr], 1024-_ctr, "[line: %d]: ", line_num); \
+    if (_p != NULL) { \
+        _ctr += snprintf(&_str[_ctr], 1024-_ctr, "[%s", _p->name); \
+        if (_o != NULL) _ctr += snprintf(&_str[_ctr], 1024 - _ctr, ".%s", _o->name); \
+        _ctr += snprintf(&_str[_ctr], 1024 - _ctr, "] "); \
+    } \
+    gp_err("%s" fmt, _str, ##__VA_ARGS__);  \
+} while (0)
+
+#define parse_debug(_pack,_op,fmt, ...) \
+do { \
+    struct packet *_p = NULL; \
+    struct poption *_o = NULL; \
+    if (_pack != NULL) _p = (struct packet *) _pack; \
+    if (_op != NULL) _o = (struct potion *) _op; \
+    char _str[1024]; \
+    int _ctr = 0; \
+    _ctr += snprintf(&_str[_ctr], 1024-_ctr, "[line: %d]", line_num); \
+    if (_p != NULL) { \
+        _ctr += snprintf(&_str[_ctr], 1024-_ctr, "[%s", _p->name); \
+        if (_o != NULL) _ctr += snprintf(&_str[_ctr], 1024 - _ctr, ".%s", _o->name); \
+        _ctr += snprintf(&_str[_ctr], 1024 - _ctr, "] "); \
+    } \
+    gp_debug("%s" fmt, _str, ##__VA_ARGS__);  \
+} while (0)
 
 #endif /* PACKET_H */
