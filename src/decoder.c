@@ -89,7 +89,7 @@ int find_frame_in_data(struct packet * p, int frame_byte, int frame_bit_sz,int t
         uint32_t num_checked = 0;
         for(int i = 0; i < p->size; ++i) {                
             for(uint32_t j = 0; j < frame_byte_sz; ++j) {
-                gp_debug("Checking %x against %x",(data_buffer[i] & (1<<check_bits)-1) , ((((uint8_t*)&frame_byte)[j]) & (1<<check_bits)-1))
+                gp_debug("Checking %x against %x",(data_buffer[i] & (1<<check_bits)-1) , ((((uint8_t*)&frame_byte)[j]) & (1<<check_bits)-1));
                 if ((data_buffer[i] & bit_mask)== ((((uint8_t*)&frame_byte)[j]) & bit_mask)) {
                     num_checked++;
                     if (num_checked == frame_byte_sz) {
