@@ -11,7 +11,6 @@ AC_PROG_CC
 AC_PROG_CC_C99
 AM_PROG_CC_C_O
 AC_PROG_CPP
-AC_PROG_LIBTOOL
 AC_LANG_C
 AC_C_CONST
 AC_TYPE_SIZE_T
@@ -24,8 +23,13 @@ AC_PROG_LN_S
 AC_EXEEXT
 AC_PROG_YACC
 AM_PROG_LEX
-LT_INIT
-#AC_PROG_RANLIB
+
+AM_PROG_LEX([], [AC_MSG_ERROR([Flex not found.])])
+AC_PROG_YACC([], [AC_MSG_ERROR([Bison not found.])])
+
+if test "x$YACC" != "xbison -y"; then
+    AC_MSG_ERROR([Bison not found.])
+fi
 
 dnl the following is a program for generating a program that
 dnl generates a source and substitutes some values

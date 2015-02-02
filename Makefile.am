@@ -15,8 +15,6 @@ genpacket_program_sources = \
                     $(gengen_sources) \
                     src/cmdline.c \
                     src/cmdline_packit.c \
-                    src/genpacket.tab.c \
-                    src/genpacket.lex.c \
                     src/packet.c \
                     src/parser.c \
                     src/value.c \
@@ -28,7 +26,12 @@ genpacket_program_sources = \
                     src/debug_print.c \
                     src/crc_custom.c \
                     src/crc.c \
+					src/genpacket.tab.c \
+					src/genpacket.lex.c \
                     src/json_printer.c
+
+#src/genpacket.l
+#src/genpacket.y
 
 src_genpacket_SOURCES =  \
 					$(genpacket_program_sources) \

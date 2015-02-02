@@ -3,5 +3,6 @@
 	"attribute0": 37,
 	"attribute1": 0,
 	"attribute2": 1,
-	"data0": [43,240]
+	"data0": [43,255],
+	"attribute3": -86
 }
