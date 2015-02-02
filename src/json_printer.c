@@ -63,53 +63,31 @@ void buffer_to_json_type_str(uint8_t * buf, int buf_bit_idx,char * type_str, str
         buf_idx = buf_bit_idx / BYTE_SIZE;
     }
     
-    uint32_t data_sz_bytes = 1;
-    if (!check_bits) {
-        data_sz_bytes = dw / BYTE_SIZE;
+    uint32_t data_sz_bytes = dw / BYTE_SIZE;
+        
+    if (check_bits) {
+        data_sz_bytes++;
     }
     uint64_t tmp_u=0;
     uint64_t tmp_s=0;
     switch(o->type.ft) {
-            case FT_UNSIGNED:
-            //if (dw < 8) {
-                if (check_bits) {
-                    bit_mask = (1<<check_bits)-1;
-                }
-                uint8_t val = buf[buf_idx]; 
-                
-                
-                //bit_mask >>= o->bit_alignment % BYTE_SIZE;
-                //val >>= o->bit_alignment % BYTE_SIZE;
-               // val &= & bit_mask;
-               
-                //sprintf(type_str,"%"PRIu8, val);
-                memcpy(&tmp_u, &buf[buf_idx],data_sz_bytes);
-                
-                tmp_u >>= o->bit_alignment % BYTE_SIZE;
-                
-                gp_debug("Val: %x bitmsk: %x raw val: %x shift: %x", tmp_u, bit_mask, buf[buf_idx], o->bit_alignment % BYTE_SIZE);
-                
-                sprintf(type_str,"%"PRIu64, tmp_u&bit_mask);
-                //}
+        case FT_UNSIGNED:
+            if (check_bits) {
+                bit_mask = (1<<dw)-1;
+            }
+            memcpy(&tmp_u, &buf[buf_idx],data_sz_bytes);
+            tmp_u >>= o->bit_alignment % BYTE_SIZE;
+            //gp_debug("Val: %x bitmsk: %x raw val: %x shift: %x", tmp_u, bit_mask, buf[buf_idx], o->bit_alignment % BYTE_SIZE);
+            sprintf(type_str,"%"PRIu64, tmp_u&bit_mask);
         break;
         case FT_SIGNED:
-            /*if (dw == 8) {
-                sprintf(type_str,"%"PRId8, buf[buf_idx]);
-            } else if (dw == 16) {
-                int16_t tmp;
-                memcpy(&tmp, &buf[buf_idx],2);
-                sprintf(type_str,"%"PRId16, tmp);
-            } else if (dw == 32) {
-                int32_t tmp;
-                memcpy(&tmp, &buf[buf_idx],4);
-                sprintf(type_str,"%"PRId32, tmp);
-            } else if (dw == 64) {
-                int64_t tmp;
-                memcpy(&tmp, &buf[buf_idx],8);
-                sprintf(type_str,"%"PRId64, tmp);
-            }*/
-            memcpy(&tmp_u, &buf[buf_idx],data_sz_bytes);
-            sprintf(type_str,"%"PRIu64, tmp_s);
+            if (check_bits) {
+                bit_mask ^= (1<<dw)-1;
+            }
+            memcpy(&tmp_s, &buf[buf_idx],data_sz_bytes);
+            tmp_s >>= o->bit_alignment % BYTE_SIZE;
+            //gp_debug("Val: %x bitmsk: %x raw val: %x shift: %x sz: %x", tmp_s, bit_mask, buf[buf_idx], o->bit_alignment % BYTE_SIZE,dw);
+            sprintf(type_str,"%"PRId64, tmp_s|bit_mask);
         break;
         case FT_FLOAT:
             if (dw == 32) {
