@@ -32,13 +32,6 @@ void generate_crc_cfg_decl_method(FILE *stream, struct source_skeleton_gen_struc
     }
 }
 
-void generate_crc_init_method(FILE *stream, struct source_skeleton_gen_struct *record, unsigned int indent) {
-    FIX_UNUSED(stream);
-    FIX_UNUSED(record);
-    FIX_UNUSED(indent);
-
-}
-
 void generate_test_frame_dynamic_method(FILE *stream, struct dynamic_packet_test_function_impl_gen_struct *record, unsigned int indent) {
     FIX_UNUSED(record);
     FIX_UNUSED(indent);
@@ -110,8 +103,32 @@ void generate_send_func_method(FILE *stream, struct send_func_impl_gen_struct *r
                 fprintf(stream, "%*s", indent, "");
             }
             if (o->otype == O_CRC) {
+                struct poption *start = get_option_by_name(p, o->start_attr);
+                struct poption *end   = get_option_by_name(p, o->end_attr);
+                int start_idx = get_option_idx_by_name(p, start->name);
+                int end_idx   = get_option_idx_by_name(p, end->name);
+
+                gp_debug("packet %s crc", p->name);
+                gp_debug("crc start: %s(%d)", o->start_attr, start_idx);
+                gp_debug("crc end: %s(%d)", o->end_attr, end_idx);
+
+                int size = 0;
+                for (int i = start_idx; i <= end_idx; i++) {
+                    int sz_add = 0;
+                    if (p->option_list[i].otype == O_DATA) {
+                        sz_add= p->option_list[i].data_width * p->option_list[i].data_size_i;
+                    }
+                    else sz_add = p->option_list[i].data_width;
+
+                    gp_debug("crc (%s: %d) size: %d", p->option_list[i].name,sz_add, size);
+                    size += sz_add;
+                }
+
+                gp_debug("crc size: %d", size/CHAR_BIT);
+
                 fprintf(stream, "\n%*s", indent, "");
-                //fprintf(stream, "packet->%s = %s_crc(ctx->%s_%s, );\n", o->name, p->name, o->name );
+                fprintf(stream, "packet->%s = %s_crc(&%s_ctx.%s_%s, &packet->%s, %d);\n", 
+                                    o->name, record->prefix, record->prefix, p->name, o->name, start->name, size/CHAR_BIT);
                 fprintf(stream, "%*s", indent, "");
             }
 
